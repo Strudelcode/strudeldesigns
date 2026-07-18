@@ -5,26 +5,21 @@
       "name": "Strudelgame",
       "role": "Designer & Gründer",
       "initials": "SG",
-      "bio": "Schaut das alles läuft"
+      "bio": "Strudelgame schaut das alle Technischen Sachen Funktionieren wie die Webseite, Discord bot/Tickets..."
     },
     {
       "id": "m-blattbyte",
       "name": "Bloodbyte",
-      "role": "Mitglied & Designer",
+      "role": "Intro/Outro Designer",
       "initials": "BB",
-      "bio": "Intros"
+      "bio": "Bloodbyte ist bekannt für seine eigene Art mit Menschen umzugehen und seine Professionellen Intros/Outros"
     }
   ],
   "news": [
     {
-      "id": "n-mrqmk9px-eur8v",
-      "date": "01. Januar 2010",
-      "content": "# Neues Team\n- **Bloodbyte** ist jetzt im team"
-    },
-    {
       "id": "n-launch",
       "date": "18. Juli 2026",
-      "content": "# Neue Webseite mit Live-Customizer\nAb sofort werden Mitglieder und News dynamisch geladen – und du kannst dein Logo direkt auf unseren Vorlagen platzieren.\n- Eigener Bereich \"Eigenes Branding\"\n- **Alle News** jetzt auf einer eigenen Seite"
+      "content": "# Neue eigene Webseite \nAb sofort werden Mitglieder und News dynamisch geladen – und du kannst dein Logo direkt auf unseren Vorlagen platzieren.\n- Eigener Bereich \"Eigenes Branding\"\n- **Alle News** jetzt auf einer eigenen Seite"
     }
   ],
   "templates": [
