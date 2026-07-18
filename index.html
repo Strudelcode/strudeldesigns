@@ -277,6 +277,33 @@
   .size-range::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--violet));cursor:pointer;border:2px solid #fff;}
   .size-range::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--violet));cursor:pointer;border:2px solid #fff;}
 
+  /* ---------- Neue Editor-Controls: Drehen, Transparenz, Textfarbe/Fett, Export-Format ---------- */
+  .control-row{display:flex;flex-direction:column;gap:4px;}
+  .control-row-label{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:var(--text-2);}
+  .control-row-label span.val{color:var(--text-1);font-weight:700;text-transform:none;letter-spacing:0;}
+  .text-style-row{display:flex;align-items:center;gap:10px;}
+  .text-color-input{width:34px;height:34px;padding:0;border:1px solid var(--glass-border);border-radius:8px;background:transparent;cursor:pointer;flex:0 0 auto;}
+  .text-color-input::-webkit-color-swatch-wrapper{padding:2px;}
+  .text-color-input::-webkit-color-swatch{border-radius:6px;border:none;}
+  .bold-toggle-btn{
+    flex:1;background:var(--glass-bg);border:1px solid var(--glass-border);color:var(--text-1);
+    font-weight:700;font-size:13px;padding:7px 8px;border-radius:8px;transition:all .18s ease;
+  }
+  .bold-toggle-btn.active{background:var(--pink);color:#fff;border-color:var(--pink);}
+  .export-format-select{
+    width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:10px;
+    padding:9px 11px;color:var(--text-0);font-family:inherit;font-size:13px;cursor:pointer;
+  }
+  .export-format-select:focus{outline:none;border-color:var(--pink);}
+
+  .filter-panel{display:flex;flex-direction:column;gap:8px;padding-top:4px;border-top:1px solid var(--glass-border);margin-top:2px;}
+  .filter-toggle-row{display:flex;gap:6px;}
+  .filter-toggle-btn{
+    flex:1;background:var(--glass-bg);border:1px solid var(--glass-border);color:var(--text-1);
+    font-weight:600;font-size:11.5px;padding:7px 6px;border-radius:8px;transition:all .18s ease;
+  }
+  .filter-toggle-btn.active{background:var(--pink);color:#fff;border-color:var(--pink);}
+
   .btn-download-mini{
     display:inline-flex;align-items:center;justify-content:center;gap:8px;
     background:linear-gradient(135deg,var(--pink),var(--magenta) 55%,var(--violet));
@@ -998,12 +1025,27 @@
         ? '<div class="mode-panel" data-mode="image">' +
             '<input type="file" class="file-input-hidden logo-file-input" accept="image/png,image/webp">' +
             '<div class="btn-row-mini"><button class="btn-upload-mini" type="button" style="flex:1;">Logo hochladen</button></div>' +
+            '<div class="filter-panel">' +
+              '<div class="control-row"><div class="control-row-label"><span>Helligkeit</span><span class="val brightness-val">100%</span></div><input type="range" class="brightness-range" min="40" max="180" value="100"></div>' +
+              '<div class="control-row"><div class="control-row-label"><span>Kontrast</span><span class="val contrast-val">100%</span></div><input type="range" class="contrast-range" min="40" max="180" value="100"></div>' +
+              '<div class="control-row"><div class="control-row-label"><span>Sättigung</span><span class="val saturate-val">100%</span></div><input type="range" class="saturate-range" min="0" max="200" value="100"></div>' +
+              '<div class="control-row"><div class="control-row-label"><span>Unschärfe</span><span class="val blur-val">0px</span></div><input type="range" class="blur-range" min="0" max="12" value="0"></div>' +
+              '<div class="filter-toggle-row">' +
+                '<button type="button" class="filter-toggle-btn grayscale-toggle-btn">S/W</button>' +
+                '<button type="button" class="filter-toggle-btn shadow-toggle-btn">Schatten</button>' +
+                '<button type="button" class="filter-toggle-btn glow-toggle-btn">Glow</button>' +
+              '</div>' +
+            '</div>' +
           '</div>'
         : '';
 
       var textPanelHtml = tpl.allowText
         ? '<div class="mode-panel" data-mode="text"' + (tpl.allowImage ? ' style="display:none;"' : '') + '>' +
             '<textarea class="text-overlay-input" placeholder="Eigener Text …" maxlength="80"></textarea>' +
+            '<div class="text-style-row">' +
+              '<input type="color" class="text-color-input" value="#ffffff" title="Textfarbe">' +
+              '<button type="button" class="bold-toggle-btn active">Fett</button>' +
+            '</div>' +
           '</div>'
         : '';
 
@@ -1023,7 +1065,14 @@
         '<div class="template-controls">' +
           toggleHtml + imagePanelHtml + textPanelHtml +
           '<div class="btn-row-mini"><button class="btn-reset-mini" type="button" style="flex:1;">Zurücksetzen</button></div>' +
-          '<input type="range" class="size-range" min="40" max="260" value="' + initialSlider + '">' +
+          '<div class="control-row"><div class="control-row-label"><span>Größe</span></div><input type="range" class="size-range" min="40" max="260" value="' + initialSlider + '"></div>' +
+          '<div class="control-row"><div class="control-row-label"><span>Drehen</span><span class="val rotate-val">0°</span></div><input type="range" class="rotate-range" min="0" max="360" value="0"></div>' +
+          '<div class="control-row"><div class="control-row-label"><span>Transparenz</span><span class="val opacity-val">100%</span></div><input type="range" class="opacity-range" min="10" max="100" value="100"></div>' +
+          '<select class="export-format-select">' +
+            '<option value="png">Export als PNG (verlustfrei)</option>' +
+            '<option value="jpeg">Export als JPG (kleinere Datei)</option>' +
+            '<option value="webp">Export als WEBP</option>' +
+          '</select>' +
           '<button class="btn-download-mini" type="button" disabled>Design herunterladen</button>' +
           '<p class="status-msg-mini">' + (tpl.allowImage ? 'Lade zuerst ein Logo hoch.' : 'Gib zuerst einen Text ein.') + '</p>' +
         '</div>';
@@ -1048,6 +1097,24 @@
     var imagePanel = card.querySelector('.mode-panel[data-mode="image"]');
     var textPanel = card.querySelector('.mode-panel[data-mode="text"]');
     var bgVideoEl = card.querySelector('video.stage-bg');
+    var rotateRange = card.querySelector('.rotate-range');
+    var rotateVal = card.querySelector('.rotate-val');
+    var opacityRange = card.querySelector('.opacity-range');
+    var opacityVal = card.querySelector('.opacity-val');
+    var textColorInput = card.querySelector('.text-color-input');
+    var boldToggleBtn = card.querySelector('.bold-toggle-btn');
+    var formatSelect = card.querySelector('.export-format-select');
+    var brightnessRange = card.querySelector('.brightness-range');
+    var brightnessVal = card.querySelector('.brightness-val');
+    var contrastRange = card.querySelector('.contrast-range');
+    var contrastVal = card.querySelector('.contrast-val');
+    var saturateRange = card.querySelector('.saturate-range');
+    var saturateVal = card.querySelector('.saturate-val');
+    var blurRange = card.querySelector('.blur-range');
+    var blurVal = card.querySelector('.blur-val');
+    var grayscaleBtn = card.querySelector('.grayscale-toggle-btn');
+    var shadowBtn = card.querySelector('.shadow-toggle-btn');
+    var glowBtn = card.querySelector('.glow-toggle-btn');
 
     var defaultZoneHtml = dropZone.innerHTML;
 
@@ -1059,8 +1126,27 @@
       size: parseInt(sizeRange.value,10),
       xRatio: tpl.defaultX,
       yRatio: tpl.defaultY,
-      sizeRatioForExport: tpl.defaultSize
+      sizeRatioForExport: tpl.defaultSize,
+      rotation: 0,
+      opacity: 1,
+      textColor: '#ffffff',
+      textBold: true,
+      brightness: 100,
+      contrast: 100,
+      saturate: 100,
+      blur: 0,
+      grayscale: false,
+      shadow: false,
+      glow: false
     };
+
+    function imgCssFilter(){
+      var f = 'brightness(' + state.brightness + '%) contrast(' + state.contrast + '%) saturate(' + state.saturate + '%) blur(' + state.blur + 'px)';
+      if(state.grayscale){ f += ' grayscale(1)'; }
+      if(state.shadow){ f += ' drop-shadow(0 4px 10px rgba(0,0,0,0.55))'; }
+      if(state.glow){ f += ' drop-shadow(0 0 12px rgba(255,63,164,0.85))'; }
+      return f;
+    }
 
     function setStatus(text, ok){
       statusMsg.textContent = text;
@@ -1081,8 +1167,15 @@
     function applyZoneSize(){
       dropZone.style.width = state.size + 'px';
       dropZone.style.height = state.size + 'px';
+      dropZone.style.transform = 'translate(-50%,-50%) rotate(' + state.rotation + 'deg)';
+      dropZone.style.opacity = state.opacity;
       var t = dropZone.querySelector('.overlay-text');
-      if(t){ t.style.fontSize = Math.max(12, state.size * 0.22) + 'px'; }
+      if(t){
+        t.style.fontSize = Math.max(12, state.size * 0.22) + 'px';
+        t.style.color = state.textColor;
+        t.style.fontWeight = state.textBold ? '700' : '400';
+      }
+      if(state.logoImg){ state.logoImg.style.filter = imgCssFilter(); }
     }
 
     function setMode(newMode){
@@ -1239,6 +1332,60 @@
       applyZonePosition();
     });
 
+    if(rotateRange){
+      rotateRange.addEventListener('input', function(){
+        state.rotation = parseInt(rotateRange.value,10);
+        if(rotateVal){ rotateVal.textContent = state.rotation + '°'; }
+        applyZoneSize();
+      });
+    }
+    if(opacityRange){
+      opacityRange.addEventListener('input', function(){
+        var pct = parseInt(opacityRange.value,10);
+        state.opacity = pct/100;
+        if(opacityVal){ opacityVal.textContent = pct + '%'; }
+        applyZoneSize();
+      });
+    }
+    if(textColorInput){
+      textColorInput.addEventListener('input', function(){
+        state.textColor = textColorInput.value;
+        applyZoneSize();
+      });
+    }
+    if(boldToggleBtn){
+      boldToggleBtn.addEventListener('click', function(){
+        state.textBold = !state.textBold;
+        boldToggleBtn.classList.toggle('active', state.textBold);
+        applyZoneSize();
+      });
+    }
+
+    function bindFilterRange(rangeEl, valEl, key, unit){
+      if(!rangeEl) return;
+      rangeEl.addEventListener('input', function(){
+        state[key] = parseInt(rangeEl.value,10);
+        if(valEl){ valEl.textContent = rangeEl.value + unit; }
+        applyZoneSize();
+      });
+    }
+    bindFilterRange(brightnessRange, brightnessVal, 'brightness', '%');
+    bindFilterRange(contrastRange, contrastVal, 'contrast', '%');
+    bindFilterRange(saturateRange, saturateVal, 'saturate', '%');
+    bindFilterRange(blurRange, blurVal, 'blur', 'px');
+
+    function bindFilterToggle(btnEl, key){
+      if(!btnEl) return;
+      btnEl.addEventListener('click', function(){
+        state[key] = !state[key];
+        btnEl.classList.toggle('active', state[key]);
+        applyZoneSize();
+      });
+    }
+    bindFilterToggle(grayscaleBtn, 'grayscale');
+    bindFilterToggle(shadowBtn, 'shadow');
+    bindFilterToggle(glowBtn, 'glow');
+
     window.addEventListener('resize', function(){ if(state.hasContent){ applyZonePosition(); } });
 
     resetBtn.addEventListener('click', function(){
@@ -1247,11 +1394,39 @@
       state.hasContent = false;
       state.logoImg = null;
       state.text = '';
+      state.rotation = 0;
+      state.opacity = 1;
+      state.textColor = '#ffffff';
+      state.textBold = true;
+      state.brightness = 100;
+      state.contrast = 100;
+      state.saturate = 100;
+      state.blur = 0;
+      state.grayscale = false;
+      state.shadow = false;
+      state.glow = false;
       var r = stage.getBoundingClientRect();
       state.size = r.width ? Math.max(40, Math.min(260, Math.round(tpl.defaultSize * r.width))) : 110;
       state.xRatio = tpl.defaultX;
       state.yRatio = tpl.defaultY;
       sizeRange.value = state.size;
+      if(rotateRange){ rotateRange.value = 0; }
+      if(rotateVal){ rotateVal.textContent = '0°'; }
+      if(opacityRange){ opacityRange.value = 100; }
+      if(opacityVal){ opacityVal.textContent = '100%'; }
+      if(textColorInput){ textColorInput.value = '#ffffff'; }
+      if(boldToggleBtn){ boldToggleBtn.classList.add('active'); }
+      if(brightnessRange){ brightnessRange.value = 100; }
+      if(brightnessVal){ brightnessVal.textContent = '100%'; }
+      if(contrastRange){ contrastRange.value = 100; }
+      if(contrastVal){ contrastVal.textContent = '100%'; }
+      if(saturateRange){ saturateRange.value = 100; }
+      if(saturateVal){ saturateVal.textContent = '100%'; }
+      if(blurRange){ blurRange.value = 0; }
+      if(blurVal){ blurVal.textContent = '0px'; }
+      if(grayscaleBtn){ grayscaleBtn.classList.remove('active'); }
+      if(shadowBtn){ shadowBtn.classList.remove('active'); }
+      if(glowBtn){ glowBtn.classList.remove('active'); }
       applyZoneSize();
       applyZonePosition();
       if(fileInput){ fileInput.value = ''; }
@@ -1285,25 +1460,34 @@
     }
 
     function drawOverlay(ctx){
+      var cx = state.xRatio*EXPORT_W, cy = state.yRatio*EXPORT_H;
+      var rad = (state.rotation || 0) * Math.PI / 180;
+      ctx.save();
+      ctx.globalAlpha = state.opacity != null ? state.opacity : 1;
+      ctx.translate(cx, cy);
+      ctx.rotate(rad);
       if(state.mode === 'image' && state.logoImg){
         var s = state.sizeRatioForExport * EXPORT_W;
         var iw = state.logoImg.naturalWidth || 1, ih = state.logoImg.naturalHeight || 1;
         var scale = Math.min(s/iw, s/ih);
         var dw = iw*scale, dh = ih*scale;
-        var cx = state.xRatio*EXPORT_W, cy = state.yRatio*EXPORT_H;
-        ctx.drawImage(state.logoImg, cx - dw/2, cy - dh/2, dw, dh);
+        ctx.filter = imgCssFilter();
+        ctx.drawImage(state.logoImg, -dw/2, -dh/2, dw, dh);
+        ctx.filter = 'none';
       } else if(state.mode === 'text' && state.text){
         var fontSize = state.sizeRatioForExport * EXPORT_W * 0.26;
-        ctx.font = '700 ' + fontSize + 'px Rajdhani, sans-serif';
-        ctx.fillStyle = '#fff';
+        var weight = state.textBold ? '700' : '400';
+        ctx.font = weight + ' ' + fontSize + 'px Rajdhani, sans-serif';
+        ctx.fillStyle = state.textColor || '#ffffff';
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10;
         var lines = state.text.split('\n');
         var lineHeight = fontSize * 1.15;
-        var startY = state.yRatio*EXPORT_H - (lines.length-1)*lineHeight/2;
-        lines.forEach(function(line, i){ ctx.fillText(line, state.xRatio*EXPORT_W, startY + i*lineHeight); });
+        var startY = -(lines.length-1)*lineHeight/2;
+        lines.forEach(function(line, i){ ctx.fillText(line, 0, startY + i*lineHeight); });
         ctx.shadowBlur = 0;
       }
+      ctx.restore();
     }
 
     downloadBtn.addEventListener('click', function(){
@@ -1320,9 +1504,12 @@
 
       function finish(){
         drawOverlay(ctx);
+        var fmt = formatSelect ? formatSelect.value : 'png';
+        var mime = fmt === 'jpeg' ? 'image/jpeg' : (fmt === 'webp' ? 'image/webp' : 'image/png');
+        var ext = fmt === 'jpeg' ? 'jpg' : (fmt === 'webp' ? 'webp' : 'png');
         var link = document.createElement('a');
-        link.download = 'strudeldesigns-' + slugify(tpl.name) + '.png';
-        link.href = canvas.toDataURL('image/png');
+        link.download = 'strudeldesigns-' + slugify(tpl.name) + '.' + ext;
+        link.href = canvas.toDataURL(mime, mime === 'image/png' ? undefined : 0.92);
         link.click();
         downloadBtn.disabled = false;
         setStatus('Design heruntergeladen ✓', true);
