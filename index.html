@@ -634,7 +634,10 @@
         direkt in dein Repo – GitHub Pages liefert die neue Version dann automatisch an alle Besucher aus.
         Der Zugangstoken wird <strong>nur in diesem Browser</strong> gespeichert (localStorage) und nirgendwo sonst.
         Nutze am besten einen <strong>fine-grained Personal Access Token</strong>, beschränkt auf genau dieses Repo mit
-        Berechtigung „Contents: Read and write“.
+        Berechtigung „Contents: Read and write“.<br><br>
+        <strong>Wichtig zur Reihenfolge:</strong> „Von GitHub laden“ nur klicken, <strong>bevor</strong> du Änderungen machst
+        (z. B. um den aktuellen Stand zu holen). Klickst du es <strong>nachdem</strong> du schon etwas geändert hast,
+        gehen diese Änderungen verloren – das Panel warnt dich in dem Fall vorher.
       </p>
       <div class="admin-form" style="border-top:none;padding-top:0;">
         <div class="admin-form-row-2">
@@ -1481,6 +1484,7 @@
   var ghLoadBtn = document.getElementById('ghLoadBtn');
   var ghPublishBtn = document.getElementById('ghPublishBtn');
   var lastKnownSha = null; // sha der zuletzt geladenen data.json, nötig fürs Überschreiben
+  var lastSyncedSnapshot = JSON.stringify(data); // Stand, der zuletzt mit GitHub übereinstimmte
 
   function loadGhSettings(){
     try{
@@ -1539,6 +1543,12 @@
   ghLoadBtn.addEventListener('click', function(){
     var s = saveGhSettings();
     if(!s.owner || !s.repo){ setGhStatus('Bitte Benutzername/Organisation und Repository angeben.'); return; }
+    if(JSON.stringify(data) !== lastSyncedSnapshot){
+      var proceed = confirm('Du hast noch nicht veröffentlichte Änderungen im Panel (z. B. bei Mitgliedern oder News). ' +
+        'Wenn du jetzt von GitHub lädst, gehen diese Änderungen verloren! ' +
+        'Klicke "Abbrechen" und veröffentliche zuerst deine Änderungen, oder "OK" um sie zu verwerfen und den GitHub-Stand zu laden.');
+      if(!proceed){ return; }
+    }
     setGhStatus('Lade data.json von GitHub …');
     var headers = { 'Accept':'application/vnd.github+json' };
     if(s.token){ headers['Authorization'] = 'Bearer ' + s.token; }
@@ -1556,6 +1566,7 @@
         }
         lastKnownSha = json.sha;
         data = parsed;
+        lastSyncedSnapshot = JSON.stringify(data);
         renderPublic();
         renderAdminLists();
         setGhStatus('Geladen ✓ – die Vorschau zeigt jetzt den Stand aus GitHub.', true);
@@ -1602,6 +1613,7 @@
       })
       .then(function(json){
         lastKnownSha = json.content && json.content.sha;
+        lastSyncedSnapshot = JSON.stringify(data);
         setGhStatus('Veröffentlicht ✓ – GitHub Pages aktualisiert die Live-Seite in Kürze für alle Besucher.', true);
       })
       .catch(function(err){
@@ -1651,6 +1663,7 @@
     .then(function(parsed){
       if(parsed && Array.isArray(parsed.members) && Array.isArray(parsed.news) && Array.isArray(parsed.templates)){
         data = parsed;
+        lastSyncedSnapshot = JSON.stringify(data);
         renderPublic();
       }
     })
