@@ -635,9 +635,9 @@
         Der Zugangstoken wird <strong>nur in diesem Browser</strong> gespeichert (localStorage) und nirgendwo sonst.
         Nutze am besten einen <strong>fine-grained Personal Access Token</strong>, beschränkt auf genau dieses Repo mit
         Berechtigung „Contents: Read and write“.<br><br>
-        <strong>Wichtig zur Reihenfolge:</strong> „Von GitHub laden“ nur klicken, <strong>bevor</strong> du Änderungen machst
-        (z. B. um den aktuellen Stand zu holen). Klickst du es <strong>nachdem</strong> du schon etwas geändert hast,
-        gehen diese Änderungen verloren – das Panel warnt dich in dem Fall vorher.
+        <strong>„Von GitHub laden“ ist optional</strong> – nur nötig, wenn du dir den aktuellen Live-Stand in die Vorschau
+        holen willst (z. B. um zu sehen, was gerade veröffentlicht ist). Zum reinen Veröffentlichen deiner Änderungen
+        reicht direkt der Klick auf „Auf GitHub veröffentlichen“.
       </p>
       <div class="admin-form" style="border-top:none;padding-top:0;">
         <div class="admin-form-row-2">
@@ -1596,13 +1596,25 @@
       'Authorization':'Bearer ' + s.token,
       'Content-Type':'application/json'
     };
-    var body = {
-      message: 'Update data.json über StrudelDesigns Admin-Panel',
-      content: utf8ToBase64(JSON.stringify(data, null, 2)),
-      branch: s.branch
-    };
-    if(lastKnownSha){ body.sha = lastKnownSha; }
-    fetch(ghApiUrl(s), { method:'PUT', headers: headers, body: JSON.stringify(body) })
+
+    // Zuerst still im Hintergrund die aktuelle sha holen (nötig zum Überschreiben einer
+    // bestehenden Datei) — OHNE data zu überschreiben, damit deine Änderungen erhalten bleiben.
+    fetch(ghApiUrl(s) + '?ref=' + encodeURIComponent(s.branch), { headers: { 'Accept':'application/vnd.github+json', 'Authorization':'Bearer ' + s.token } })
+      .then(function(res){
+        if(res.status === 404){ return null; } // Datei existiert noch nicht -> ohne sha neu anlegen
+        if(!res.ok){ throw { code:res.status, phase:'sha' }; }
+        return res.json();
+      })
+      .then(function(metaJson){
+        if(metaJson && metaJson.sha){ lastKnownSha = metaJson.sha; }
+        var body = {
+          message: 'Update data.json über StrudelDesigns Admin-Panel',
+          content: utf8ToBase64(JSON.stringify(data, null, 2)),
+          branch: s.branch
+        };
+        if(lastKnownSha){ body.sha = lastKnownSha; }
+        return fetch(ghApiUrl(s), { method:'PUT', headers: headers, body: JSON.stringify(body) });
+      })
       .then(function(res){
         if(!res.ok){
           return res.json().catch(function(){ return {}; }).then(function(errBody){
@@ -1618,7 +1630,7 @@
       })
       .catch(function(err){
         if(err && err.code === 409){
-          setGhStatus('Konflikt: Die Datei wurde zwischenzeitlich extern geändert. Bitte zuerst „Von GitHub laden“ klicken.');
+          setGhStatus('Konflikt: Die Datei wurde gerade zeitgleich extern geändert. Bitte kurz erneut auf „Auf GitHub veröffentlichen“ klicken.');
         } else if(err && err.code === 401){
           setGhStatus('Token ungültig oder abgelaufen (401).');
         } else if(err && err.code === 403){
