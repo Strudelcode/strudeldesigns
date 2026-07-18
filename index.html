@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StrudelDesigns – Kreative Designs für Streamer &amp; Creator</title>
+<meta name="description" content="StrudelDesigns – Logos, Overlays und Branding für Streamer und Gaming-Communities. Individuelle Designs, schneller Support über Discord.">
+<link rel="icon" type="image/webp" href="data:image/webp;base64,__LOGO_B64__">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#08050d;
+    --bg-1:#0f0a1a;
+    --bg-2:#160f24;
+    --pink:#ff3fa4;
+    --magenta:#c026d3;
+    --violet:#8b5cf6;
+    --ice:#7dd3fc;
+    --text-0:#f4f1fb;
+    --text-1:#b9b2cc;
+    --text-2:#847ca0;
+    --glass-bg:rgba(255,255,255,0.045);
+    --glass-bg-strong:rgba(255,255,255,0.075);
+    --glass-border:rgba(255,255,255,0.11);
+    --glass-border-hi:rgba(255,255,255,0.22);
+    --radius:20px;
+    --shadow-glow:0 0 60px rgba(192,38,211,0.18);
+    --font-display:'Rajdhani',sans-serif;
+    --font-body:'Inter',sans-serif;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+
+  body{
+    font-family:var(--font-body);
+    color:var(--text-0);
+    background:
+      radial-gradient(ellipse 900px 500px at 12% -5%, rgba(192,38,211,0.22), transparent 60%),
+      radial-gradient(ellipse 900px 600px at 92% 12%, rgba(56,189,248,0.10), transparent 55%),
+      radial-gradient(ellipse 1000px 700px at 50% 100%, rgba(139,92,246,0.14), transparent 60%),
+      linear-gradient(180deg, var(--bg-0), var(--bg-1) 40%, var(--bg-2));
+    background-attachment:fixed;
+    min-height:100vh;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+  ul{list-style:none;}
+  button{font-family:inherit;cursor:pointer;}
+
+  ::selection{background:var(--pink);color:#fff;}
+  :focus-visible{outline:2px solid var(--ice);outline-offset:3px;border-radius:6px;}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--font-display);font-weight:600;font-size:13px;
+    letter-spacing:0.16em;text-transform:uppercase;color:var(--pink);margin-bottom:14px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:linear-gradient(90deg, var(--pink), transparent);}
+
+  h1,h2,h3{font-family:var(--font-display);font-weight:700;letter-spacing:0.01em;}
+
+  .glass{
+    background:var(--glass-bg);
+    border:1px solid var(--glass-border);
+    border-radius:var(--radius);
+    backdrop-filter:blur(22px) saturate(140%);
+    -webkit-backdrop-filter:blur(22px) saturate(140%);
+  }
+
+  /* ---------- Discord top banner ---------- */
+  .discord-bar{
+    position:sticky;top:0;z-index:100;
+    background:linear-gradient(90deg,#3a1257,#5b1a8f 45%,#7c1fa8);
+    border-bottom:1px solid rgba(255,255,255,0.12);
+  }
+  .discord-bar-inner{
+    max-width:1180px;margin:0 auto;padding:10px 24px;
+    display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;text-align:center;
+  }
+  .discord-bar-text{font-size:14px;font-weight:500;color:#f4e9ff;}
+  .discord-bar-text strong{color:#fff;}
+  .btn-discord-sm{
+    display:inline-flex;align-items:center;gap:8px;background:#fff;color:#3a1257;
+    font-weight:700;font-size:13px;padding:7px 16px;border-radius:999px;white-space:nowrap;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-discord-sm:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,0.25);}
+
+  /* ---------- Header / Nav ---------- */
+  header.site{
+    position:sticky;top:37px;z-index:90;
+    background:rgba(8,5,13,0.55);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  nav.site{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+  .brand img{height:34px;width:auto;}
+  .brand-name{font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:0.04em;}
+  .brand-name span{background:linear-gradient(90deg,var(--pink),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .nav-links{display:flex;align-items:center;gap:34px;}
+  .nav-links a{font-size:14.5px;font-weight:500;color:var(--text-1);transition:color .18s ease;position:relative;}
+  .nav-links a:hover{color:var(--text-0);}
+  .nav-links a::after{content:"";position:absolute;left:0;bottom:-6px;width:0;height:2px;background:linear-gradient(90deg,var(--pink),var(--violet));transition:width .2s ease;}
+  .nav-links a:hover::after{width:100%;}
+  .nav-links a.current{color:var(--text-0);}
+  .nav-links a.current::after{width:100%;}
+
+  .nav-cta{
+    display:inline-flex;align-items:center;gap:8px;
+    background:linear-gradient(135deg,var(--pink),var(--magenta) 60%,var(--violet));
+    color:#fff;font-weight:600;font-size:14px;padding:9px 18px;border-radius:999px;
+    box-shadow:0 6px 20px rgba(192,38,211,0.35);transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(192,38,211,0.45);}
+
+  .burger{
+    display:none;width:38px;height:38px;border-radius:10px;
+    border:1px solid var(--glass-border);background:var(--glass-bg);
+    align-items:center;justify-content:center;color:var(--text-0);
+  }
+  .burger svg{width:18px;height:18px;}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:96px 0 70px;position:relative;}
+  .hero-inner{text-align:center;max-width:760px;margin:0 auto;}
+  .hero-logo{width:104px;margin:0 auto 28px;filter:drop-shadow(0 0 34px rgba(192,38,211,0.45));}
+  .hero h1{font-size:clamp(34px,6vw,58px);line-height:1.06;margin-bottom:20px;}
+  .hero h1 .grad{background:linear-gradient(90deg,var(--pink),var(--magenta) 45%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p{font-size:17px;color:var(--text-1);line-height:1.65;max-width:560px;margin:0 auto 34px;}
+  .hero-actions{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;}
+
+  .btn-primary{
+    display:inline-flex;align-items:center;gap:10px;
+    background:linear-gradient(135deg,var(--pink),var(--magenta) 55%,var(--violet));
+    color:#fff;font-family:var(--font-display);font-weight:600;font-size:15.5px;letter-spacing:0.02em;
+    padding:14px 28px;border:none;border-radius:14px;box-shadow:0 10px 32px rgba(192,38,211,0.38);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(192,38,211,0.5);}
+
+  .btn-ghost{
+    display:inline-flex;align-items:center;gap:10px;background:var(--glass-bg);
+    border:1px solid var(--glass-border);color:var(--text-0);font-family:var(--font-display);
+    font-weight:600;font-size:15.5px;padding:14px 26px;border-radius:14px;
+    transition:border-color .2s ease, transform .2s ease, background .2s ease;
+  }
+  .btn-ghost:hover{border-color:var(--glass-border-hi);transform:translateY(-2px);background:var(--glass-bg-strong);}
+
+  /* ---------- Section shell ---------- */
+  section{padding:88px 0;position:relative;}
+  .section-head{text-align:center;max-width:640px;margin:0 auto 52px;}
+  .section-head h2{font-size:clamp(28px,4vw,40px);margin-bottom:14px;}
+  .section-head p{color:var(--text-1);font-size:15.5px;line-height:1.6;}
+
+  /* ---------- Seiten / Routing ---------- */
+  .page[hidden]{display:none;}
+  .page-header{padding-top:64px;}
+  .back-link{
+    display:inline-flex;align-items:center;gap:8px;color:var(--text-2);font-size:13.5px;
+    font-weight:600;margin-bottom:22px;transition:color .18s ease;
+  }
+  .back-link:hover{color:var(--text-0);}
+  .back-link svg{width:15px;height:15px;}
+
+  /* ---------- News-Vorschau (Startseite) & News-Seite ---------- */
+  .news-list{display:flex;flex-direction:column;gap:16px;max-width:760px;margin:0 auto;}
+  .news-item{padding:24px 26px;}
+  .news-date{
+    font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--pink);
+    letter-spacing:0.03em;display:flex;align-items:center;gap:8px;margin-bottom:8px;
+  }
+  .news-date::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--pink);box-shadow:0 0 10px var(--pink);}
+  .news-body h4{font-size:17px;margin:4px 0 8px;font-family:var(--font-display);color:var(--text-0);}
+  .news-body p{font-size:14px;color:var(--text-1);line-height:1.6;margin-bottom:8px;}
+  .news-body p:last-child{margin-bottom:0;}
+  .news-body ul{padding-left:20px;margin-bottom:8px;}
+  .news-body li{color:var(--text-1);font-size:14px;line-height:1.6;margin-bottom:4px;}
+  .news-body strong{color:var(--text-0);}
+  .news-view-all{text-align:center;margin-top:32px;}
+  .empty-hint{text-align:center;color:var(--text-2);font-size:14px;padding:30px 0;}
+
+  /* ---------- Team ---------- */
+  .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;}
+  .team-card{padding:32px 26px;text-align:center;transition:transform .22s ease, border-color .22s ease;}
+  .team-card:hover{transform:translateY(-6px);border-color:var(--glass-border-hi);}
+  .avatar{
+    width:88px;height:88px;border-radius:50%;margin:0 auto 18px;
+    display:flex;align-items:center;justify-content:center;font-family:var(--font-display);
+    font-size:28px;font-weight:700;color:#fff;
+    background:linear-gradient(135deg,var(--pink),var(--magenta) 55%,var(--violet));
+    box-shadow:0 0 0 4px rgba(255,255,255,0.06), 0 12px 30px rgba(192,38,211,0.3);
+  }
+  .team-card h3{font-size:19px;margin-bottom:4px;}
+  .team-role{font-size:12.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--pink);margin-bottom:12px;}
+  .team-card p.desc{font-size:13.5px;color:var(--text-1);line-height:1.6;}
+
+  /* ---------- Branding-Seite: Vorlagen-Grid mit funktionierendem Customizer ---------- */
+  .grid-templates{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;}
+  .template-card{padding:22px;display:flex;flex-direction:column;gap:14px;}
+  .template-card h3{font-size:19px;}
+
+  .stage{
+    position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255,63,164,0.35), transparent 55%),
+      radial-gradient(circle at 75% 75%, rgba(139,92,246,0.35), transparent 55%),
+      linear-gradient(135deg,#1a0f2e,#0c0714 70%);
+    border:1px solid var(--glass-border);touch-action:none;cursor:default;user-select:none;
+  }
+  .stage-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .stage-noise{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);background-size:3px 3px;opacity:.5;pointer-events:none;}
+  .stage-scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px, transparent 1px, transparent 3px);pointer-events:none;}
+  .stage-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;pointer-events:none;}
+  .stage-text .pulse-dot{width:9px;height:9px;border-radius:50%;background:var(--pink);box-shadow:0 0 0 0 rgba(255,63,164,0.6);animation:pulseDot 1.6s infinite;margin-bottom:4px;}
+  @keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(255,63,164,0.55);}70%{box-shadow:0 0 0 14px rgba(255,63,164,0);}100%{box-shadow:0 0 0 0 rgba(255,63,164,0);}}
+  .stage-text h4{font-family:var(--font-display);font-size:clamp(17px,3.4vw,26px);letter-spacing:0.06em;text-transform:uppercase;background:linear-gradient(90deg,#fff,var(--pink) 60%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .stage-text span{font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-2);}
+
+  .drop-zone{
+    position:absolute;width:120px;height:120px;left:50%;top:50%;transform:translate(-50%,-50%);
+    border:2px dashed rgba(255,255,255,0.4);border-radius:14px;background:rgba(255,255,255,0.05);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;
+    color:var(--text-1);cursor:grab;transition:border-color .15s ease, background .15s ease;touch-action:none;
+  }
+  .drop-zone.dragover{border-color:var(--pink);background:rgba(255,63,164,0.12);}
+  .drop-zone.has-logo{border-style:solid;border-color:rgba(255,255,255,0.25);background:transparent;padding:8px;}
+  .drop-zone.grabbing{cursor:grabbing;}
+  .drop-zone svg{width:22px;height:22px;color:var(--text-2);}
+  .drop-zone p{font-size:11px;line-height:1.4;max-width:100px;text-align:center;}
+  .drop-zone img.uploaded-logo{max-width:100%;max-height:100%;object-fit:contain;pointer-events:none;}
+  .resize-handle{position:absolute;right:-7px;bottom:-7px;width:16px;height:16px;border-radius:50%;background:var(--pink);border:2px solid #fff;cursor:nwse-resize;display:none;touch-action:none;}
+  .drop-zone.has-logo .resize-handle{display:block;}
+
+  .template-controls{display:flex;flex-direction:column;gap:10px;}
+  .file-input-hidden{display:none;}
+  .btn-row-mini{display:flex;gap:8px;}
+  .btn-upload-mini, .btn-reset-mini{
+    flex:1;background:var(--glass-bg-strong);border:1px solid var(--glass-border);color:var(--text-0);
+    font-weight:600;font-size:12.5px;padding:9px 10px;border-radius:10px;transition:border-color .18s ease;text-align:center;
+  }
+  .btn-reset-mini{flex:0 0 auto;color:var(--text-2);}
+  .btn-upload-mini:hover, .btn-reset-mini:hover{border-color:var(--glass-border-hi);}
+  .size-range{width:100%;height:4px;border-radius:999px;background:rgba(255,255,255,0.14);-webkit-appearance:none;outline:none;}
+  .size-range::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--violet));cursor:pointer;border:2px solid #fff;}
+  .size-range::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--violet));cursor:pointer;border:2px solid #fff;}
+
+  .btn-download-mini{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    background:linear-gradient(135deg,var(--pink),var(--magenta) 55%,var(--violet));
+    color:#fff;font-family:var(--font-display);font-weight:700;font-size:14px;letter-spacing:0.02em;
+    padding:12px 16px;border:none;border-radius:12px;box-shadow:0 8px 24px rgba(192,38,211,0.32);
+    transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;width:100%;
+  }
+  .btn-download-mini:hover{transform:translateY(-2px);}
+  .btn-download-mini:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+  .status-msg-mini{font-size:12px;color:var(--text-2);text-align:center;min-height:15px;}
+  .status-msg-mini.ok{color:#6ee7b7;}
+
+  /* ---------- Discord CTA section ---------- */
+  .discord-cta{padding:60px 0;}
+  .discord-cta-card{
+    padding:52px 40px;text-align:center;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255,63,164,0.16), transparent 55%),
+      radial-gradient(circle at 85% 80%, rgba(139,92,246,0.2), transparent 55%),
+      var(--glass-bg);
+  }
+  .discord-cta-card h2{font-size:clamp(24px,4vw,34px);margin-bottom:14px;}
+  .discord-cta-card p{color:var(--text-1);max-width:520px;margin:0 auto 28px;font-size:15px;line-height:1.6;}
+
+  /* ---------- Footer ---------- */
+  footer{border-top:1px solid rgba(255,255,255,0.07);padding:44px 0 34px;}
+  .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;}
+  .footer-brand{display:flex;align-items:center;gap:10px;}
+  .footer-brand img{height:26px;}
+  .footer-brand span{font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--text-1);}
+  .footer-links{display:flex;gap:22px;flex-wrap:wrap;}
+  .footer-links a{font-size:13.5px;color:var(--text-2);transition:color .18s ease;}
+  .footer-links a:hover{color:var(--text-0);}
+  .footer-copy{font-size:12.5px;color:var(--text-2);text-align:center;margin-top:26px;}
+
+  @media (max-width:760px){
+    .nav-links{
+      position:fixed;inset:76px 16px auto 16px;flex-direction:column;align-items:flex-start;gap:4px;
+      padding:14px;background:rgba(12,8,20,0.96);border:1px solid var(--glass-border);border-radius:16px;
+      backdrop-filter:blur(20px);transform:translateY(-14px);opacity:0;pointer-events:none;
+      transition:transform .22s ease, opacity .22s ease;
+    }
+    .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto;}
+    .nav-links a{padding:11px 8px;width:100%;}
+    .nav-links .nav-cta{margin-top:6px;}
+    .burger{display:flex;}
+  }
+
+  /* ---------- Modals: Geheimcode & Admin-Panel ---------- */
+  .modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(5,3,9,0.72);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.hidden{display:none;}
+
+  .code-modal{width:100%;max-width:280px;padding:30px 26px;text-align:center;}
+  .code-modal h3{font-size:15px;margin-bottom:16px;letter-spacing:0.04em;color:var(--text-1);font-weight:600;}
+  .code-modal input{width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);border-radius:10px;padding:13px;text-align:center;letter-spacing:0.5em;font-size:20px;color:var(--text-0);margin-bottom:14px;font-family:var(--font-display);}
+  .code-modal input:focus{outline:none;border-color:var(--pink);}
+  .code-modal button{width:100%;background:linear-gradient(135deg,var(--pink),var(--violet));color:#fff;padding:11px;border-radius:10px;font-weight:700;font-family:var(--font-display);letter-spacing:0.03em;}
+
+  .admin-fab{
+    position:fixed;bottom:26px;right:26px;z-index:250;width:54px;height:54px;border-radius:50%;
+    background:linear-gradient(135deg,var(--pink),var(--violet));display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 30px rgba(192,38,211,0.5);color:#fff;transition:transform .2s ease;
+  }
+  .admin-fab.hidden{display:none;}
+  .admin-fab:hover{transform:scale(1.08) rotate(20deg);}
+  .admin-fab svg{width:24px;height:24px;}
+
+  .admin-modal{width:100%;max-width:820px;max-height:86vh;overflow-y:auto;padding:0;}
+  .admin-modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid var(--glass-border);position:sticky;top:0;background:rgba(15,10,26,0.92);backdrop-filter:blur(10px);}
+  .admin-modal-header h3{font-size:19px;}
+  .admin-close{background:none;color:var(--text-2);font-size:24px;line-height:1;padding:2px 10px;border-radius:8px;}
+  .admin-close:hover{color:var(--text-0);background:rgba(255,255,255,0.08);}
+
+  .admin-tabs{display:flex;gap:10px;padding:18px 26px 0;flex-wrap:wrap;}
+  .admin-tab-btn{background:var(--glass-bg);border:1px solid var(--glass-border);color:var(--text-1);padding:8px 16px;border-radius:10px;font-size:13px;font-weight:600;}
+  .admin-tab-btn.active{background:var(--pink);color:#fff;border-color:var(--pink);}
+
+  .admin-panel{padding:20px 26px 6px;display:none;}
+  .admin-panel.active{display:block;}
+
+  .admin-list{display:flex;flex-direction:column;gap:9px;margin-bottom:18px;}
+  .admin-list-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);border-radius:10px;font-size:13.5px;}
+  .admin-list-item .item-main{overflow:hidden;flex:1;}
+  .admin-list-item .item-title{font-weight:600;color:var(--text-0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .admin-list-item .item-meta{color:var(--text-2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .admin-list-item .item-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+  .admin-del-btn{background:rgba(255,63,90,0.14);color:#ff8fa0;border:1px solid rgba(255,63,90,0.3);padding:6px 11px;border-radius:8px;font-size:12px;font-weight:600;}
+  .admin-del-btn:hover{background:rgba(255,63,90,0.25);}
+  .admin-mini-upload{background:rgba(139,92,246,0.15);color:#c4b5fd;border:1px solid rgba(139,92,246,0.3);padding:6px 10px;border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer;}
+  .admin-mini-upload:hover{background:rgba(139,92,246,0.28);}
+  .admin-mini-upload input{display:none;}
+
+  .admin-form{display:flex;flex-direction:column;gap:12px;padding:16px 0 18px;border-top:1px dashed var(--glass-border);}
+  .admin-form label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-2);margin-bottom:5px;display:block;}
+  .admin-form input, .admin-form textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:10px;padding:10px 12px;color:var(--text-0);font-family:inherit;font-size:13.5px;}
+  .admin-form input:focus, .admin-form textarea:focus{outline:none;border-color:var(--pink);}
+  .admin-form textarea{min-height:100px;resize:vertical;font-family:'Courier New',monospace;}
+  .admin-form-row{display:grid;grid-template-columns:1fr 1fr 76px;gap:10px;}
+  .admin-form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .admin-form-hint{font-size:11.5px;color:var(--text-2);line-height:1.5;}
+  .admin-add-btn{align-self:flex-start;background:var(--glass-bg-strong);border:1px solid var(--glass-border);color:var(--text-0);padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;}
+  .admin-add-btn:hover{border-color:var(--glass-border-hi);}
+  .admin-file-row{display:flex;align-items:center;gap:10px;}
+  .admin-file-row label.admin-mini-upload{flex-shrink:0;}
+
+  .admin-footer{display:flex;align-items:center;gap:10px;justify-content:flex-end;padding:16px 26px 22px;border-top:1px solid var(--glass-border);flex-wrap:wrap;}
+  .admin-status{font-size:12px;color:var(--text-2);margin-right:auto;}
+  .admin-status.ok{color:#6ee7b7;}
+  .admin-save-btn{background:linear-gradient(135deg,var(--pink),var(--violet));color:#fff;padding:11px 22px;border-radius:10px;font-weight:700;font-family:var(--font-display);letter-spacing:0.02em;}
+  .admin-reset-btn{background:transparent;border:1px solid var(--glass-border);color:var(--text-2);padding:11px 16px;border-radius:10px;font-size:12.5px;}
+  .admin-reset-btn:hover{color:var(--text-0);border-color:var(--glass-border-hi);}
+
+  @media (max-width:640px){
+    .admin-form-row, .admin-form-row-2{grid-template-columns:1fr;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Discord Banner -->
+<div class="discord-bar">
+  <div class="discord-bar-inner">
+    <span class="discord-bar-text">🎮 Du brauchst Hilfe oder willst ein <strong>Ticket für dein eigenes Design</strong> erstellen? Join unserem Discord!</span>
+    <a class="btn-discord-sm" href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener">Discord beitreten →</a>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="site">
+  <nav class="site">
+    <a href="#home" class="brand" id="brandTrigger">
+      <img src="data:image/webp;base64,__LOGO_B64__" alt="StrudelDesigns Logo">
+      <span class="brand-name">Strudel<span>Designs</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home" data-nav="home">Start</a></li>
+      <li><a href="#team" data-nav="home">Team</a></li>
+      <li><a href="#news" data-nav="news">News</a></li>
+      <li><a href="#branding" data-nav="branding">Eigenes Branding</a></li>
+      <li><a class="nav-cta" href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener">Discord</a></li>
+    </ul>
+    <button class="burger" id="burgerBtn" aria-label="Menü öffnen" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+    </button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ================= STARTSEITE ================= -->
+  <div class="page" id="page-home">
+
+    <section class="hero">
+      <div class="wrap hero-inner">
+        <img class="hero-logo" src="data:image/webp;base64,__LOGO_B64__" alt="StrudelDesigns">
+        <h1>Designs, die deinen Stream <span class="grad">unverwechselbar</span> machen</h1>
+        <p>Logos, Overlays, Banner &amp; Branding für Streamer und Gaming-Communities. Individuell gestaltet, schnell geliefert, mit persönlichem Support direkt auf Discord.</p>
+        <div class="hero-actions">
+          <a href="#branding" class="btn-primary">Eigenes Branding entdecken</a>
+          <a href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener" class="btn-ghost">Auf Discord fragen</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="home-news">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow" style="justify-content:center;display:flex;">Updates</div>
+          <h2>News &amp; Ankündigungen</h2>
+          <p>Die letzten Neuigkeiten rund um StrudelDesigns.</p>
+        </div>
+        <div class="news-list" id="homeNewsContainer"></div>
+        <div class="news-view-all">
+          <a href="#news" class="btn-ghost">Alle News ansehen</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="team">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow" style="justify-content:center;display:flex;">Die Community</div>
+          <h2>Unsere Mitglieder</h2>
+          <p>Die kreativen Köpfe und Streamer aus unserer Community.</p>
+        </div>
+        <div class="team-grid" id="membersContainer"></div>
+      </div>
+    </section>
+
+    <section class="discord-cta">
+      <div class="wrap">
+        <div class="glass discord-cta-card">
+          <h2>Bereit für dein eigenes Design?</h2>
+          <p>Erstelle ein Ticket in unserem Discord und wir besprechen gemeinsam dein nächstes Projekt – von Logo bis komplettem Stream-Branding.</p>
+          <a href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener" class="btn-primary">Ticket auf Discord erstellen</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ================= NEWS-SEITE ================= -->
+  <div class="page" id="page-news" hidden>
+    <div class="wrap page-header">
+      <a href="#home" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Zur Startseite
+      </a>
+      <div class="section-head" style="margin-bottom:44px;">
+        <div class="eyebrow" style="justify-content:center;display:flex;">Alle Beiträge</div>
+        <h2>News &amp; Ankündigungen</h2>
+        <p>Alle Updates rund um StrudelDesigns – die neuesten Einträge zuerst.</p>
+      </div>
+      <div class="news-list" id="allNewsContainer"></div>
+    </div>
+  </div>
+
+  <!-- ================= BRANDING-SEITE ================= -->
+  <div class="page" id="page-branding" hidden>
+    <div class="wrap page-header">
+      <a href="#home" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Zur Startseite
+      </a>
+      <div class="section-head" style="margin-bottom:44px;">
+        <div class="eyebrow" style="justify-content:center;display:flex;">Live-Vorschau</div>
+        <h2>Eigenes Branding</h2>
+        <p>Wähle eine Vorlage, lade dein eigenes Logo hoch und positioniere es frei. Danach kannst du die Vorschau direkt herunterladen.</p>
+      </div>
+      <div class="grid-templates" id="templatesContainer"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="data:image/webp;base64,__FULL_B64__" alt="StrudelDesigns">
+        <span>© 2026 StrudelDesigns</span>
+      </div>
+      <ul class="footer-links">
+        <li><a href="#team">Team</a></li>
+        <li><a href="#news">News</a></li>
+        <li><a href="#branding">Eigenes Branding</a></li>
+        <li><a href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener">Discord</a></li>
+      </ul>
+    </div>
+    <p class="footer-copy">Gestaltet mit ♥ von StrudelDesigns · Alle Logos &amp; Designs urheberrechtlich geschützt.</p>
+  </div>
+</footer>
+
+<!-- ================= Geheimes Code-Feld ================= -->
+<div class="modal-overlay hidden" id="codeModalOverlay">
+  <div class="glass code-modal">
+    <h3>🔒 Zugangscode</h3>
+    <form id="codeForm">
+      <input type="password" id="codeInput" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="····">
+      <button type="submit">Bestätigen</button>
+    </form>
+  </div>
+</div>
+
+<!-- ================= Schwebender Admin-Button ================= -->
+<button class="admin-fab hidden" id="adminFab" aria-label="Admin-Panel öffnen" title="Admin-Panel">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </svg>
+</button>
+
+<!-- ================= Admin-Dashboard ================= -->
+<div class="modal-overlay hidden" id="adminModalOverlay">
+  <div class="glass admin-modal">
+    <div class="admin-modal-header">
+      <h3>⚙️ Admin-Panel</h3>
+      <button class="admin-close" id="adminCloseBtn" aria-label="Schließen">×</button>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab-btn active" data-tab="members">Mitglieder</button>
+      <button class="admin-tab-btn" data-tab="news">News</button>
+      <button class="admin-tab-btn" data-tab="templates">Vorlagen</button>
+    </div>
+
+    <!-- Mitglieder-Verwaltung -->
+    <div class="admin-panel active" id="adminPanelMembers">
+      <div class="admin-list" id="adminMembersList"></div>
+      <div class="admin-form">
+        <div class="admin-form-row">
+          <div>
+            <label for="newMemberName">Name</label>
+            <input type="text" id="newMemberName" placeholder="z. B. Neuer Streamer">
+          </div>
+          <div>
+            <label for="newMemberRole">Rolle / Status</label>
+            <input type="text" id="newMemberRole" placeholder="z. B. Content Creator">
+          </div>
+          <div>
+            <label for="newMemberInitials">Kürzel</label>
+            <input type="text" id="newMemberInitials" maxlength="2" placeholder="XX">
+          </div>
+        </div>
+        <button class="admin-add-btn" id="addMemberBtn" type="button">+ Mitglied hinzufügen</button>
+      </div>
+    </div>
+
+    <!-- News-Verwaltung -->
+    <div class="admin-panel" id="adminPanelNews">
+      <div class="admin-list" id="adminNewsList"></div>
+      <div class="admin-form">
+        <div>
+          <label for="newNewsDate">Datum</label>
+          <input type="text" id="newNewsDate" placeholder="z. B. 18. Juli 2026">
+        </div>
+        <div>
+          <label for="newNewsContent">Inhalt (Markdown)</label>
+          <textarea id="newNewsContent" placeholder="# Überschrift&#10;Normaler Text mit **fett**.&#10;- Listenpunkt 1&#10;- Listenpunkt 2"></textarea>
+          <p class="admin-form-hint"># für Überschrift · **Text** für fett · - Text für Listenpunkte</p>
+        </div>
+        <button class="admin-add-btn" id="addNewsBtn" type="button">+ News hinzufügen</button>
+      </div>
+    </div>
+
+    <!-- Vorlagen-Verwaltung -->
+    <div class="admin-panel" id="adminPanelTemplates">
+      <div class="admin-list" id="adminTemplatesList"></div>
+      <div class="admin-form">
+        <div class="admin-form-row-2">
+          <div>
+            <label for="newTemplateName">Name der Vorlage</label>
+            <input type="text" id="newTemplateName" placeholder="z. B. BRB Screen">
+          </div>
+          <div>
+            <label for="newTemplatePlaceholder">Platzhalter-Text (ohne Bild)</label>
+            <input type="text" id="newTemplatePlaceholder" placeholder="z. B. Gleich geht's weiter">
+          </div>
+        </div>
+        <div>
+          <label>Hintergrundbild (optional)</label>
+          <div class="admin-file-row">
+            <label class="admin-mini-upload">
+              Bild wählen
+              <input type="file" id="newTemplateAsset" accept="image/png,image/jpeg,image/webp">
+            </label>
+            <span class="admin-form-hint" id="newTemplateAssetName">Kein Bild ausgewählt – Standard-Overlay wird genutzt.</span>
+          </div>
+        </div>
+        <button class="admin-add-btn" id="addTemplateBtn" type="button">+ Vorlage hinzufügen</button>
+        <p class="admin-form-hint">Hinweis: Bilder werden clientseitig komprimiert und lokal im Browser gespeichert – Videos werden aus Speicherplatzgründen aktuell nicht unterstützt.</p>
+      </div>
+    </div>
+
+    <div class="admin-footer">
+      <span class="admin-status" id="adminStatus"></span>
+      <button class="admin-reset-btn" id="adminResetBtn" type="button">Auf Standard zurücksetzen</button>
+      <button class="admin-save-btn" id="adminSaveBtn" type="button">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     1) DATEN: Standardwerte + localStorage
+     ============================================================ */
+  var STORAGE_KEY = 'strudeldesigns_data_v2';
+
+  var DEFAULT_DATA = {
+    members: [
+      { id:'m-strudelgames', name:'Strudelgames', role:'Streamer & Gründer', initials:'SG' },
+      { id:'m-strudeldesigns', name:'Strudel Designs', role:'Design-Team', initials:'SD' },
+      { id:'m-blattbyte', name:'Blattbyte', role:'Mitglied', initials:'BB' }
+    ],
+    news: [
+      {
+        id:'n-launch',
+        date:'18. Juli 2026',
+        content:'# Neue Webseite mit Live-Customizer\nAb sofort werden Mitglieder und News dynamisch geladen – und du kannst dein Logo direkt auf unseren Vorlagen platzieren.\n- Eigener Bereich "Eigenes Branding"\n- **Alle News** jetzt auf einer eigenen Seite'
+      }
+    ],
+    templates: [
+      { id:'t-starting-soon', name:'Stream Starting Soon', placeholder:'Stream startet gleich', asset:null },
+      { id:'t-gameplay', name:'Main Gameplay Overlay', placeholder:'Live Gameplay', asset:null }
+    ]
+  };
+
+  function cloneData(d){ return JSON.parse(JSON.stringify(d)); }
+
+  function loadData(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && Array.isArray(parsed.members) && Array.isArray(parsed.news) && Array.isArray(parsed.templates)){
+          return parsed;
+        }
+      }
+    }catch(e){ /* Daten beschädigt -> Standard verwenden */ }
+    return cloneData(DEFAULT_DATA);
+  }
+
+  function saveData(d){ localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+
+  var data = loadData();
+
+  /* ============================================================
+     2) HELFER: HTML escapen, Markdown, IDs, Bildkompression
+     ============================================================ */
+  function escapeHtml(str){
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function inlineMarkdown(str){
+    return escapeHtml(str).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  }
+  function renderMarkdown(text){
+    var lines = String(text || '').split('\n');
+    var html = ''; var inList = false;
+    lines.forEach(function(rawLine){
+      var line = rawLine.trim();
+      if(line.indexOf('# ') === 0){
+        if(inList){ html += '</ul>'; inList = false; }
+        html += '<h4>' + inlineMarkdown(line.slice(2)) + '</h4>';
+      } else if(line.indexOf('- ') === 0){
+        if(!inList){ html += '<ul>'; inList = true; }
+        html += '<li>' + inlineMarkdown(line.slice(2)) + '</li>';
+      } else if(line === ''){
+        if(inList){ html += '</ul>'; inList = false; }
+      } else {
+        if(inList){ html += '</ul>'; inList = false; }
+        html += '<p>' + inlineMarkdown(line) + '</p>';
+      }
+    });
+    if(inList){ html += '</ul>'; }
+    return html;
+  }
+  function todayGerman(){
+    var d = new Date();
+    var months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+    return d.getDate() + '. ' + months[d.getMonth()] + ' ' + d.getFullYear();
+  }
+  function makeId(prefix){ return prefix + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,7); }
+  function slugify(str){ return String(str).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || 'design'; }
+
+  function compressImage(file, maxWidth, cb){
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = new Image();
+      img.onload = function(){
+        var scale = Math.min(1, maxWidth / img.width);
+        var w = Math.max(1, Math.round(img.width * scale));
+        var h = Math.max(1, Math.round(img.height * scale));
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        var dataUrl;
+        try{ dataUrl = canvas.toDataURL('image/webp', 0.82); }
+        catch(err){ dataUrl = canvas.toDataURL('image/jpeg', 0.82); }
+        cb(dataUrl);
+      };
+      img.onerror = function(){ cb(null); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function(){ cb(null); };
+    reader.readAsDataURL(file);
+  }
+
+  /* ============================================================
+     3) ROUTING: Startseite / News-Seite / Branding-Seite
+     ============================================================ */
+  var pages = {
+    home: document.getElementById('page-home'),
+    news: document.getElementById('page-news'),
+    branding: document.getElementById('page-branding')
+  };
+  var navLinkEls = document.querySelectorAll('.nav-links a[data-nav]');
+
+  function showPage(name){
+    Object.keys(pages).forEach(function(key){
+      pages[key].hidden = (key !== name);
+    });
+    navLinkEls.forEach(function(a){
+      a.classList.toggle('current', a.getAttribute('data-nav') === name);
+    });
+    if(name === 'branding'){ renderTemplates(); }
+  }
+
+  function routeFromHash(){
+    var h = (location.hash || '').replace('#','');
+    if(h === 'news' || h === 'branding'){
+      showPage(h);
+      window.scrollTo({ top:0, behavior:'auto' });
+    } else {
+      showPage('home');
+      if(h){
+        setTimeout(function(){
+          var el = document.getElementById(h);
+          if(el){ el.scrollIntoView({ behavior:'smooth' }); }
+        }, 60);
+      } else {
+        window.scrollTo({ top:0, behavior:'auto' });
+      }
+    }
+  }
+
+  window.addEventListener('hashchange', routeFromHash);
+
+  /* ============================================================
+     4) RENDERN: Mitglieder, News (Startseite + News-Seite)
+     ============================================================ */
+  var membersContainer = document.getElementById('membersContainer');
+  var homeNewsContainer = document.getElementById('homeNewsContainer');
+  var allNewsContainer = document.getElementById('allNewsContainer');
+
+  function renderMembers(){
+    membersContainer.innerHTML = '';
+    if(data.members.length === 0){
+      membersContainer.innerHTML = '<div class="empty-hint">Noch keine Mitglieder eingetragen.</div>';
+      return;
+    }
+    data.members.forEach(function(m){
+      var card = document.createElement('div');
+      card.className = 'team-card glass';
+      card.innerHTML =
+        '<div class="avatar">' + escapeHtml(m.initials || '?') + '</div>' +
+        '<h3>' + escapeHtml(m.name) + '</h3>' +
+        '<div class="team-role">' + escapeHtml(m.role || 'Mitglied') + '</div>';
+      membersContainer.appendChild(card);
+    });
+  }
+
+  function buildNewsCard(n){
+    var card = document.createElement('div');
+    card.className = 'news-item glass';
+    card.innerHTML =
+      '<div class="news-date">' + escapeHtml(n.date || '') + '</div>' +
+      '<div class="news-body">' + renderMarkdown(n.content) + '</div>';
+    return card;
+  }
+
+  function renderNews(){
+    // Startseite: die zwei neuesten
+    homeNewsContainer.innerHTML = '';
+    if(data.news.length === 0){
+      homeNewsContainer.innerHTML = '<div class="empty-hint">Aktuell keine News vorhanden.</div>';
+    } else {
+      data.news.slice(0, 2).forEach(function(n){ homeNewsContainer.appendChild(buildNewsCard(n)); });
+    }
+    // News-Seite: alle, neueste zuerst
+    allNewsContainer.innerHTML = '';
+    if(data.news.length === 0){
+      allNewsContainer.innerHTML = '<div class="empty-hint">Aktuell keine News vorhanden.</div>';
+    } else {
+      data.news.forEach(function(n){ allNewsContainer.appendChild(buildNewsCard(n)); });
+    }
+  }
+
+  function renderPublic(){
+    renderMembers();
+    renderNews();
+    if(!pages.branding.hidden){ renderTemplates(); }
+  }
+
+  /* ============================================================
+     5) CUSTOMIZER-FABRIK: jede Vorlage bekommt ihre eigene Instanz
+     ============================================================ */
+  var templatesContainer = document.getElementById('templatesContainer');
+
+  function renderTemplates(){
+    templatesContainer.innerHTML = '';
+    if(data.templates.length === 0){
+      templatesContainer.innerHTML = '<div class="empty-hint">Noch keine Vorlagen vorhanden.</div>';
+      return;
+    }
+    data.templates.forEach(function(tpl){
+      var card = document.createElement('div');
+      card.className = 'template-card glass';
+
+      var bgHtml = tpl.asset
+        ? '<img class="stage-bg" src="' + tpl.asset + '" alt="">'
+        : '<div class="stage-text"><div class="pulse-dot"></div><h4>' + escapeHtml(tpl.placeholder || tpl.name) + '</h4><span>Platzhalter-Overlay</span></div>';
+
+      card.innerHTML =
+        '<h3>' + escapeHtml(tpl.name) + '</h3>' +
+        '<div class="stage">' +
+          bgHtml +
+          '<div class="stage-noise"></div><div class="stage-scan"></div>' +
+          '<div class="drop-zone" tabindex="0" role="button" aria-label="Logo hochladen und verschieben">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+            '<p>Logo hier ablegen oder klicken</p>' +
+            '<div class="resize-handle"></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="template-controls">' +
+          '<input type="file" class="file-input-hidden logo-file-input" accept="image/png,image/webp">' +
+          '<div class="btn-row-mini">' +
+            '<button class="btn-upload-mini" type="button">Logo hochladen</button>' +
+            '<button class="btn-reset-mini" type="button">Reset</button>' +
+          '</div>' +
+          '<input type="range" class="size-range" min="50" max="240" value="110">' +
+          '<button class="btn-download-mini" type="button" disabled>Design herunterladen</button>' +
+          '<p class="status-msg-mini">Lade zuerst ein Logo hoch.</p>' +
+        '</div>';
+
+      templatesContainer.appendChild(card);
+      initCustomizer(card, tpl);
+    });
+  }
+
+  function initCustomizer(card, tpl){
+    var stage = card.querySelector('.stage');
+    var dropZone = card.querySelector('.drop-zone');
+    var resizeHandle = card.querySelector('.resize-handle');
+    var fileInput = card.querySelector('.logo-file-input');
+    var uploadBtn = card.querySelector('.btn-upload-mini');
+    var resetBtn = card.querySelector('.btn-reset-mini');
+    var downloadBtn = card.querySelector('.btn-download-mini');
+    var sizeRange = card.querySelector('.size-range');
+    var statusMsg = card.querySelector('.status-msg-mini');
+
+    var defaultZoneHtml = dropZone.innerHTML;
+
+    var state = { hasLogo:false, size: parseInt(sizeRange.value,10), xRatio:0.5, yRatio:0.5 };
+
+    function setStatus(text, ok){
+      statusMsg.textContent = text;
+      statusMsg.classList.toggle('ok', !!ok);
+    }
+    function applyZonePosition(){
+      var r = stage.getBoundingClientRect();
+      var half = state.size/2;
+      var x = state.xRatio * r.width;
+      var y = state.yRatio * r.height;
+      x = Math.min(Math.max(x, half), Math.max(half, r.width - half));
+      y = Math.min(Math.max(y, half), Math.max(half, r.height - half));
+      state.xRatio = r.width ? x / r.width : 0.5;
+      state.yRatio = r.height ? y / r.height : 0.5;
+      dropZone.style.left = x + 'px';
+      dropZone.style.top = y + 'px';
+    }
+    function applyZoneSize(){
+      dropZone.style.width = state.size + 'px';
+      dropZone.style.height = state.size + 'px';
+    }
+
+    function loadLogo(file){
+      if(!file){ return; }
+      if(!/^image\/(png|webp)$/.test(file.type)){
+        setStatus('Bitte eine PNG- oder WebP-Datei hochladen.');
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function(e){
+        dropZone.innerHTML = '';
+        var img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'uploaded-logo';
+        img.alt = 'Hochgeladenes Logo';
+        dropZone.appendChild(img);
+        dropZone.appendChild(resizeHandle);
+        dropZone.classList.add('has-logo');
+        state.hasLogo = true;
+        applyZoneSize();
+        applyZonePosition();
+        downloadBtn.disabled = false;
+        setStatus('Logo geladen – verschiebe & skaliere es nach Wunsch.', true);
+      };
+      reader.onerror = function(){ setStatus('Datei konnte nicht gelesen werden.'); };
+      reader.readAsDataURL(file);
+    }
+
+    uploadBtn.addEventListener('click', function(){ fileInput.click(); });
+    dropZone.addEventListener('click', function(){ if(!state.hasLogo){ fileInput.click(); } });
+    dropZone.addEventListener('keydown', function(e){
+      if((e.key === 'Enter' || e.key === ' ') && !state.hasLogo){ e.preventDefault(); fileInput.click(); }
+    });
+    fileInput.addEventListener('change', function(){
+      if(fileInput.files && fileInput.files[0]){ loadLogo(fileInput.files[0]); }
+    });
+
+    ['dragenter','dragover'].forEach(function(evt){
+      stage.addEventListener(evt, function(e){ e.preventDefault(); dropZone.classList.add('dragover'); });
+    });
+    ['dragleave','drop'].forEach(function(evt){
+      stage.addEventListener(evt, function(e){ e.preventDefault(); dropZone.classList.remove('dragover'); });
+    });
+    stage.addEventListener('drop', function(e){
+      e.preventDefault();
+      var files = e.dataTransfer && e.dataTransfer.files;
+      if(files && files[0]){ loadLogo(files[0]); }
+    });
+
+    var dragging = false;
+    var dragOffset = {x:0,y:0};
+
+    dropZone.addEventListener('pointerdown', function(e){
+      if(!state.hasLogo){ return; }
+      if(e.target === resizeHandle){ return; }
+      dragging = true;
+      dropZone.classList.add('grabbing');
+      dropZone.setPointerCapture(e.pointerId);
+      var rect = dropZone.getBoundingClientRect();
+      dragOffset.x = e.clientX - rect.left - rect.width/2;
+      dragOffset.y = e.clientY - rect.top - rect.height/2;
+    });
+    dropZone.addEventListener('pointermove', function(e){
+      if(!dragging) return;
+      var stageRect = stage.getBoundingClientRect();
+      var half = state.size/2;
+      var x = e.clientX - stageRect.left - dragOffset.x;
+      var y = e.clientY - stageRect.top - dragOffset.y;
+      x = Math.min(Math.max(x, half), Math.max(half, stageRect.width - half));
+      y = Math.min(Math.max(y, half), Math.max(half, stageRect.height - half));
+      state.xRatio = x / stageRect.width;
+      state.yRatio = y / stageRect.height;
+      dropZone.style.left = x + 'px';
+      dropZone.style.top = y + 'px';
+    });
+    function endDrag(e){
+      if(!dragging) return;
+      dragging = false;
+      dropZone.classList.remove('grabbing');
+      try{ dropZone.releasePointerCapture(e.pointerId); }catch(err){}
+    }
+    dropZone.addEventListener('pointerup', endDrag);
+    dropZone.addEventListener('pointercancel', endDrag);
+
+    var resizing = false;
+    resizeHandle.addEventListener('pointerdown', function(e){
+      e.stopPropagation();
+      resizing = true;
+      resizeHandle.setPointerCapture(e.pointerId);
+    });
+    resizeHandle.addEventListener('pointermove', function(e){
+      if(!resizing) return;
+      var zoneRect = dropZone.getBoundingClientRect();
+      var newSize = Math.max(50, Math.min(240, (e.clientX - zoneRect.left)));
+      state.size = newSize;
+      sizeRange.value = newSize;
+      applyZoneSize();
+      applyZonePosition();
+    });
+    function endResize(e){
+      if(!resizing) return;
+      resizing = false;
+      try{ resizeHandle.releasePointerCapture(e.pointerId); }catch(err){}
+    }
+    resizeHandle.addEventListener('pointerup', endResize);
+    resizeHandle.addEventListener('pointercancel', endResize);
+
+    sizeRange.addEventListener('input', function(){
+      state.size = parseInt(sizeRange.value,10);
+      applyZoneSize();
+      applyZonePosition();
+    });
+
+    window.addEventListener('resize', function(){ if(state.hasLogo){ applyZonePosition(); } });
+
+    resetBtn.addEventListener('click', function(){
+      dropZone.innerHTML = defaultZoneHtml;
+      dropZone.classList.remove('has-logo');
+      state.hasLogo = false;
+      state.size = 110;
+      state.xRatio = 0.5;
+      state.yRatio = 0.5;
+      sizeRange.value = 110;
+      applyZoneSize();
+      applyZonePosition();
+      fileInput.value = '';
+      downloadBtn.disabled = true;
+      setStatus('Lade zuerst ein Logo hoch.');
+    });
+
+    downloadBtn.addEventListener('click', function(){
+      if(!state.hasLogo){ return; }
+      if(typeof html2canvas === 'undefined'){
+        setStatus('Download-Werkzeug konnte nicht geladen werden. Prüfe deine Internetverbindung.');
+        return;
+      }
+      setStatus('Erstelle Vorschau …', true);
+      downloadBtn.disabled = true;
+      html2canvas(stage, {backgroundColor:null, scale:2, useCORS:true}).then(function(canvas){
+        var link = document.createElement('a');
+        link.download = 'strudeldesigns-' + slugify(tpl.name) + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        downloadBtn.disabled = false;
+        setStatus('Design heruntergeladen ✓', true);
+      }).catch(function(){
+        downloadBtn.disabled = false;
+        setStatus('Download fehlgeschlagen. Bitte erneut versuchen.');
+      });
+    });
+
+    applyZoneSize();
+    requestAnimationFrame(applyZonePosition);
+  }
+
+  /* ============================================================
+     6) GEHEIMER TRIGGER: 3x Klick auf das Logo in 1,5s
+     ============================================================ */
+  var brandTrigger = document.getElementById('brandTrigger');
+  var codeModalOverlay = document.getElementById('codeModalOverlay');
+  var codeForm = document.getElementById('codeForm');
+  var codeInput = document.getElementById('codeInput');
+  var adminFab = document.getElementById('adminFab');
+
+  var isAdmin = false;
+  var clickCount = 0;
+  var clickTimer = null;
+  var SECRET_CODE = '1601';
+
+  brandTrigger.addEventListener('click', function(e){
+    clickCount++;
+    if(clickTimer){ clearTimeout(clickTimer); }
+    clickTimer = setTimeout(function(){ clickCount = 0; }, 1500);
+    if(clickCount >= 3){
+      e.preventDefault();
+      clickCount = 0;
+      clearTimeout(clickTimer);
+      openCodeModal();
+    }
+  });
+
+  function openCodeModal(){
+    codeInput.value = '';
+    codeModalOverlay.classList.remove('hidden');
+    setTimeout(function(){ codeInput.focus(); }, 50);
+  }
+  function closeCodeModal(){ codeModalOverlay.classList.add('hidden'); }
+
+  codeForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(codeInput.value.trim() === SECRET_CODE){
+      isAdmin = true;
+      adminFab.classList.remove('hidden');
+      closeCodeModal();
+    } else {
+      closeCodeModal();
+    }
+  });
+  codeModalOverlay.addEventListener('click', function(e){ if(e.target === codeModalOverlay){ closeCodeModal(); } });
+
+  /* ============================================================
+     7) ADMIN-DASHBOARD
+     ============================================================ */
+  var adminModalOverlay = document.getElementById('adminModalOverlay');
+  var adminCloseBtn = document.getElementById('adminCloseBtn');
+  var adminStatus = document.getElementById('adminStatus');
+  var adminTabBtns = document.querySelectorAll('.admin-tab-btn');
+  var adminPanels = {
+    members: document.getElementById('adminPanelMembers'),
+    news: document.getElementById('adminPanelNews'),
+    templates: document.getElementById('adminPanelTemplates')
+  };
+  var adminMembersList = document.getElementById('adminMembersList');
+  var adminNewsList = document.getElementById('adminNewsList');
+  var adminTemplatesList = document.getElementById('adminTemplatesList');
+
+  adminFab.addEventListener('click', function(){
+    setStatus('');
+    renderAdminLists();
+    adminModalOverlay.classList.remove('hidden');
+  });
+  adminCloseBtn.addEventListener('click', function(){ adminModalOverlay.classList.add('hidden'); });
+  adminModalOverlay.addEventListener('click', function(e){ if(e.target === adminModalOverlay){ adminModalOverlay.classList.add('hidden'); } });
+
+  adminTabBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      adminTabBtns.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var tab = btn.getAttribute('data-tab');
+      Object.keys(adminPanels).forEach(function(key){
+        adminPanels[key].classList.toggle('active', key === tab);
+      });
+    });
+  });
+
+  function setStatus(text, ok){
+    adminStatus.textContent = text;
+    adminStatus.classList.toggle('ok', !!ok);
+  }
+
+  function renderAdminLists(){
+    // Mitglieder
+    adminMembersList.innerHTML = data.members.length ? '' : '<div class="admin-form-hint">Noch keine Mitglieder.</div>';
+    data.members.forEach(function(m){
+      var row = document.createElement('div');
+      row.className = 'admin-list-item';
+      row.innerHTML =
+        '<div class="item-main"><div class="item-title">' + escapeHtml(m.name) + '</div>' +
+        '<div class="item-meta">' + escapeHtml(m.role || '') + ' · Kürzel: ' + escapeHtml(m.initials || '') + '</div></div>' +
+        '<div class="item-actions"><button class="admin-del-btn">Löschen</button></div>';
+      row.querySelector('.admin-del-btn').addEventListener('click', function(){
+        data.members = data.members.filter(function(x){ return x.id !== m.id; });
+        renderAdminLists();
+        setStatus('Änderung noch nicht gespeichert.');
+      });
+      adminMembersList.appendChild(row);
+    });
+
+    // News
+    adminNewsList.innerHTML = data.news.length ? '' : '<div class="admin-form-hint">Noch keine News.</div>';
+    data.news.forEach(function(n){
+      var preview = String(n.content || '').replace(/[#*-]/g,'').replace(/\s+/g,' ').trim();
+      if(preview.length > 70){ preview = preview.slice(0,70) + '…'; }
+      var row = document.createElement('div');
+      row.className = 'admin-list-item';
+      row.innerHTML =
+        '<div class="item-main"><div class="item-title">' + escapeHtml(n.date || '') + '</div>' +
+        '<div class="item-meta">' + escapeHtml(preview) + '</div></div>' +
+        '<div class="item-actions"><button class="admin-del-btn">Löschen</button></div>';
+      row.querySelector('.admin-del-btn').addEventListener('click', function(){
+        data.news = data.news.filter(function(x){ return x.id !== n.id; });
+        renderAdminLists();
+        setStatus('Änderung noch nicht gespeichert.');
+      });
+      adminNewsList.appendChild(row);
+    });
+
+    // Vorlagen
+    adminTemplatesList.innerHTML = data.templates.length ? '' : '<div class="admin-form-hint">Noch keine Vorlagen.</div>';
+    data.templates.forEach(function(tpl){
+      var row = document.createElement('div');
+      row.className = 'admin-list-item';
+      row.innerHTML =
+        '<div class="item-main"><div class="item-title">' + escapeHtml(tpl.name) + '</div>' +
+        '<div class="item-meta">' + (tpl.asset ? 'Eigenes Hintergrundbild ✓' : 'Standard-Overlay (kein Bild)') + '</div></div>' +
+        '<div class="item-actions">' +
+          '<label class="admin-mini-upload">Bild ändern<input type="file" class="tpl-asset-input" accept="image/png,image/jpeg,image/webp"></label>' +
+          '<button class="admin-del-btn">Löschen</button>' +
+        '</div>';
+      row.querySelector('.tpl-asset-input').addEventListener('change', function(e){
+        var file = e.target.files && e.target.files[0];
+        if(!file){ return; }
+        setStatus('Bild wird verarbeitet …');
+        compressImage(file, 800, function(dataUrl){
+          if(dataUrl){
+            tpl.asset = dataUrl;
+            setStatus('Hintergrund aktualisiert – noch nicht gespeichert.');
+          } else {
+            setStatus('Bild konnte nicht verarbeitet werden.');
+          }
+          renderAdminLists();
+        });
+      });
+      row.querySelector('.admin-del-btn').addEventListener('click', function(){
+        data.templates = data.templates.filter(function(x){ return x.id !== tpl.id; });
+        renderAdminLists();
+        setStatus('Änderung noch nicht gespeichert.');
+      });
+      adminTemplatesList.appendChild(row);
+    });
+  }
+
+  /* --- Mitglied hinzufügen --- */
+  document.getElementById('addMemberBtn').addEventListener('click', function(){
+    var nameInput = document.getElementById('newMemberName');
+    var roleInput = document.getElementById('newMemberRole');
+    var initInput = document.getElementById('newMemberInitials');
+    var name = nameInput.value.trim();
+    if(!name){ setStatus('Bitte einen Namen angeben.'); nameInput.focus(); return; }
+    var role = roleInput.value.trim() || 'Mitglied';
+    var initials = (initInput.value.trim().toUpperCase() || name.slice(0,2).toUpperCase()).slice(0,2);
+    data.members.push({ id:makeId('m'), name:name, role:role, initials:initials });
+    nameInput.value = ''; roleInput.value = ''; initInput.value = '';
+    renderAdminLists();
+    setStatus('Mitglied hinzugefügt – noch nicht gespeichert.');
+  });
+
+  /* --- News hinzufügen --- */
+  document.getElementById('addNewsBtn').addEventListener('click', function(){
+    var dateInput = document.getElementById('newNewsDate');
+    var contentInput = document.getElementById('newNewsContent');
+    var content = contentInput.value.trim();
+    if(!content){ setStatus('Bitte einen News-Text eingeben.'); contentInput.focus(); return; }
+    var date = dateInput.value.trim() || todayGerman();
+    data.news.unshift({ id:makeId('n'), date:date, content:content });
+    dateInput.value = ''; contentInput.value = '';
+    renderAdminLists();
+    setStatus('News hinzugefügt – noch nicht gespeichert.');
+  });
+
+  /* --- Vorlage hinzufügen --- */
+  var pendingTemplateAsset = null;
+  var newTemplateAssetInput = document.getElementById('newTemplateAsset');
+  var newTemplateAssetName = document.getElementById('newTemplateAssetName');
+  newTemplateAssetInput.addEventListener('change', function(e){
+    var file = e.target.files && e.target.files[0];
+    if(!file){ pendingTemplateAsset = null; newTemplateAssetName.textContent = 'Kein Bild ausgewählt – Standard-Overlay wird genutzt.'; return; }
+    newTemplateAssetName.textContent = 'Bild wird verarbeitet …';
+    compressImage(file, 800, function(dataUrl){
+      pendingTemplateAsset = dataUrl;
+      newTemplateAssetName.textContent = dataUrl ? ('Ausgewählt: ' + file.name) : 'Bild konnte nicht verarbeitet werden.';
+    });
+  });
+
+  document.getElementById('addTemplateBtn').addEventListener('click', function(){
+    var nameInput = document.getElementById('newTemplateName');
+    var placeholderInput = document.getElementById('newTemplatePlaceholder');
+    var name = nameInput.value.trim();
+    if(!name){ setStatus('Bitte einen Namen für die Vorlage angeben.'); nameInput.focus(); return; }
+    var placeholder = placeholderInput.value.trim() || name;
+    data.templates.push({ id:makeId('t'), name:name, placeholder:placeholder, asset:pendingTemplateAsset });
+    nameInput.value = ''; placeholderInput.value = ''; newTemplateAssetInput.value = '';
+    pendingTemplateAsset = null;
+    newTemplateAssetName.textContent = 'Kein Bild ausgewählt – Standard-Overlay wird genutzt.';
+    renderAdminLists();
+    setStatus('Vorlage hinzugefügt – noch nicht gespeichert.');
+  });
+
+  /* --- Speichern: schreibt in localStorage & rendert die Seite live --- */
+  document.getElementById('adminSaveBtn').addEventListener('click', function(){
+    try{
+      saveData(data);
+      renderPublic();
+      setStatus('Gespeichert ✓', true);
+    }catch(err){
+      setStatus('Speichern fehlgeschlagen – evtl. ist der lokale Speicher voll (z. B. zu große Bilder).');
+    }
+  });
+
+  /* --- Auf Standard zurücksetzen --- */
+  document.getElementById('adminResetBtn').addEventListener('click', function(){
+    if(!confirm('Wirklich alle Mitglieder, News & Vorlagen auf die Standardwerte zurücksetzen?')){ return; }
+    data = cloneData(DEFAULT_DATA);
+    saveData(data);
+    renderPublic();
+    renderAdminLists();
+    setStatus('Auf Standard zurückgesetzt ✓', true);
+  });
+
+  /* ============================================================
+     8) Mobile Nav
+     ============================================================ */
+  var burgerBtn = document.getElementById('burgerBtn');
+  var navLinks = document.getElementById('navLinks');
+  burgerBtn.addEventListener('click', function(){
+    var isOpen = navLinks.classList.toggle('open');
+    burgerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+  navLinks.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      navLinks.classList.remove('open');
+      burgerBtn.setAttribute('aria-expanded','false');
+    });
+  });
+
+  /* ============================================================
+     9) INIT
+     ============================================================ */
+  renderPublic();
+  routeFromHash();
+
+})();
+</script>
+</body>
+</html>
