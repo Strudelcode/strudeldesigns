@@ -2,27 +2,25 @@
   "members": [
     {
       "id": "m-strudelgames",
-      "name": "Strudelgames",
-      "role": "Streamer & Gründer",
+      "name": "Strudelgame",
+      "role": "Designer & Gründer",
       "initials": "SG",
-      "bio": ""
-    },
-    {
-      "id": "m-strudeldesigns",
-      "name": "Strudel Designs",
-      "role": "Design-Team",
-      "initials": "SD",
-      "bio": ""
+      "bio": "Schaut das alles läuft"
     },
     {
       "id": "m-blattbyte",
-      "name": "Blattbyte",
-      "role": "Mitglied",
+      "name": "Bloodbyte",
+      "role": "Mitglied & Designer",
       "initials": "BB",
-      "bio": ""
+      "bio": "Intros"
     }
   ],
   "news": [
+    {
+      "id": "n-mrqmk9px-eur8v",
+      "date": "01. Januar 2010",
+      "content": "# Neues Team\n- **Bloodbyte** ist jetzt im team"
+    },
     {
       "id": "n-launch",
       "date": "18. Juli 2026",
