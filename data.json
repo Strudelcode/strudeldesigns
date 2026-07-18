@@ -1,0 +1,18 @@
+{
+  "members": [
+    { "id": "m-strudelgames", "name": "Strudelgames", "role": "Streamer & Gründer", "initials": "SG", "bio": "" },
+    { "id": "m-strudeldesigns", "name": "Strudel Designs", "role": "Design-Team", "initials": "SD", "bio": "" },
+    { "id": "m-blattbyte", "name": "Blattbyte", "role": "Mitglied", "initials": "BB", "bio": "" }
+  ],
+  "news": [
+    {
+      "id": "n-launch",
+      "date": "18. Juli 2026",
+      "content": "# Neue Webseite mit Live-Customizer\nAb sofort werden Mitglieder und News dynamisch geladen – und du kannst dein Logo direkt auf unseren Vorlagen platzieren.\n- Eigener Bereich \"Eigenes Branding\"\n- **Alle News** jetzt auf einer eigenen Seite"
+    }
+  ],
+  "templates": [
+    { "id": "t-starting-soon", "name": "Stream Starting Soon", "placeholder": "Stream startet gleich", "asset": null },
+    { "id": "t-gameplay", "name": "Main Gameplay Overlay", "placeholder": "Live Gameplay", "asset": null }
+  ]
+}
