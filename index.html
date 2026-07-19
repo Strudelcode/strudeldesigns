@@ -248,7 +248,7 @@
   .editor-modal-body{flex:1 1 auto;overflow-y:auto;min-height:0;}
   .editor-modal-body .template-card{
     padding:0;gap:0;display:flex;flex-direction:column;background:transparent;border:none;
-    box-shadow:none;backdrop-filter:none;border-radius:0;
+    box-shadow:none;backdrop-filter:none;border-radius:0;max-width:none;
   }
   .editor-modal-body .template-card > h3{order:0;margin:0;padding:14px 20px 0;font-size:13px;font-weight:700;opacity:0.7;}
   .editor-modal-body .template-card > .stage{
@@ -263,14 +263,14 @@
     .editor-modal-body .template-card > h3{display:none;}
     .editor-modal-body .template-card > .stage{
       position:static;order:0;flex:0 1 auto;align-self:center;margin:28px;border-radius:16px;
-      width:min(100%, 680px);max-width:680px;
+      width:min(100%, 560px);max-width:560px;
     }
     .editor-modal-body .template-card > .template-controls{
       order:1;flex:0 0 380px;max-width:380px;height:100%;overflow-y:auto;
       padding:20px 20px 48px;border-left:1px solid var(--glass-border);margin:0;
     }
   }
-  .template-card{padding:22px;display:flex;flex-direction:column;gap:14px;}
+  .template-card{padding:22px;display:flex;flex-direction:column;gap:14px;max-width:440px;}
   .template-card h3{font-size:19px;}
 
   .stage{
@@ -1277,32 +1277,6 @@
           '<div class="control-row"><div class="control-row-label"><span>Transparenz</span><span class="val opacity-val">100%</span></div><input type="range" class="opacity-range" min="10" max="100" value="100"></div>' +
           '<select class="resolution-select export-format-select">' +
             '<option value="native" class="native-res-option" disabled>Original-Auflösung (wird erkannt …)</option>' +
-            '<optgroup label="Allgemein">' +
-              '<option value="1280x720">Standard (1280×720)</option>' +
-              '<option value="1920x1080">Full HD (1920×1080)</option>' +
-              '<option value="2560x1440">2K (2560×1440)</option>' +
-            '</optgroup>' +
-            '<optgroup label="Discord">' +
-              '<option value="960x540">Discord Server-Banner (960×540)</option>' +
-              '<option value="512x512">Discord Icon (512×512)</option>' +
-            '</optgroup>' +
-            '<optgroup label="YouTube">' +
-              '<option value="2560x1440">YouTube Banner (2560×1440)</option>' +
-              '<option value="1280x720">YouTube Thumbnail (1280×720)</option>' +
-            '</optgroup>' +
-            '<optgroup label="Twitch">' +
-              '<option value="1200x480">Twitch Banner (1200×480)</option>' +
-              '<option value="320x100">Twitch Panel (320×100)</option>' +
-            '</optgroup>' +
-            '<optgroup label="Social Media">' +
-              '<option value="1080x1080">Instagram Post (1080×1080)</option>' +
-              '<option value="1080x1920">TikTok (1080×1920)</option>' +
-              '<option value="820x312">Facebook Cover (820×312)</option>' +
-            '</optgroup>' +
-            '<optgroup label="Minecraft">' +
-              '<option value="64x64">Minecraft Skin (64×64)</option>' +
-              '<option value="64x64">Minecraft Server-Icon (64×64)</option>' +
-            '</optgroup>' +
           '</select>' +
           '<select class="export-format-select">' +
             '<option value="png">Export als PNG (verlustfrei)</option>' +
@@ -1363,19 +1337,18 @@
         opt.textContent = 'Original-Auflösung (' + w + '×' + h + ')';
         resolutionSelect.value = 'native';
       }
-      // Auflösungen, die größer als das hochgeladene Original sind, würden nur hochskaliert
-      // und unscharf werden -> diese Optionen sperren, statt versteckte Qualitätsverluste zu riskieren.
+      // Nur noch Größen im GLEICHEN Seitenverhältnis wie das hochgeladene Original anbieten,
+      // als prozentuale Abstufungen davon -> nie verzerrt, nie größer als das Original.
       if(resolutionSelect){
-        resolutionSelect.querySelectorAll('option').forEach(function(o){
-          if(o === opt) return;
-          var parts = o.value.split('x');
-          var ow = parseInt(parts[0], 10), oh = parseInt(parts[1], 10);
-          if(!ow || !oh) return;
-          var tooLarge = ow > w || oh > h;
-          o.disabled = tooLarge;
-          var base = o.getAttribute('data-base-label') || o.textContent;
-          o.setAttribute('data-base-label', base);
-          o.textContent = base + (tooLarge ? ' – größer als Original' : '');
+        resolutionSelect.querySelectorAll('option:not(.native-res-option)').forEach(function(o){ o.remove(); });
+        var steps = [0.75, 0.5, 0.25];
+        steps.forEach(function(pct){
+          var sw = Math.max(2, Math.round(w * pct));
+          var sh = Math.max(2, Math.round(h * pct));
+          var o = document.createElement('option');
+          o.value = sw + 'x' + sh;
+          o.textContent = Math.round(pct * 100) + ' % (' + sw + '×' + sh + ')';
+          resolutionSelect.appendChild(o);
         });
       }
     }
@@ -1385,6 +1358,22 @@
     }
     if(bgVideoEl){
       bgVideoEl.addEventListener('loadedmetadata', function(){ applyNativeRes(bgVideoEl.videoWidth, bgVideoEl.videoHeight); });
+    }
+    if(!bgImgEl && !bgVideoEl && resolutionSelect){
+      // Kein Bild vorhanden (reine Text-/Form-Vorlage) -> Standardgrößen im 16:9-Format der Stage anbieten.
+      var nativeOpt = resolutionSelect.querySelector('.native-res-option');
+      if(nativeOpt){
+        nativeOpt.disabled = false;
+        nativeOpt.textContent = 'Standard (1920×1080)';
+        nativeOpt.value = '1920x1080';
+        resolutionSelect.value = '1920x1080';
+      }
+      [[1280,720],[960,540]].forEach(function(size){
+        var o = document.createElement('option');
+        o.value = size[0] + 'x' + size[1];
+        o.textContent = size[0] + '×' + size[1];
+        resolutionSelect.appendChild(o);
+      });
     }
     var shapeTypeSelect = card.querySelector('.shape-type-select');
     var shapeColorInput = card.querySelector('.shape-color-input');
