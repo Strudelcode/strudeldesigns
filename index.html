@@ -791,14 +791,12 @@
     <!-- GitHub-Verbindung -->
     <div class="admin-panel" id="adminPanelGithub">
       <p class="admin-form-hint" style="margin-bottom:14px;">
-        Hier verbindest du das Admin-Panel mit deinem GitHub-Repo. „Auf GitHub veröffentlichen“ schreibt <code>data.json</code>
-        direkt in dein Repo – GitHub Pages liefert die neue Version dann automatisch an alle Besucher aus.
-        Der Zugangstoken wird <strong>nur in diesem Browser</strong> gespeichert (localStorage) und nirgendwo sonst.
-        Nutze am besten einen <strong>fine-grained Personal Access Token</strong>, beschränkt auf genau dieses Repo mit
-        Berechtigung „Contents: Read and write“.<br><br>
-        <strong>„Von GitHub laden“ ist optional</strong> – nur nötig, wenn du dir den aktuellen Live-Stand in die Vorschau
-        holen willst (z. B. um zu sehen, was gerade veröffentlicht ist). Zum reinen Veröffentlichen deiner Änderungen
-        reicht direkt der Klick auf „Auf GitHub veröffentlichen“.
+        Hier verbindest du das Admin-Panel mit deinem GitHub-Repo. „Von GitHub laden“ liest die aktuelle
+        <code>data.json</code> direkt aus deinem (öffentlichen) Repo – dafür ist kein Token nötig.<br><br>
+        Zum <strong>Veröffentlichen</strong> schickt „Auf GitHub veröffentlichen“ die Daten an deine eigene
+        kleine Cloudflare-Worker-Funktion. Nur diese Funktion kennt den echten GitHub-Token – der taucht in
+        diesem Browser nie mehr auf. Stattdessen brauchst du hier nur die <strong>Worker-URL</strong> und das
+        <strong>Admin-Passwort</strong>, das du beim Einrichten des Workers selbst festgelegt hast.
       </p>
       <div class="admin-form" style="border-top:none;padding-top:0;">
         <div class="admin-form-row-2">
@@ -822,8 +820,12 @@
           </div>
         </div>
         <div>
-          <label for="ghToken">Personal Access Token</label>
-          <input type="password" id="ghToken" placeholder="ghp_… oder github_pat_…" autocomplete="off">
+          <label for="ghWorkerUrl">Worker-URL (zum Veröffentlichen)</label>
+          <input type="text" id="ghWorkerUrl" placeholder="https://strudeldesigns-sync.DEINNAME.workers.dev" autocomplete="off">
+        </div>
+        <div>
+          <label for="ghAdminPassword">Admin-Passwort (im Worker festgelegt)</label>
+          <input type="password" id="ghAdminPassword" placeholder="Dein selbst gewähltes Passwort" autocomplete="off">
         </div>
         <div class="btn-row-mini" style="margin-top:4px;">
           <button class="admin-add-btn" id="ghLoadBtn" type="button">Von GitHub laden</button>
@@ -2503,16 +2505,17 @@
   /* ============================================================
      7b) GITHUB-SYNC: data.json direkt im Repo lesen & schreiben
      ============================================================ */
-  var GH_SETTINGS_KEY = 'strudeldesigns_gh_settings_v1';
+  var GH_SETTINGS_KEY = 'strudeldesigns_gh_settings_v2';
   var ghOwnerInput = document.getElementById('ghOwner');
   var ghRepoInput = document.getElementById('ghRepo');
   var ghBranchInput = document.getElementById('ghBranch');
   var ghPathInput = document.getElementById('ghPath');
-  var ghTokenInput = document.getElementById('ghToken');
+  var ghWorkerUrlInput = document.getElementById('ghWorkerUrl');
+  var ghAdminPasswordInput = document.getElementById('ghAdminPassword');
   var ghStatusEl = document.getElementById('ghStatus');
   var ghLoadBtn = document.getElementById('ghLoadBtn');
   var ghPublishBtn = document.getElementById('ghPublishBtn');
-  var lastKnownSha = null; // sha der zuletzt geladenen data.json, nötig fürs Überschreiben
+  var lastKnownSha = null; // wird aktuell nur noch informativ genutzt, der Worker holt sich die sha selbst
   var lastSyncedSnapshot = JSON.stringify(data); // Stand, der zuletzt mit GitHub übereinstimmte
 
   function loadGhSettings(){
@@ -2523,7 +2526,8 @@
       ghRepoInput.value = s.repo || '';
       ghBranchInput.value = s.branch || 'main';
       ghPathInput.value = s.path || 'data.json';
-      ghTokenInput.value = s.token || '';
+      ghWorkerUrlInput.value = s.workerUrl || '';
+      ghAdminPasswordInput.value = s.password || '';
     }catch(e){ /* ignorieren, leere Felder verwenden */ }
   }
   function saveGhSettings(){
@@ -2532,13 +2536,14 @@
       repo: ghRepoInput.value.trim(),
       branch: ghBranchInput.value.trim() || 'main',
       path: ghPathInput.value.trim() || 'data.json',
-      token: ghTokenInput.value.trim()
+      workerUrl: ghWorkerUrlInput.value.trim().replace(/\/+$/,''),
+      password: ghAdminPasswordInput.value
     };
     localStorage.setItem(GH_SETTINGS_KEY, JSON.stringify(s));
     return s;
   }
   loadGhSettings();
-  [ghOwnerInput, ghRepoInput, ghBranchInput, ghPathInput, ghTokenInput].forEach(function(inp){
+  [ghOwnerInput, ghRepoInput, ghBranchInput, ghPathInput, ghWorkerUrlInput, ghAdminPasswordInput].forEach(function(inp){
     inp.addEventListener('change', saveGhSettings);
   });
 
@@ -2547,16 +2552,7 @@
     ghStatusEl.style.color = ok ? '#6ee7b7' : '';
   }
 
-  // UTF-8-sicheres Base64 (wichtig wegen Umlauten & Emojis in News/Bios)
-  function utf8ToBase64(str){
-    var bytes = new TextEncoder().encode(str);
-    var binary = '';
-    var chunk = 0x8000;
-    for(var i = 0; i < bytes.length; i += chunk){
-      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
-    }
-    return btoa(binary);
-  }
+  // UTF-8-sicheres Base64-Decodieren (wichtig wegen Umlauten & Emojis in News/Bios)
   function base64ToUtf8(b64){
     var binary = atob(String(b64 || '').replace(/\n/g, ''));
     var bytes = new Uint8Array(binary.length);
@@ -2569,6 +2565,8 @@
       '/contents/' + s.path.split('/').map(encodeURIComponent).join('/');
   }
 
+  // Lesen läuft unauthentifiziert direkt gegen die öffentliche GitHub-API – dafür ist kein Token nötig
+  // (funktioniert nur bei öffentlichen Repos, was bei einer GitHub-Pages-Seite ohnehin der Fall ist).
   ghLoadBtn.addEventListener('click', function(){
     var s = saveGhSettings();
     if(!s.owner || !s.repo){ setGhStatus('Bitte Benutzername/Organisation und Repository angeben.'); return; }
@@ -2579,9 +2577,7 @@
       if(!proceed){ return; }
     }
     setGhStatus('Lade data.json von GitHub …');
-    var headers = { 'Accept':'application/vnd.github+json' };
-    if(s.token){ headers['Authorization'] = 'Bearer ' + s.token; }
-    fetch(ghApiUrl(s) + '?ref=' + encodeURIComponent(s.branch), { headers: headers })
+    fetch(ghApiUrl(s) + '?ref=' + encodeURIComponent(s.branch), { headers: { 'Accept':'application/vnd.github+json' } })
       .then(function(res){
         if(res.status === 404){ throw { code:404 }; }
         if(!res.ok){ throw { code:res.status }; }
@@ -2605,68 +2601,48 @@
         if(err && err.code === 404){
           lastKnownSha = null;
           setGhStatus('In diesem Repo liegt noch keine data.json – beim Veröffentlichen wird sie neu angelegt.');
-        } else if(err && err.code === 401){
-          setGhStatus('Token ungültig oder fehlt (401). Prüfe den Personal Access Token.');
         } else if(err && err.code === 403){
-          setGhStatus('Kein Zugriff (403). Hat der Token Lese-/Schreibrechte für dieses Repo?');
+          setGhStatus('Kein Zugriff (403). Ist das Repo öffentlich? Private Repos lassen sich ohne Token nicht lesen.');
         } else {
           setGhStatus('Laden fehlgeschlagen. Prüfe Benutzername, Repo, Branch und Internetverbindung.');
         }
       });
   });
 
+  // Veröffentlichen läuft über deine eigene Cloudflare-Worker-Funktion. Der Browser sendet nur das
+  // Admin-Passwort + die Daten – der echte GitHub-Token bleibt ausschließlich im Worker gespeichert.
   ghPublishBtn.addEventListener('click', function(){
     var s = saveGhSettings();
-    if(!s.owner || !s.repo){ setGhStatus('Bitte Benutzername/Organisation und Repository angeben.'); return; }
-    if(!s.token){ setGhStatus('Zum Veröffentlichen wird ein Personal Access Token benötigt.'); return; }
+    if(!s.workerUrl){ setGhStatus('Bitte zuerst die Worker-URL eintragen (siehe Einrichtungsanleitung).'); return; }
+    if(!s.password){ setGhStatus('Bitte das Admin-Passwort eintragen.'); return; }
     setGhStatus('Veröffentliche auf GitHub …');
     ghPublishBtn.disabled = true;
-    var headers = {
-      'Accept':'application/vnd.github+json',
-      'Authorization':'Bearer ' + s.token,
-      'Content-Type':'application/json'
-    };
 
-    // Zuerst still im Hintergrund die aktuelle sha holen (nötig zum Überschreiben einer
-    // bestehenden Datei) — OHNE data zu überschreiben, damit deine Änderungen erhalten bleiben.
-    fetch(ghApiUrl(s) + '?ref=' + encodeURIComponent(s.branch), { headers: { 'Accept':'application/vnd.github+json', 'Authorization':'Bearer ' + s.token } })
+    fetch(s.workerUrl, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        password: s.password,
+        content: JSON.stringify(data, null, 2)
+      })
+    })
       .then(function(res){
-        if(res.status === 404){ return null; } // Datei existiert noch nicht -> ohne sha neu anlegen
-        if(!res.ok){ throw { code:res.status, phase:'sha' }; }
-        return res.json();
+        return res.json().catch(function(){ return {}; }).then(function(body){
+          if(!res.ok || !body.ok){ throw { code:res.status, message: body && body.error }; }
+          return body;
+        });
       })
-      .then(function(metaJson){
-        if(metaJson && metaJson.sha){ lastKnownSha = metaJson.sha; }
-        var body = {
-          message: 'Update data.json über StrudelDesigns Admin-Panel',
-          content: utf8ToBase64(JSON.stringify(data, null, 2)),
-          branch: s.branch
-        };
-        if(lastKnownSha){ body.sha = lastKnownSha; }
-        return fetch(ghApiUrl(s), { method:'PUT', headers: headers, body: JSON.stringify(body) });
-      })
-      .then(function(res){
-        if(!res.ok){
-          return res.json().catch(function(){ return {}; }).then(function(errBody){
-            throw { code:res.status, message: errBody && errBody.message };
-          });
-        }
-        return res.json();
-      })
-      .then(function(json){
-        lastKnownSha = json.content && json.content.sha;
+      .then(function(){
         lastSyncedSnapshot = JSON.stringify(data);
         setGhStatus('Veröffentlicht ✓ – GitHub Pages aktualisiert die Live-Seite in Kürze für alle Besucher.', true);
       })
       .catch(function(err){
-        if(err && err.code === 409){
+        if(err && err.code === 401){
+          setGhStatus('Falsches Admin-Passwort (401).');
+        } else if(err && err.code === 409){
           setGhStatus('Konflikt: Die Datei wurde gerade zeitgleich extern geändert. Bitte kurz erneut auf „Auf GitHub veröffentlichen“ klicken.');
-        } else if(err && err.code === 401){
-          setGhStatus('Token ungültig oder abgelaufen (401).');
-        } else if(err && err.code === 403){
-          setGhStatus('Kein Schreibzugriff (403). Token braucht „Contents: Read and write“ für dieses Repo.');
-        } else if(err && err.code === 404){
-          setGhStatus('Repo/Pfad nicht gefunden (404). Prüfe Benutzername, Repo-Name und Branch.');
+        } else if(err && err.code === 0){
+          setGhStatus('Worker nicht erreichbar. Prüfe die Worker-URL und ob der Worker deployed ist.');
         } else {
           setGhStatus('Veröffentlichen fehlgeschlagen' + (err && err.message ? (': ' + err.message) : '.'));
         }
