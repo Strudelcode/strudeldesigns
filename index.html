@@ -229,10 +229,11 @@
   .editor-modal{position:fixed;inset:0;z-index:300;display:none;}
   .editor-modal.open{display:block;}
   body.modal-open{overflow:hidden;}
-  .editor-modal-backdrop{position:absolute;inset:0;background:rgba(5,2,10,0.82);backdrop-filter:blur(6px);}
+  .editor-modal-backdrop{position:absolute;inset:0;background:rgba(5,2,10,0.9);backdrop-filter:blur(10px);}
   .editor-modal-panel{
     position:relative;height:100vh;max-width:1400px;margin:0 auto;display:flex;flex-direction:column;
-    background:#0c0714;
+    background:#0c0714;border-left:1px solid var(--glass-border-hi);border-right:1px solid var(--glass-border-hi);
+    box-shadow:0 0 90px rgba(0,0,0,0.65);
   }
   .editor-modal-topbar{
     display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;
@@ -261,7 +262,8 @@
     .editor-modal-body .template-card{flex-direction:row;height:100%;}
     .editor-modal-body .template-card > h3{display:none;}
     .editor-modal-body .template-card > .stage{
-      position:static;order:0;flex:1 1 60%;align-self:center;margin:28px;border-radius:16px;max-width:920px;
+      position:static;order:0;flex:0 1 auto;align-self:center;margin:28px;border-radius:16px;
+      width:min(100%, 680px);max-width:680px;
     }
     .editor-modal-body .template-card > .template-controls{
       order:1;flex:0 0 380px;max-width:380px;height:100%;overflow-y:auto;
@@ -1360,6 +1362,21 @@
         opt.disabled = false;
         opt.textContent = 'Original-Auflösung (' + w + '×' + h + ')';
         resolutionSelect.value = 'native';
+      }
+      // Auflösungen, die größer als das hochgeladene Original sind, würden nur hochskaliert
+      // und unscharf werden -> diese Optionen sperren, statt versteckte Qualitätsverluste zu riskieren.
+      if(resolutionSelect){
+        resolutionSelect.querySelectorAll('option').forEach(function(o){
+          if(o === opt) return;
+          var parts = o.value.split('x');
+          var ow = parseInt(parts[0], 10), oh = parseInt(parts[1], 10);
+          if(!ow || !oh) return;
+          var tooLarge = ow > w || oh > h;
+          o.disabled = tooLarge;
+          var base = o.getAttribute('data-base-label') || o.textContent;
+          o.setAttribute('data-base-label', base);
+          o.textContent = base + (tooLarge ? ' – größer als Original' : '');
+        });
       }
     }
     if(bgImgEl){
