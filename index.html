@@ -261,6 +261,26 @@
   .drop-zone svg{width:22px;height:22px;color:var(--text-2);}
   .drop-zone p{font-size:11px;line-height:1.4;max-width:100px;text-align:center;}
   .drop-zone img.uploaded-logo{max-width:100%;max-height:100%;object-fit:contain;pointer-events:none;}
+  .overlay-shape{width:100%;height:100%;box-sizing:border-box;}
+  .snap-guide{position:absolute;background:var(--pink);opacity:0;pointer-events:none;z-index:5;transition:opacity .08s ease;}
+  .snap-guide-v{top:0;bottom:0;left:50%;width:1px;}
+  .snap-guide-h{left:0;right:0;top:50%;height:1px;}
+  .snap-guide.visible{opacity:0.85;}
+  .align-btn-row{display:flex;gap:6px;}
+  .align-btn{
+    flex:1;background:var(--glass-bg);border:1px solid var(--glass-border);color:var(--text-1);
+    font-size:15px;padding:6px 4px;border-radius:8px;cursor:pointer;transition:all .18s ease;line-height:1;
+  }
+  .align-btn:hover{background:var(--pink);color:#fff;border-color:var(--pink);}
+  .grid-overlay{
+    position:absolute;inset:0;pointer-events:none;z-index:4;opacity:0;transition:opacity .15s ease;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.18) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.18) 1px, transparent 1px);
+    background-size:10% 10%;
+  }
+  .grid-overlay.visible{opacity:1;}
+  .stage{transition:transform .12s ease;}
   .resize-handle{position:absolute;right:-7px;bottom:-7px;width:16px;height:16px;border-radius:50%;background:var(--pink);border:2px solid #fff;cursor:nwse-resize;display:none;touch-action:none;}
   .drop-zone.has-logo .resize-handle{display:block;}
 
@@ -1014,15 +1034,22 @@
         bgHtml = '<div class="stage-text"><div class="pulse-dot"></div><h4>' + escapeHtml(tpl.placeholder || tpl.name) + '</h4><span>Platzhalter-Overlay</span></div>';
       }
 
-      var toggleHtml = (tpl.allowImage && tpl.allowText)
+      var modes = [];
+      if(tpl.allowImage){ modes.push({key:'image', label:'🖼️ Bild'}); }
+      if(tpl.allowText){ modes.push({key:'text', label:'🔤 Text'}); }
+      modes.push({key:'shape', label:'🔷 Form'});
+      var defaultMode = modes[0].key;
+
+      var toggleHtml = modes.length > 1
         ? '<div class="overlay-type-toggle">' +
-            '<button type="button" class="overlay-type-btn active" data-mode="image">🖼️ Bild</button>' +
-            '<button type="button" class="overlay-type-btn" data-mode="text">🔤 Text</button>' +
+            modes.map(function(m, i){
+              return '<button type="button" class="overlay-type-btn' + (i===0 ? ' active' : '') + '" data-mode="' + m.key + '">' + m.label + '</button>';
+            }).join('') +
           '</div>'
         : '';
 
       var imagePanelHtml = tpl.allowImage
-        ? '<div class="mode-panel" data-mode="image">' +
+        ? '<div class="mode-panel" data-mode="image"' + (defaultMode !== 'image' ? ' style="display:none;"' : '') + '>' +
             '<input type="file" class="file-input-hidden logo-file-input" accept="image/png,image/webp">' +
             '<div class="btn-row-mini"><button class="btn-upload-mini" type="button" style="flex:1;">Logo hochladen</button></div>' +
             '<div class="filter-panel">' +
@@ -1030,6 +1057,7 @@
               '<div class="control-row"><div class="control-row-label"><span>Kontrast</span><span class="val contrast-val">100%</span></div><input type="range" class="contrast-range" min="40" max="180" value="100"></div>' +
               '<div class="control-row"><div class="control-row-label"><span>Sättigung</span><span class="val saturate-val">100%</span></div><input type="range" class="saturate-range" min="0" max="200" value="100"></div>' +
               '<div class="control-row"><div class="control-row-label"><span>Unschärfe</span><span class="val blur-val">0px</span></div><input type="range" class="blur-range" min="0" max="12" value="0"></div>' +
+              '<div class="control-row"><div class="control-row-label"><span>Abrundungen</span><span class="val radius-val">0%</span></div><input type="range" class="radius-range" min="0" max="50" value="0"></div>' +
               '<div class="filter-toggle-row">' +
                 '<button type="button" class="filter-toggle-btn grayscale-toggle-btn">S/W</button>' +
                 '<button type="button" class="filter-toggle-btn shadow-toggle-btn">Schatten</button>' +
@@ -1040,14 +1068,45 @@
         : '';
 
       var textPanelHtml = tpl.allowText
-        ? '<div class="mode-panel" data-mode="text"' + (tpl.allowImage ? ' style="display:none;"' : '') + '>' +
+        ? '<div class="mode-panel" data-mode="text"' + (defaultMode !== 'text' ? ' style="display:none;"' : '') + '>' +
             '<textarea class="text-overlay-input" placeholder="Eigener Text …" maxlength="80"></textarea>' +
             '<div class="text-style-row">' +
               '<input type="color" class="text-color-input" value="#ffffff" title="Textfarbe">' +
               '<button type="button" class="bold-toggle-btn active">Fett</button>' +
             '</div>' +
+            '<div class="control-row"><div class="control-row-label"><span>Buchstabenabstand</span><span class="val letterspace-val">0px</span></div><input type="range" class="letterspace-range" min="0" max="20" value="0"></div>' +
+            '<div class="control-row"><div class="control-row-label"><span>Zeilenhöhe</span><span class="val lineheight-val">115%</span></div><input type="range" class="lineheight-range" min="80" max="200" value="115"></div>' +
+            '<div class="text-style-row">' +
+              '<input type="color" class="text-bg-color-input" value="#000000" title="Hintergrundfarbe">' +
+              '<button type="button" class="filter-toggle-btn text-bg-toggle-btn">Hintergrund</button>' +
+            '</div>' +
           '</div>'
         : '';
+
+      var shapePanelHtml =
+        '<div class="mode-panel" data-mode="shape"' + (defaultMode !== 'shape' ? ' style="display:none;"' : '') + '>' +
+          '<select class="shape-type-select export-format-select">' +
+            '<option value="rectangle">Rechteck</option>' +
+            '<option value="circle">Kreis</option>' +
+            '<option value="triangle">Dreieck</option>' +
+            '<option value="line">Linie</option>' +
+          '</select>' +
+          '<div class="text-style-row">' +
+            '<input type="color" class="shape-color-input" value="#ff3fa4" title="Füllfarbe">' +
+            '<button type="button" class="filter-toggle-btn shape-gradient-btn">Verlauf</button>' +
+          '</div>' +
+          '<div class="text-style-row shape-gradient-row" style="display:none;">' +
+            '<input type="color" class="shape-color2-input" value="#8b5cf6" title="Verlaufsfarbe 2">' +
+            '<select class="shape-gradient-type-select export-format-select" style="flex:1;">' +
+              '<option value="linear">Linear</option>' +
+              '<option value="radial">Radial</option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="text-style-row">' +
+            '<input type="color" class="shape-outline-color-input" value="#ffffff" title="Outline-Farbe">' +
+            '<button type="button" class="filter-toggle-btn shape-outline-btn">Outline</button>' +
+          '</div>' +
+        '</div>';
 
       var initialSlider = Math.round((tpl.defaultSize || 0.22) * 500);
 
@@ -1056,6 +1115,8 @@
         '<div class="stage">' +
           bgHtml +
           '<div class="stage-noise"></div><div class="stage-scan"></div>' +
+          '<div class="snap-guide snap-guide-v"></div><div class="snap-guide snap-guide-h"></div>' +
+          '<div class="grid-overlay"></div>' +
           '<div class="drop-zone" tabindex="0" role="button" aria-label="Logo oder Text hinzufügen und verschieben">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
             '<p>' + (tpl.allowImage ? 'Logo hier ablegen oder klicken' : 'Klicken für eigenen Text') + '</p>' +
@@ -1063,11 +1124,55 @@
           '</div>' +
         '</div>' +
         '<div class="template-controls">' +
-          toggleHtml + imagePanelHtml + textPanelHtml +
+          toggleHtml + imagePanelHtml + textPanelHtml + shapePanelHtml +
           '<div class="btn-row-mini"><button class="btn-reset-mini" type="button" style="flex:1;">Zurücksetzen</button></div>' +
+          '<div class="control-row"><div class="control-row-label"><span>Ausrichten</span></div>' +
+            '<div class="align-btn-row">' +
+              '<button type="button" class="align-btn" data-align="left" title="Links">⟸</button>' +
+              '<button type="button" class="align-btn" data-align="center-h" title="Horizontal zentrieren">↔</button>' +
+              '<button type="button" class="align-btn" data-align="right" title="Rechts">⟹</button>' +
+              '<button type="button" class="align-btn" data-align="top" title="Oben">⤒</button>' +
+              '<button type="button" class="align-btn" data-align="center-v" title="Vertikal zentrieren">↕</button>' +
+              '<button type="button" class="align-btn" data-align="bottom" title="Unten">⤓</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="control-row"><div class="control-row-label"><span>Ansicht</span></div>' +
+            '<div class="align-btn-row">' +
+              '<button type="button" class="filter-toggle-btn grid-toggle-btn" style="flex:1;">🔳 Raster</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="control-row"><div class="control-row-label"><span>Zoom</span><span class="val zoom-val">100%</span></div><input type="range" class="zoom-range" min="50" max="200" value="100"></div>' +
           '<div class="control-row"><div class="control-row-label"><span>Größe</span></div><input type="range" class="size-range" min="40" max="260" value="' + initialSlider + '"></div>' +
           '<div class="control-row"><div class="control-row-label"><span>Drehen</span><span class="val rotate-val">0°</span></div><input type="range" class="rotate-range" min="0" max="360" value="0"></div>' +
           '<div class="control-row"><div class="control-row-label"><span>Transparenz</span><span class="val opacity-val">100%</span></div><input type="range" class="opacity-range" min="10" max="100" value="100"></div>' +
+          '<select class="resolution-select export-format-select">' +
+            '<optgroup label="Allgemein">' +
+              '<option value="1280x720">Standard (1280×720)</option>' +
+              '<option value="1920x1080">Full HD (1920×1080)</option>' +
+              '<option value="2560x1440">2K (2560×1440)</option>' +
+            '</optgroup>' +
+            '<optgroup label="Discord">' +
+              '<option value="960x540">Discord Server-Banner (960×540)</option>' +
+              '<option value="512x512">Discord Icon (512×512)</option>' +
+            '</optgroup>' +
+            '<optgroup label="YouTube">' +
+              '<option value="2560x1440">YouTube Banner (2560×1440)</option>' +
+              '<option value="1280x720">YouTube Thumbnail (1280×720)</option>' +
+            '</optgroup>' +
+            '<optgroup label="Twitch">' +
+              '<option value="1200x480">Twitch Banner (1200×480)</option>' +
+              '<option value="320x100">Twitch Panel (320×100)</option>' +
+            '</optgroup>' +
+            '<optgroup label="Social Media">' +
+              '<option value="1080x1080">Instagram Post (1080×1080)</option>' +
+              '<option value="1080x1920">TikTok (1080×1920)</option>' +
+              '<option value="820x312">Facebook Cover (820×312)</option>' +
+            '</optgroup>' +
+            '<optgroup label="Minecraft">' +
+              '<option value="64x64">Minecraft Skin (64×64)</option>' +
+              '<option value="64x64">Minecraft Server-Icon (64×64)</option>' +
+            '</optgroup>' +
+          '</select>' +
           '<select class="export-format-select">' +
             '<option value="png">Export als PNG (verlustfrei)</option>' +
             '<option value="jpeg">Export als JPG (kleinere Datei)</option>' +
@@ -1096,6 +1201,7 @@
     var typeToggleBtns = card.querySelectorAll('.overlay-type-btn');
     var imagePanel = card.querySelector('.mode-panel[data-mode="image"]');
     var textPanel = card.querySelector('.mode-panel[data-mode="text"]');
+    var shapePanel = card.querySelector('.mode-panel[data-mode="shape"]');
     var bgVideoEl = card.querySelector('video.stage-bg');
     var rotateRange = card.querySelector('.rotate-range');
     var rotateVal = card.querySelector('.rotate-val');
@@ -1115,14 +1221,39 @@
     var grayscaleBtn = card.querySelector('.grayscale-toggle-btn');
     var shadowBtn = card.querySelector('.shadow-toggle-btn');
     var glowBtn = card.querySelector('.glow-toggle-btn');
+    var resolutionSelect = card.querySelector('.resolution-select');
+    var shapeTypeSelect = card.querySelector('.shape-type-select');
+    var shapeColorInput = card.querySelector('.shape-color-input');
+    var shapeGradientBtn = card.querySelector('.shape-gradient-btn');
+    var shapeGradientRow = card.querySelector('.shape-gradient-row');
+    var shapeColor2Input = card.querySelector('.shape-color2-input');
+    var shapeGradientTypeSelect = card.querySelector('.shape-gradient-type-select');
+    var shapeOutlineColorInput = card.querySelector('.shape-outline-color-input');
+    var shapeOutlineBtn = card.querySelector('.shape-outline-btn');
+    var radiusRange = card.querySelector('.radius-range');
+    var radiusVal = card.querySelector('.radius-val');
+    var letterspaceRange = card.querySelector('.letterspace-range');
+    var letterspaceVal = card.querySelector('.letterspace-val');
+    var lineheightRange = card.querySelector('.lineheight-range');
+    var lineheightVal = card.querySelector('.lineheight-val');
+    var textBgColorInput = card.querySelector('.text-bg-color-input');
+    var textBgToggleBtn = card.querySelector('.text-bg-toggle-btn');
+    var snapGuideV = card.querySelector('.snap-guide-v');
+    var snapGuideH = card.querySelector('.snap-guide-h');
+    var alignBtns = card.querySelectorAll('.align-btn');
+    var gridToggleBtn = card.querySelector('.grid-toggle-btn');
+    var gridOverlay = card.querySelector('.grid-overlay');
+    var zoomRange = card.querySelector('.zoom-range');
+    var zoomVal = card.querySelector('.zoom-val');
 
     var defaultZoneHtml = dropZone.innerHTML;
 
     var state = {
       hasContent:false,
-      mode: tpl.allowImage ? 'image' : 'text',
+      mode: tpl.allowImage ? 'image' : (tpl.allowText ? 'text' : 'shape'),
       text:'',
       logoImg:null,
+      shapeEl:null,
       size: parseInt(sizeRange.value,10),
       xRatio: tpl.defaultX,
       yRatio: tpl.defaultY,
@@ -1137,7 +1268,19 @@
       blur: 0,
       grayscale: false,
       shadow: false,
-      glow: false
+      glow: false,
+      shapeType: 'rectangle',
+      shapeColor: '#ff3fa4',
+      shapeColor2: '#8b5cf6',
+      shapeGradient: false,
+      shapeGradientType: 'linear',
+      shapeOutline: false,
+      shapeOutlineColor: '#ffffff',
+      imgRadius: 0,
+      textLetterSpacing: 0,
+      textLineHeightPct: 115,
+      textBg: false,
+      textBgColor: '#000000'
     };
 
     function imgCssFilter(){
@@ -1148,12 +1291,34 @@
       return f;
     }
 
+    function applyShapeStyle(){
+      var div = state.shapeEl;
+      if(!div){ return; }
+      var bg;
+      if(state.shapeGradient){
+        bg = (state.shapeGradientType === 'radial' ? 'radial-gradient(circle, ' : 'linear-gradient(135deg, ') + state.shapeColor + ', ' + state.shapeColor2 + ')';
+      } else {
+        bg = state.shapeColor;
+      }
+      div.style.background = bg;
+      div.style.border = state.shapeOutline ? '3px solid ' + state.shapeOutlineColor : 'none';
+      if(state.shapeType === 'circle'){
+        div.style.width = '100%'; div.style.height = '100%'; div.style.borderRadius = '50%'; div.style.clipPath = 'none';
+      } else if(state.shapeType === 'triangle'){
+        div.style.width = '100%'; div.style.height = '100%'; div.style.borderRadius = '0'; div.style.clipPath = 'polygon(50% 0%,0% 100%,100% 100%)'; div.style.border = 'none';
+      } else if(state.shapeType === 'line'){
+        div.style.width = '100%'; div.style.height = '14%'; div.style.borderRadius = '999px'; div.style.clipPath = 'none';
+      } else {
+        div.style.width = '100%'; div.style.height = '100%'; div.style.borderRadius = '8px'; div.style.clipPath = 'none';
+      }
+    }
+
     function setStatus(text, ok){
       statusMsg.textContent = text;
       statusMsg.classList.toggle('ok', !!ok);
     }
     function applyZonePosition(){
-      var r = stage.getBoundingClientRect();
+      var r = { width: stage.offsetWidth, height: stage.offsetHeight };
       var half = state.size/2;
       var x = state.xRatio * r.width;
       var y = state.yRatio * r.height;
@@ -1174,8 +1339,16 @@
         t.style.fontSize = Math.max(12, state.size * 0.22) + 'px';
         t.style.color = state.textColor;
         t.style.fontWeight = state.textBold ? '700' : '400';
+        t.style.letterSpacing = state.textLetterSpacing + 'px';
+        t.style.lineHeight = (state.textLineHeightPct/100);
+        t.style.background = state.textBg ? state.textBgColor : 'transparent';
+        t.style.padding = state.textBg ? '0.2em 0.5em' : '0';
+        t.style.borderRadius = state.textBg ? '8px' : '0';
       }
-      if(state.logoImg){ state.logoImg.style.filter = imgCssFilter(); }
+      if(state.logoImg){
+        state.logoImg.style.filter = imgCssFilter();
+        state.logoImg.style.borderRadius = state.imgRadius + '%';
+      }
     }
 
     function setMode(newMode){
@@ -1183,11 +1356,14 @@
       typeToggleBtns.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-mode') === newMode); });
       if(imagePanel){ imagePanel.style.display = newMode === 'image' ? '' : 'none'; }
       if(textPanel){ textPanel.style.display = newMode === 'text' ? '' : 'none'; }
-      if(!state.hasContent){ setStatus(newMode === 'image' ? 'Lade zuerst ein Logo hoch.' : 'Gib zuerst einen Text ein.'); }
+      if(shapePanel){ shapePanel.style.display = newMode === 'shape' ? '' : 'none'; }
+      if(newMode === 'shape'){ showShape(); }
+      else if(!state.hasContent){ setStatus(newMode === 'image' ? 'Lade zuerst ein Logo hoch.' : 'Gib zuerst einen Text ein.'); }
     }
     typeToggleBtns.forEach(function(b){
       b.addEventListener('click', function(){ setMode(b.getAttribute('data-mode')); });
     });
+    if(state.mode === 'shape'){ showShape(); }
 
     function showLogo(src){
       dropZone.innerHTML = '';
@@ -1232,6 +1408,22 @@
       setStatus(text ? 'Text platziert – verschiebe & skaliere ihn nach Wunsch.' : 'Gib zuerst einen Text ein.', !!text);
     }
 
+    function showShape(){
+      dropZone.innerHTML = '';
+      var div = document.createElement('div');
+      div.className = 'overlay-shape';
+      div.style.pointerEvents = 'none';
+      dropZone.appendChild(div);
+      dropZone.appendChild(resizeHandle);
+      dropZone.classList.add('has-logo');
+      state.hasContent = true;
+      state.shapeEl = div;
+      applyShapeStyle();
+      applyZoneSize(); applyZonePosition();
+      downloadBtn.disabled = false;
+      setStatus('Form platziert – verschiebe, skaliere & style sie nach Wunsch.', true);
+    }
+
     if(uploadBtn){ uploadBtn.addEventListener('click', function(){ fileInput.click(); }); }
     if(fileInput){
       fileInput.addEventListener('change', function(){
@@ -1252,8 +1444,72 @@
         e.preventDefault();
         if(state.mode === 'image' && fileInput){ fileInput.click(); }
         else if(state.mode === 'text' && textInput){ textInput.focus(); }
+        return;
+      }
+      if(!state.hasContent) return;
+      var stageRect = { width: stage.offsetWidth, height: stage.offsetHeight };
+      var step = 12;
+      if(e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown'){
+        e.preventDefault();
+        var half = state.size/2;
+        var x = state.xRatio * stageRect.width;
+        var y = state.yRatio * stageRect.height;
+        if(e.key === 'ArrowLeft'){ x -= step; }
+        if(e.key === 'ArrowRight'){ x += step; }
+        if(e.key === 'ArrowUp'){ y -= step; }
+        if(e.key === 'ArrowDown'){ y += step; }
+        x = Math.min(Math.max(x, half), Math.max(half, stageRect.width - half));
+        y = Math.min(Math.max(y, half), Math.max(half, stageRect.height - half));
+        state.xRatio = stageRect.width ? x / stageRect.width : 0.5;
+        state.yRatio = stageRect.height ? y / stageRect.height : 0.5;
+        applyZonePosition();
+      } else if(e.key === 'Delete' || e.key === 'Backspace'){
+        e.preventDefault();
+        resetBtn.click();
       }
     });
+
+    alignBtns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        if(!state.hasContent) return;
+        var stageRect = { width: stage.offsetWidth, height: stage.offsetHeight };
+        var half = state.size/2;
+        var align = btn.getAttribute('data-align');
+        var x = state.xRatio * stageRect.width;
+        var y = state.yRatio * stageRect.height;
+        if(align === 'left'){ x = half; }
+        else if(align === 'right'){ x = Math.max(half, stageRect.width - half); }
+        else if(align === 'center-h'){ x = stageRect.width/2; }
+        else if(align === 'top'){ y = half; }
+        else if(align === 'bottom'){ y = Math.max(half, stageRect.height - half); }
+        else if(align === 'center-v'){ y = stageRect.height/2; }
+        state.xRatio = stageRect.width ? x / stageRect.width : 0.5;
+        state.yRatio = stageRect.height ? y / stageRect.height : 0.5;
+        applyZonePosition();
+      });
+    });
+
+    if(gridToggleBtn && gridOverlay){
+      gridToggleBtn.addEventListener('click', function(){
+        var on = gridOverlay.classList.toggle('visible');
+        gridToggleBtn.classList.toggle('active', on);
+      });
+    }
+
+    function setZoom(pct){
+      pct = Math.max(50, Math.min(200, pct));
+      stage.style.transform = 'scale(' + (pct/100) + ')';
+      if(zoomRange){ zoomRange.value = pct; }
+      if(zoomVal){ zoomVal.textContent = pct + '%'; }
+    }
+    if(zoomRange){
+      zoomRange.addEventListener('input', function(){ setZoom(parseInt(zoomRange.value,10)); });
+    }
+    stage.addEventListener('wheel', function(e){
+      e.preventDefault();
+      var current = zoomRange ? parseInt(zoomRange.value,10) : 100;
+      setZoom(current + (e.deltaY < 0 ? 10 : -10));
+    }, { passive:false });
 
     ['dragenter','dragover'].forEach(function(evt){
       stage.addEventListener(evt, function(e){ if(state.mode !== 'image') return; e.preventDefault(); dropZone.classList.add('dragover'); });
@@ -1281,16 +1537,27 @@
       dragOffset.x = e.clientX - rect.left - rect.width/2;
       dragOffset.y = e.clientY - rect.top - rect.height/2;
     });
+    function getZoom(){ return zoomRange ? (parseInt(zoomRange.value,10) || 100) / 100 : 1; }
+
     dropZone.addEventListener('pointermove', function(e){
       if(!dragging) return;
-      var stageRect = stage.getBoundingClientRect();
+      var z = getZoom();
+      var stageScreenRect = stage.getBoundingClientRect();
+      var layoutW = stage.offsetWidth, layoutH = stage.offsetHeight;
       var half = state.size/2;
-      var x = e.clientX - stageRect.left - dragOffset.x;
-      var y = e.clientY - stageRect.top - dragOffset.y;
-      x = Math.min(Math.max(x, half), Math.max(half, stageRect.width - half));
-      y = Math.min(Math.max(y, half), Math.max(half, stageRect.height - half));
-      state.xRatio = x / stageRect.width;
-      state.yRatio = y / stageRect.height;
+      var x = (e.clientX - stageScreenRect.left - dragOffset.x) / z;
+      var y = (e.clientY - stageScreenRect.top - dragOffset.y) / z;
+      x = Math.min(Math.max(x, half), Math.max(half, layoutW - half));
+      y = Math.min(Math.max(y, half), Math.max(half, layoutH - half));
+      var snapPx = 8;
+      var nearCenterX = Math.abs(x - layoutW/2) < snapPx;
+      var nearCenterY = Math.abs(y - layoutH/2) < snapPx;
+      if(nearCenterX){ x = layoutW/2; }
+      if(nearCenterY){ y = layoutH/2; }
+      if(snapGuideV){ snapGuideV.classList.toggle('visible', nearCenterX); }
+      if(snapGuideH){ snapGuideH.classList.toggle('visible', nearCenterY); }
+      state.xRatio = layoutW ? x / layoutW : 0.5;
+      state.yRatio = layoutH ? y / layoutH : 0.5;
       dropZone.style.left = x + 'px';
       dropZone.style.top = y + 'px';
     });
@@ -1298,6 +1565,8 @@
       if(!dragging) return;
       dragging = false;
       dropZone.classList.remove('grabbing');
+      if(snapGuideV){ snapGuideV.classList.remove('visible'); }
+      if(snapGuideH){ snapGuideH.classList.remove('visible'); }
       try{ dropZone.releasePointerCapture(e.pointerId); }catch(err){}
     }
     dropZone.addEventListener('pointerup', endDrag);
@@ -1311,8 +1580,9 @@
     });
     resizeHandle.addEventListener('pointermove', function(e){
       if(!resizing) return;
+      var z = getZoom();
       var zoneRect = dropZone.getBoundingClientRect();
-      var newSize = Math.max(40, Math.min(260, (e.clientX - zoneRect.left)));
+      var newSize = Math.max(40, Math.min(260, (e.clientX - zoneRect.left) / z));
       state.size = newSize;
       sizeRange.value = newSize;
       applyZoneSize();
@@ -1373,6 +1643,9 @@
     bindFilterRange(contrastRange, contrastVal, 'contrast', '%');
     bindFilterRange(saturateRange, saturateVal, 'saturate', '%');
     bindFilterRange(blurRange, blurVal, 'blur', 'px');
+    bindFilterRange(radiusRange, radiusVal, 'imgRadius', '%');
+    bindFilterRange(letterspaceRange, letterspaceVal, 'textLetterSpacing', 'px');
+    bindFilterRange(lineheightRange, lineheightVal, 'textLineHeightPct', '%');
 
     function bindFilterToggle(btnEl, key){
       if(!btnEl) return;
@@ -1385,6 +1658,59 @@
     bindFilterToggle(grayscaleBtn, 'grayscale');
     bindFilterToggle(shadowBtn, 'shadow');
     bindFilterToggle(glowBtn, 'glow');
+    bindFilterToggle(textBgToggleBtn, 'textBg');
+    if(textBgColorInput){
+      textBgColorInput.addEventListener('input', function(){
+        state.textBgColor = textBgColorInput.value;
+        applyZoneSize();
+      });
+    }
+
+    if(shapeTypeSelect){
+      shapeTypeSelect.addEventListener('change', function(){
+        state.shapeType = shapeTypeSelect.value;
+        applyShapeStyle();
+      });
+    }
+    if(shapeColorInput){
+      shapeColorInput.addEventListener('input', function(){
+        state.shapeColor = shapeColorInput.value;
+        applyShapeStyle();
+      });
+    }
+    if(shapeColor2Input){
+      shapeColor2Input.addEventListener('input', function(){
+        state.shapeColor2 = shapeColor2Input.value;
+        applyShapeStyle();
+      });
+    }
+    if(shapeGradientTypeSelect){
+      shapeGradientTypeSelect.addEventListener('change', function(){
+        state.shapeGradientType = shapeGradientTypeSelect.value;
+        applyShapeStyle();
+      });
+    }
+    if(shapeGradientBtn){
+      shapeGradientBtn.addEventListener('click', function(){
+        state.shapeGradient = !state.shapeGradient;
+        shapeGradientBtn.classList.toggle('active', state.shapeGradient);
+        if(shapeGradientRow){ shapeGradientRow.style.display = state.shapeGradient ? '' : 'none'; }
+        applyShapeStyle();
+      });
+    }
+    if(shapeOutlineColorInput){
+      shapeOutlineColorInput.addEventListener('input', function(){
+        state.shapeOutlineColor = shapeOutlineColorInput.value;
+        applyShapeStyle();
+      });
+    }
+    if(shapeOutlineBtn){
+      shapeOutlineBtn.addEventListener('click', function(){
+        state.shapeOutline = !state.shapeOutline;
+        shapeOutlineBtn.classList.toggle('active', state.shapeOutline);
+        applyShapeStyle();
+      });
+    }
 
     window.addEventListener('resize', function(){ if(state.hasContent){ applyZonePosition(); } });
 
@@ -1405,7 +1731,19 @@
       state.grayscale = false;
       state.shadow = false;
       state.glow = false;
-      var r = stage.getBoundingClientRect();
+      state.shapeType = 'rectangle';
+      state.shapeColor = '#ff3fa4';
+      state.shapeColor2 = '#8b5cf6';
+      state.shapeGradient = false;
+      state.shapeGradientType = 'linear';
+      state.shapeOutline = false;
+      state.shapeOutlineColor = '#ffffff';
+      state.imgRadius = 0;
+      state.textLetterSpacing = 0;
+      state.textLineHeightPct = 115;
+      state.textBg = false;
+      state.textBgColor = '#000000';
+      var r = { width: stage.offsetWidth, height: stage.offsetHeight };
       state.size = r.width ? Math.max(40, Math.min(260, Math.round(tpl.defaultSize * r.width))) : 110;
       state.xRatio = tpl.defaultX;
       state.yRatio = tpl.defaultY;
@@ -1427,12 +1765,32 @@
       if(grayscaleBtn){ grayscaleBtn.classList.remove('active'); }
       if(shadowBtn){ shadowBtn.classList.remove('active'); }
       if(glowBtn){ glowBtn.classList.remove('active'); }
+      if(shapeTypeSelect){ shapeTypeSelect.value = 'rectangle'; }
+      if(shapeColorInput){ shapeColorInput.value = '#ff3fa4'; }
+      if(shapeColor2Input){ shapeColor2Input.value = '#8b5cf6'; }
+      if(shapeGradientTypeSelect){ shapeGradientTypeSelect.value = 'linear'; }
+      if(shapeGradientBtn){ shapeGradientBtn.classList.remove('active'); }
+      if(shapeGradientRow){ shapeGradientRow.style.display = 'none'; }
+      if(shapeOutlineColorInput){ shapeOutlineColorInput.value = '#ffffff'; }
+      if(shapeOutlineBtn){ shapeOutlineBtn.classList.remove('active'); }
+      if(radiusRange){ radiusRange.value = 0; }
+      if(radiusVal){ radiusVal.textContent = '0%'; }
+      if(letterspaceRange){ letterspaceRange.value = 0; }
+      if(letterspaceVal){ letterspaceVal.textContent = '0px'; }
+      if(lineheightRange){ lineheightRange.value = 115; }
+      if(lineheightVal){ lineheightVal.textContent = '115%'; }
+      if(textBgColorInput){ textBgColorInput.value = '#000000'; }
+      if(textBgToggleBtn){ textBgToggleBtn.classList.remove('active'); }
       applyZoneSize();
       applyZonePosition();
       if(fileInput){ fileInput.value = ''; }
       if(textInput){ textInput.value = ''; }
-      downloadBtn.disabled = true;
-      setStatus(state.mode === 'image' ? 'Lade zuerst ein Logo hoch.' : 'Gib zuerst einen Text ein.');
+      if(state.mode === 'shape'){
+        showShape();
+      } else {
+        downloadBtn.disabled = true;
+        setStatus(state.mode === 'image' ? 'Lade zuerst ein Logo hoch.' : 'Gib zuerst einen Text ein.');
+      }
     });
 
     /* ---- Download: sauberer Canvas-Export ohne Platzhalter-Rahmen, funktioniert auch mit Video-Hintergrund ---- */
@@ -1472,20 +1830,74 @@
         var scale = Math.min(s/iw, s/ih);
         var dw = iw*scale, dh = ih*scale;
         ctx.filter = imgCssFilter();
-        ctx.drawImage(state.logoImg, -dw/2, -dh/2, dw, dh);
+        if(state.imgRadius > 0){
+          var rx = (dw/2) * (state.imgRadius/100);
+          var ry = (dh/2) * (state.imgRadius/100);
+          ctx.save();
+          ctx.beginPath();
+          if(ctx.roundRect){ ctx.roundRect(-dw/2, -dh/2, dw, dh, Math.min(rx,ry)); }
+          else { ctx.rect(-dw/2, -dh/2, dw, dh); }
+          ctx.clip();
+          ctx.drawImage(state.logoImg, -dw/2, -dh/2, dw, dh);
+          ctx.restore();
+        } else {
+          ctx.drawImage(state.logoImg, -dw/2, -dh/2, dw, dh);
+        }
         ctx.filter = 'none';
       } else if(state.mode === 'text' && state.text){
         var fontSize = state.sizeRatioForExport * EXPORT_W * 0.26;
         var weight = state.textBold ? '700' : '400';
         ctx.font = weight + ' ' + fontSize + 'px Rajdhani, sans-serif';
-        ctx.fillStyle = state.textColor || '#ffffff';
+        if('letterSpacing' in ctx){ ctx.letterSpacing = state.textLetterSpacing + 'px'; }
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10;
         var lines = state.text.split('\n');
-        var lineHeight = fontSize * 1.15;
+        var lineHeight = fontSize * ((state.textLineHeightPct || 115)/100);
         var startY = -(lines.length-1)*lineHeight/2;
+        if(state.textBg){
+          var maxW = 0;
+          lines.forEach(function(line){ maxW = Math.max(maxW, ctx.measureText(line).width); });
+          var padX = fontSize*0.35, padY = fontSize*0.2;
+          var boxW = maxW + padX*2, boxH = lines.length*lineHeight + padY*2;
+          ctx.fillStyle = state.textBgColor;
+          if(ctx.roundRect){ ctx.beginPath(); ctx.roundRect(-boxW/2, startY - lineHeight/2 - padY, boxW, boxH, 10); ctx.fill(); }
+          else { ctx.fillRect(-boxW/2, startY - lineHeight/2 - padY, boxW, boxH); }
+        }
+        ctx.fillStyle = state.textColor || '#ffffff';
+        ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10;
         lines.forEach(function(line, i){ ctx.fillText(line, 0, startY + i*lineHeight); });
         ctx.shadowBlur = 0;
+        if('letterSpacing' in ctx){ ctx.letterSpacing = '0px'; }
+      } else if(state.mode === 'shape'){
+        var shapeSize = state.sizeRatioForExport * EXPORT_W;
+        var half = shapeSize/2;
+        var fillStyle;
+        if(state.shapeGradient){
+          if(state.shapeGradientType === 'radial'){
+            fillStyle = ctx.createRadialGradient(0,0,0,0,0,half);
+          } else {
+            fillStyle = ctx.createLinearGradient(-half,-half,half,half);
+          }
+          fillStyle.addColorStop(0, state.shapeColor);
+          fillStyle.addColorStop(1, state.shapeColor2);
+        } else {
+          fillStyle = state.shapeColor;
+        }
+        ctx.fillStyle = fillStyle;
+        ctx.strokeStyle = state.shapeOutlineColor;
+        ctx.lineWidth = Math.max(2, shapeSize*0.025);
+        ctx.beginPath();
+        if(state.shapeType === 'circle'){
+          ctx.arc(0,0,half,0,Math.PI*2);
+        } else if(state.shapeType === 'triangle'){
+          ctx.moveTo(0,-half); ctx.lineTo(-half,half); ctx.lineTo(half,half); ctx.closePath();
+        } else if(state.shapeType === 'line'){
+          var lh = shapeSize*0.14;
+          ctx.rect(-half, -lh/2, shapeSize, lh);
+        } else {
+          ctx.rect(-half, -half, shapeSize, shapeSize);
+        }
+        ctx.fill();
+        if(state.shapeOutline && state.shapeType !== 'triangle'){ ctx.stroke(); }
       }
       ctx.restore();
     }
@@ -1495,7 +1907,13 @@
       setStatus('Erstelle Vorschau …', true);
       downloadBtn.disabled = true;
 
-      var stageRect = stage.getBoundingClientRect();
+      if(resolutionSelect){
+        var res = resolutionSelect.value.split('x');
+        EXPORT_W = parseInt(res[0],10) || 1280;
+        EXPORT_H = parseInt(res[1],10) || 720;
+      }
+
+      var stageRect = { width: stage.offsetWidth };
       state.sizeRatioForExport = stageRect.width ? state.size / stageRect.width : (tpl.defaultSize || 0.22);
 
       var canvas = document.createElement('canvas');
@@ -1532,7 +1950,7 @@
     setMode(state.mode);
     applyZoneSize();
     requestAnimationFrame(function(){
-      var r = stage.getBoundingClientRect();
+      var r = { width: stage.offsetWidth, height: stage.offsetHeight };
       if(r.width){
         state.size = Math.max(40, Math.min(260, Math.round(tpl.defaultSize * r.width)));
         sizeRange.value = state.size;
