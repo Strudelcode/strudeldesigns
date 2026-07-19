@@ -1195,6 +1195,7 @@
                 '<button type="button" class="filter-toggle-btn grayscale-toggle-btn">S/W</button>' +
                 '<button type="button" class="filter-toggle-btn shadow-toggle-btn">Schatten</button>' +
                 '<button type="button" class="filter-toggle-btn glow-toggle-btn">Glow</button>' +
+                '<input type="color" class="glow-color-input" value="#ff3fa4" title="Glow-Farbe">' +
               '</div>' +
             '</div>' +
           '</div>'
@@ -1425,6 +1426,7 @@
       grayscale: false,
       shadow: false,
       glow: false,
+      glowColor: '#ff3fa4',
       shapeType: 'rectangle',
       shapeColor: '#ff3fa4',
       shapeColor2: '#8b5cf6',
@@ -1439,11 +1441,20 @@
       textBgColor: '#000000'
     };
 
+    function hexToRgba(hex, alpha){
+      var h = String(hex || '#ff3fa4').replace('#','');
+      if(h.length === 3){ h = h.split('').map(function(c){ return c+c; }).join(''); }
+      var r = parseInt(h.substr(0,2),16) || 0;
+      var g = parseInt(h.substr(2,2),16) || 0;
+      var b = parseInt(h.substr(4,2),16) || 0;
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+    }
+
     function imgCssFilter(){
       var f = 'brightness(' + state.brightness + '%) contrast(' + state.contrast + '%) saturate(' + state.saturate + '%) blur(' + state.blur + 'px)';
       if(state.grayscale){ f += ' grayscale(1)'; }
       if(state.shadow){ f += ' drop-shadow(0 4px 10px rgba(0,0,0,0.55))'; }
-      if(state.glow){ f += ' drop-shadow(0 0 12px rgba(255,63,164,0.85))'; }
+      if(state.glow){ f += ' drop-shadow(0 0 12px ' + hexToRgba(state.glowColor, 0.85) + ')'; }
       return f;
     }
 
@@ -1814,6 +1825,13 @@
     bindFilterToggle(grayscaleBtn, 'grayscale');
     bindFilterToggle(shadowBtn, 'shadow');
     bindFilterToggle(glowBtn, 'glow');
+    var glowColorInput = card.querySelector('.glow-color-input');
+    if(glowColorInput){
+      glowColorInput.addEventListener('input', function(){
+        state.glowColor = glowColorInput.value;
+        if(state.glow){ applyZoneSize(); }
+      });
+    }
     bindFilterToggle(textBgToggleBtn, 'textBg');
     if(textBgColorInput){
       textBgColorInput.addEventListener('input', function(){
