@@ -204,7 +204,70 @@
   .team-card p.desc{font-size:13.5px;color:var(--text-1);line-height:1.6;}
 
   /* ---------- Branding-Seite: Vorlagen-Grid mit funktionierendem Customizer ---------- */
-  .grid-templates{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;}
+  .grid-templates{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;}
+
+  /* ---------- Galerie-Karten (Vorlagen-Übersicht) ---------- */
+  .gallery-card{
+    appearance:none;-webkit-appearance:none;font:inherit;color:inherit;text-align:left;
+    padding:0;margin:0;cursor:pointer;display:flex;flex-direction:column;overflow:hidden;
+    transition:transform .18s ease, border-color .18s ease;
+  }
+  .gallery-card:hover{transform:translateY(-4px);border-color:var(--pink);}
+  .gallery-thumb-wrap{position:relative;aspect-ratio:16/9;overflow:hidden;background:#0c0714;flex:0 0 auto;}
+  .gallery-thumb{width:100%;height:100%;object-fit:cover;display:block;}
+  .gallery-thumb-placeholder{
+    width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;
+    padding:10px;background:linear-gradient(135deg,#1a0f2e,#0c0714);color:var(--pink);font-weight:700;font-size:13px;
+  }
+  .gallery-video-badge{
+    position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.65);color:#fff;font-size:11px;
+    font-weight:600;padding:3px 9px;border-radius:999px;pointer-events:none;
+  }
+  .gallery-card-title{padding:12px 14px;font-weight:700;font-size:14px;color:var(--text-0);}
+
+  /* ---------- Editor-Modal (Vollbild-Editor mit fixierter Vorschau) ---------- */
+  .editor-modal{position:fixed;inset:0;z-index:300;display:none;}
+  .editor-modal.open{display:block;}
+  body.modal-open{overflow:hidden;}
+  .editor-modal-backdrop{position:absolute;inset:0;background:rgba(5,2,10,0.82);backdrop-filter:blur(6px);}
+  .editor-modal-panel{
+    position:relative;height:100vh;max-width:1400px;margin:0 auto;display:flex;flex-direction:column;
+    background:#0c0714;
+  }
+  .editor-modal-topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;
+    border-bottom:1px solid var(--glass-border);background:rgba(12,7,20,0.97);flex:0 0 auto;
+  }
+  .editor-modal-title{font-weight:800;font-size:17px;color:var(--text-0);}
+  .editor-modal-close{
+    background:var(--glass-bg);border:1px solid var(--glass-border);color:var(--text-1);
+    width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:15px;flex:0 0 auto;transition:all .18s ease;
+  }
+  .editor-modal-close:hover{background:var(--pink);color:#fff;border-color:var(--pink);}
+  .editor-modal-body{flex:1 1 auto;overflow-y:auto;min-height:0;}
+  .editor-modal-body .template-card{
+    padding:0;gap:0;display:flex;flex-direction:column;background:transparent;border:none;
+    box-shadow:none;backdrop-filter:none;border-radius:0;
+  }
+  .editor-modal-body .template-card > h3{order:0;margin:0;padding:14px 20px 0;font-size:13px;font-weight:700;opacity:0.7;}
+  .editor-modal-body .template-card > .stage{
+    order:-1;position:sticky;top:0;z-index:6;border-radius:0;margin:0;width:100%;
+  }
+  .editor-modal-body .template-card > .template-controls{
+    order:1;max-width:640px;width:100%;margin:0 auto;padding:16px 20px 48px;
+  }
+  @media (min-width:960px){
+    .editor-modal-body{overflow:hidden;}
+    .editor-modal-body .template-card{flex-direction:row;height:100%;}
+    .editor-modal-body .template-card > h3{display:none;}
+    .editor-modal-body .template-card > .stage{
+      position:static;order:0;flex:1 1 60%;align-self:center;margin:28px;border-radius:16px;max-width:920px;
+    }
+    .editor-modal-body .template-card > .template-controls{
+      order:1;flex:0 0 380px;max-width:380px;height:100%;overflow-y:auto;
+      padding:20px 20px 48px;border-left:1px solid var(--glass-border);margin:0;
+    }
+  }
   .template-card{padding:22px;display:flex;flex-direction:column;gap:14px;}
   .template-card h3{font-size:19px;}
 
@@ -569,6 +632,17 @@
         <p>Wähle eine Vorlage, lade dein eigenes Logo hoch und positioniere es frei. Danach kannst du die Vorschau direkt herunterladen.</p>
       </div>
       <div class="grid-templates" id="templatesContainer"></div>
+    </div>
+  </div>
+
+  <div class="editor-modal" id="editorModal">
+    <div class="editor-modal-backdrop" id="editorModalBackdrop"></div>
+    <div class="editor-modal-panel">
+      <div class="editor-modal-topbar">
+        <span class="editor-modal-title" id="editorModalTitle"></span>
+        <button type="button" class="editor-modal-close" id="editorModalCloseBtn" aria-label="Editor schließen">✕</button>
+      </div>
+      <div class="editor-modal-body" id="editorModalBody"></div>
     </div>
   </div>
 
@@ -1013,6 +1087,11 @@
      5) CUSTOMIZER-FABRIK: jede Vorlage bekommt ihre eigene Instanz
      ============================================================ */
   var templatesContainer = document.getElementById('templatesContainer');
+  var editorModal = document.getElementById('editorModal');
+  var editorModalBackdrop = document.getElementById('editorModalBackdrop');
+  var editorModalBody = document.getElementById('editorModalBody');
+  var editorModalTitle = document.getElementById('editorModalTitle');
+  var editorModalCloseBtn = document.getElementById('editorModalCloseBtn');
 
   function renderTemplates(){
     templatesContainer.innerHTML = '';
@@ -1022,6 +1101,49 @@
     }
     data.templates.forEach(function(tpl){
       normalizeTemplate(tpl);
+      templatesContainer.appendChild(buildGalleryCard(tpl));
+    });
+  }
+
+  function buildGalleryCard(tpl){
+    var g = document.createElement('button');
+    g.type = 'button';
+    g.className = 'gallery-card glass';
+    var thumbHtml;
+    if(tpl.asset && tpl.assetType === 'video'){
+      thumbHtml = '<video class="gallery-thumb" src="' + tpl.asset + '" autoplay muted loop playsinline></video>' +
+                  '<span class="gallery-video-badge">▶ Video</span>';
+    } else if(tpl.asset){
+      thumbHtml = '<img class="gallery-thumb" src="' + tpl.asset + '" alt="" loading="lazy">';
+    } else {
+      thumbHtml = '<div class="gallery-thumb gallery-thumb-placeholder"><span>' + escapeHtml(tpl.placeholder || tpl.name) + '</span></div>';
+    }
+    g.innerHTML =
+      '<div class="gallery-thumb-wrap">' + thumbHtml + '</div>' +
+      '<div class="gallery-card-title">' + escapeHtml(tpl.name) + '</div>';
+    g.addEventListener('click', function(){ openEditorModal(tpl); });
+    return g;
+  }
+
+  function openEditorModal(tpl){
+    editorModalBody.innerHTML = '';
+    editorModalTitle.textContent = tpl.name;
+    editorModalBody.appendChild(buildEditorCard(tpl));
+    editorModal.classList.add('open');
+    document.body.classList.add('modal-open');
+  }
+  function closeEditorModal(){
+    editorModal.classList.remove('open');
+    editorModalBody.innerHTML = '';
+    document.body.classList.remove('modal-open');
+  }
+  editorModalCloseBtn.addEventListener('click', closeEditorModal);
+  editorModalBackdrop.addEventListener('click', closeEditorModal);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && editorModal.classList.contains('open')){ closeEditorModal(); }
+  });
+
+  function buildEditorCard(tpl){
       var card = document.createElement('div');
       card.className = 'template-card glass';
 
@@ -1146,6 +1268,7 @@
           '<div class="control-row"><div class="control-row-label"><span>Drehen</span><span class="val rotate-val">0°</span></div><input type="range" class="rotate-range" min="0" max="360" value="0"></div>' +
           '<div class="control-row"><div class="control-row-label"><span>Transparenz</span><span class="val opacity-val">100%</span></div><input type="range" class="opacity-range" min="10" max="100" value="100"></div>' +
           '<select class="resolution-select export-format-select">' +
+            '<option value="native" class="native-res-option" disabled>Original-Auflösung (wird erkannt …)</option>' +
             '<optgroup label="Allgemein">' +
               '<option value="1280x720">Standard (1280×720)</option>' +
               '<option value="1920x1080">Full HD (1920×1080)</option>' +
@@ -1182,9 +1305,8 @@
           '<p class="status-msg-mini">' + (tpl.allowImage ? 'Lade zuerst ein Logo hoch.' : 'Gib zuerst einen Text ein.') + '</p>' +
         '</div>';
 
-      templatesContainer.appendChild(card);
       initCustomizer(card, tpl);
-    });
+      return card;
   }
 
   function initCustomizer(card, tpl){
@@ -1203,6 +1325,7 @@
     var textPanel = card.querySelector('.mode-panel[data-mode="text"]');
     var shapePanel = card.querySelector('.mode-panel[data-mode="shape"]');
     var bgVideoEl = card.querySelector('video.stage-bg');
+    var bgImgEl = card.querySelector('img.stage-bg');
     var rotateRange = card.querySelector('.rotate-range');
     var rotateVal = card.querySelector('.rotate-val');
     var opacityRange = card.querySelector('.opacity-range');
@@ -1222,6 +1345,24 @@
     var shadowBtn = card.querySelector('.shadow-toggle-btn');
     var glowBtn = card.querySelector('.glow-toggle-btn');
     var resolutionSelect = card.querySelector('.resolution-select');
+    var nativeAssetW = null, nativeAssetH = null;
+    function applyNativeRes(w, h){
+      if(!w || !h) return;
+      nativeAssetW = w; nativeAssetH = h;
+      var opt = resolutionSelect ? resolutionSelect.querySelector('.native-res-option') : null;
+      if(opt){
+        opt.disabled = false;
+        opt.textContent = 'Original-Auflösung (' + w + '×' + h + ')';
+        resolutionSelect.value = 'native';
+      }
+    }
+    if(bgImgEl){
+      if(bgImgEl.complete && bgImgEl.naturalWidth){ applyNativeRes(bgImgEl.naturalWidth, bgImgEl.naturalHeight); }
+      else { bgImgEl.addEventListener('load', function(){ applyNativeRes(bgImgEl.naturalWidth, bgImgEl.naturalHeight); }); }
+    }
+    if(bgVideoEl){
+      bgVideoEl.addEventListener('loadedmetadata', function(){ applyNativeRes(bgVideoEl.videoWidth, bgVideoEl.videoHeight); });
+    }
     var shapeTypeSelect = card.querySelector('.shape-type-select');
     var shapeColorInput = card.querySelector('.shape-color-input');
     var shapeGradientBtn = card.querySelector('.shape-gradient-btn');
@@ -1908,9 +2049,13 @@
       downloadBtn.disabled = true;
 
       if(resolutionSelect){
-        var res = resolutionSelect.value.split('x');
-        EXPORT_W = parseInt(res[0],10) || 1280;
-        EXPORT_H = parseInt(res[1],10) || 720;
+        if(resolutionSelect.value === 'native' && nativeAssetW && nativeAssetH){
+          EXPORT_W = nativeAssetW; EXPORT_H = nativeAssetH;
+        } else {
+          var res = resolutionSelect.value.split('x');
+          EXPORT_W = parseInt(res[0],10) || 1280;
+          EXPORT_H = parseInt(res[1],10) || 720;
+        }
       }
 
       var stageRect = { width: stage.offsetWidth };
