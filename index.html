@@ -826,6 +826,7 @@
         <div>
           <label for="ghAdminPassword">Admin-Passwort (im Worker festgelegt)</label>
           <input type="password" id="ghAdminPassword" placeholder="Dein selbst gewähltes Passwort" autocomplete="off">
+          <p class="admin-form-hint" style="margin-top:4px;">Wird nicht gespeichert – nach jedem Veröffentlichen musst du es neu eingeben.</p>
         </div>
         <div class="btn-row-mini" style="margin-top:4px;">
           <button class="admin-add-btn" id="ghLoadBtn" type="button">Von GitHub laden</button>
@@ -2527,23 +2528,27 @@
       ghBranchInput.value = s.branch || 'main';
       ghPathInput.value = s.path || 'data.json';
       ghWorkerUrlInput.value = s.workerUrl || '';
-      ghAdminPasswordInput.value = s.password || '';
+      // Das Admin-Passwort wird bewusst NICHT gespeichert/wiederhergestellt –
+      // es muss bei jedem Veröffentlichen neu eingetippt werden (mehr Sicherheit statt Komfort).
     }catch(e){ /* ignorieren, leere Felder verwenden */ }
   }
   function saveGhSettings(){
-    var s = {
+    var persisted = {
       owner: ghOwnerInput.value.trim(),
       repo: ghRepoInput.value.trim(),
       branch: ghBranchInput.value.trim() || 'main',
       path: ghPathInput.value.trim() || 'data.json',
-      workerUrl: ghWorkerUrlInput.value.trim().replace(/\/+$/,''),
-      password: ghAdminPasswordInput.value
+      workerUrl: ghWorkerUrlInput.value.trim().replace(/\/+$/,'')
     };
-    localStorage.setItem(GH_SETTINGS_KEY, JSON.stringify(s));
+    localStorage.setItem(GH_SETTINGS_KEY, JSON.stringify(persisted));
+    // Passwort nur zur Laufzeit zurückgeben, nie in localStorage schreiben.
+    var s = {};
+    for(var k in persisted){ s[k] = persisted[k]; }
+    s.password = ghAdminPasswordInput.value;
     return s;
   }
   loadGhSettings();
-  [ghOwnerInput, ghRepoInput, ghBranchInput, ghPathInput, ghWorkerUrlInput, ghAdminPasswordInput].forEach(function(inp){
+  [ghOwnerInput, ghRepoInput, ghBranchInput, ghPathInput, ghWorkerUrlInput].forEach(function(inp){
     inp.addEventListener('change', saveGhSettings);
   });
 
@@ -2647,7 +2652,7 @@
           setGhStatus('Veröffentlichen fehlgeschlagen' + (err && err.message ? (': ' + err.message) : '.'));
         }
       })
-      .finally(function(){ ghPublishBtn.disabled = false; });
+      .finally(function(){ ghPublishBtn.disabled = false; ghAdminPasswordInput.value = ''; });
   });
 
   /* ============================================================
