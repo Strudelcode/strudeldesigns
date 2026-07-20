@@ -1153,34 +1153,32 @@
     reader.readAsDataURL(file);
   }
 
-  /* Video: liefert eine lokale Vorschau (blob:-URL, kostet keinen localStorage-Speicher) sofort zurück
-     und liest parallel die Rohdatei als Base64 für den späteren echten GitHub-Upload beim Veröffentlichen. */
-  function loadVideoForGithubUpload(file, cb){
+  /* Bild ODER Video: liefert eine lokale Vorschau (blob:-URL, kostet keinen localStorage-Speicher) sofort
+     zurück und liest parallel die Rohdatei als Base64 für den späteren echten GitHub-Upload beim
+     Veröffentlichen. Die Datei wird NICHT verändert – Originalauflösung und -format bleiben erhalten. */
+  function loadMediaForGithubUpload(file, assetType, cb){
     if(file.size > MAX_GITHUB_ASSET_BYTES){
-      cb(null, null, 'Video zu groß (' + Math.round(file.size/1024/1024*10)/10 + ' MB) – bitte max. ' + Math.round(MAX_GITHUB_ASSET_BYTES/1024/1024) + ' MB.', null);
+      cb(null, null, 'Datei zu groß (' + Math.round(file.size/1024/1024*10)/10 + ' MB) – bitte max. ' + Math.round(MAX_GITHUB_ASSET_BYTES/1024/1024) + ' MB.', null);
       return;
     }
     var previewUrl = URL.createObjectURL(file);
     readFileAsBase64(file, function(base64, err){
       if(err){ cb(null, null, err, null); return; }
-      var ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g,'') || 'mp4';
-      cb(previewUrl, 'video', null, { base64: base64, ext: ext });
+      var fallbackExt = assetType === 'video' ? 'mp4' : 'png';
+      var ext = (file.name.split('.').pop() || fallbackExt).toLowerCase().replace(/[^a-z0-9]/g,'') || fallbackExt;
+      cb(previewUrl, assetType, null, { base64: base64, ext: ext, assetType: assetType });
     });
   }
 
   /* Lädt eine Hintergrund-Datei (Bild ODER Video) und liefert (previewUrl, assetType, err, pendingUpload) zurück.
-     Bei Bildern ist pendingUpload immer null (die komprimierte Data-URL wird direkt eingebettet).
-     Bei Videos enthält pendingUpload {base64, ext} – das muss beim Veröffentlichen erst noch echt
-     auf GitHub hochgeladen werden (siehe uploadPendingAssets). */
+     pendingUpload enthält immer {base64, ext, assetType} – die Datei wird unverändert (Originalauflösung
+     und -format) beim Veröffentlichen echt auf GitHub hochgeladen (siehe uploadPendingAssets). */
   function loadTemplateAsset(file, cb){
     if(!file){ cb(null, null, null, null); return; }
     if(/^video\//.test(file.type)){
-      loadVideoForGithubUpload(file, cb);
+      loadMediaForGithubUpload(file, 'video', cb);
     } else if(/^image\//.test(file.type)){
-      compressImage(file, 1920, function(dataUrl){
-        if(!dataUrl){ cb(null, null, 'Bild konnte nicht verarbeitet werden.', null); return; }
-        cb(dataUrl, 'image', null, null);
-      });
+      loadMediaForGithubUpload(file, 'image', cb);
     } else {
       cb(null, null, 'Nicht unterstütztes Dateiformat.', null);
     }
@@ -1379,10 +1377,16 @@
   var designLightboxCloseBtn = document.getElementById('designLightboxCloseBtn');
 
   function designDownloadFilename(d){
-    var ext = 'png';
-    if(d.assetType === 'video'){ ext = 'mp4'; }
-    else if(/^data:image\/webp/.test(d.asset || '')){ ext = 'webp'; }
-    else if(/^data:image\/jpeg/.test(d.asset || '')){ ext = 'jpg'; }
+    var ext = d.assetType === 'video' ? 'mp4' : 'png';
+    var asset = d.asset || '';
+    if(/^data:image\/webp/.test(asset)){ ext = 'webp'; }
+    else if(/^data:image\/jpeg/.test(asset)){ ext = 'jpg'; }
+    else {
+      /* Echte GitHub-Datei (z. B. "designs/foo-bar.png") oder blob:-Vorschau: Endung aus dem
+         Original-Dateinamen übernehmen, damit der Download im Originalformat erfolgt. */
+      var m = /\.([a-z0-9]+)(?:\?.*)?$/i.exec(asset.split('#')[0]);
+      if(m){ ext = m[1].toLowerCase(); }
+    }
     return slugify(d.title) + '.' + ext;
   }
 
@@ -2844,9 +2848,7 @@
             tpl.asset = dataUrl;
             tpl.assetType = assetType;
             registerPendingAssetUpload('template', tpl.id, pendingUpload, tpl.name);
-            setStatus(assetType === 'video'
-              ? 'Video ausgewählt – wird beim Veröffentlichen auf GitHub hochgeladen.'
-              : 'Hintergrund aktualisiert – noch nicht gespeichert.');
+            setStatus((assetType === 'video' ? 'Video' : 'Bild') + ' ausgewählt – wird beim Veröffentlichen auf GitHub hochgeladen.');
             renderAdminLists();
           });
         });
@@ -2931,9 +2933,7 @@
             d.asset = dataUrl;
             d.assetType = assetType;
             registerPendingAssetUpload('design', d.id, pendingUpload, d.title);
-            setStatus(assetType === 'video'
-              ? 'Video ausgewählt – wird beim Veröffentlichen auf GitHub hochgeladen.'
-              : 'Datei aktualisiert – noch nicht gespeichert.');
+            setStatus((assetType === 'video' ? 'Video' : 'Bild') + ' ausgewählt – wird beim Veröffentlichen auf GitHub hochgeladen.');
             renderAdminLists();
           });
         });
@@ -3010,7 +3010,7 @@
      Videos werden nicht mehr als Base64 in data.json eingebettet, sondern als
      "pending" gemerkt (Vorschau via blob:-URL) und erst beim Klick auf
      "Auf GitHub veröffentlichen" als echte Datei committet. */
-  var pendingAssetUploads = []; // { targetKind:'template'|'design', targetId, base64, ext, label }
+  var pendingAssetUploads = []; // { targetKind:'template'|'design', targetId, base64, ext, assetType, label }
   function registerPendingAssetUpload(targetKind, targetId, pendingUpload, label){
     pendingAssetUploads = pendingAssetUploads.filter(function(p){
       return !(p.targetKind === targetKind && p.targetId === targetId);
@@ -3018,7 +3018,8 @@
     if(pendingUpload){
       pendingAssetUploads.push({
         targetKind: targetKind, targetId: targetId,
-        base64: pendingUpload.base64, ext: pendingUpload.ext, label: label
+        base64: pendingUpload.base64, ext: pendingUpload.ext,
+        assetType: pendingUpload.assetType, label: label
       });
     }
   }
@@ -3052,7 +3053,7 @@
       pendingTemplateAssetType = assetType;
       pendingTemplateAssetUpload = pendingUpload;
       newTemplateAssetName.textContent = 'Ausgewählt: ' + file.name +
-        (assetType === 'video' ? ' (Video – wird beim Veröffentlichen auf GitHub hochgeladen)' : '');
+        ' (wird beim Veröffentlichen im Original auf GitHub hochgeladen)';
     });
   });
 
@@ -3109,7 +3110,7 @@
       pendingDesignAssetType = assetType;
       pendingDesignAssetUpload = pendingUpload;
       newDesignAssetName.textContent = 'Ausgewählt: ' + file.name +
-        (assetType === 'video' ? ' (Video – wird beim Veröffentlichen auf GitHub hochgeladen)' : '');
+        ' (wird beim Veröffentlichen im Original auf GitHub hochgeladen)';
     });
   });
 
@@ -3295,9 +3296,9 @@
       });
   });
 
-  /* Lädt ausstehende Video-Uploads (siehe pendingAssetUploads) nacheinander als echte
-     Dateien auf GitHub hoch (Git-Data-API im Worker) und trägt danach den finalen
-     relativen Pfad (z. B. "designs/xyz.mp4") in data.templates/data.designs ein.
+  /* Lädt ausstehende Datei-Uploads (Bild ODER Video, siehe pendingAssetUploads) nacheinander als
+     echte Dateien auf GitHub hoch (Git-Data-API im Worker) und trägt danach den finalen
+     relativen Pfad (z. B. "designs/xyz.png" oder "designs/xyz.mp4") in data.templates/data.designs ein.
      Läuft NACHEINANDER, nicht parallel, weil jeder Upload einen eigenen Commit auf
      denselben Branch schreibt – gleichzeitige Commits würden sich gegenseitig blockieren. */
   function uploadPendingAssets(workerUrl, password, cb){
@@ -3337,7 +3338,7 @@
           if(target){
             if(target.asset && target.asset.indexOf('blob:') === 0){ URL.revokeObjectURL(target.asset); }
             target.asset = body.path;
-            target.assetType = 'video';
+            target.assetType = item.assetType || 'image';
           }
           pendingAssetUploads = pendingAssetUploads.filter(function(p){ return p !== item; });
           next();
