@@ -3276,6 +3276,7 @@
     .then(function(parsed){
       if(parsed && Array.isArray(parsed.members) && Array.isArray(parsed.news) && Array.isArray(parsed.templates)){
         parsed.templates.forEach(normalizeTemplate);
+        normalizeRootData(parsed);
         data = parsed;
         lastSyncedSnapshot = JSON.stringify(data);
         renderPublic();
