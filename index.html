@@ -1139,7 +1139,20 @@
     reader.readAsDataURL(file);
   }
 
-  var MAX_VIDEO_BYTES = 4 * 1024 * 1024; // 4 MB – localStorage & GitHub-Sync bleiben sonst zu groß
+  var MAX_VIDEO_BYTES = 4 * 1024 * 1024; // 4 MB – lokal (ohne GitHub), damit localStorage nicht gesprengt wird
+  var MAX_GITHUB_ASSET_BYTES = 20 * 1024 * 1024; // 20 MB – Dateien, die als echte Datei auf GitHub hochgeladen werden
+
+  /* Liest eine Datei als reinen Base64-String (ohne "data:...;base64," Präfix) – für den GitHub-Upload */
+  function readFileAsBase64(file, cb){
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var result = e.target.result || '';
+      var idx = result.indexOf(',');
+      cb(idx !== -1 ? result.slice(idx + 1) : result, null);
+    };
+    reader.onerror = function(){ cb(null, 'Datei konnte nicht gelesen werden.'); };
+    reader.readAsDataURL(file);
+  }
 
   function readVideoAsDataURL(file, cb){
     if(file.size > MAX_VIDEO_BYTES){
