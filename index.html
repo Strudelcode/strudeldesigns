@@ -251,7 +251,7 @@
     box-shadow:none;backdrop-filter:none;border-radius:0;max-width:none;
   }
   .editor-modal-body .template-card > h3{order:0;margin:0;padding:14px 20px 0;font-size:13px;font-weight:700;opacity:0.7;}
-  .editor-modal-body .template-card > .stage{
+  .editor-modal-body .template-card > .stage-viewport{
     order:-1;position:sticky;top:0;z-index:6;border-radius:0;margin:0;width:100%;
   }
   .editor-modal-body .template-card > .template-controls{
@@ -261,7 +261,7 @@
     .editor-modal-body{overflow:hidden;}
     .editor-modal-body .template-card{flex-direction:row;height:100%;}
     .editor-modal-body .template-card > h3{display:none;}
-    .editor-modal-body .template-card > .stage{
+    .editor-modal-body .template-card > .stage-viewport{
       position:static;order:0;flex:0 1 auto;align-self:center;margin:28px;border-radius:16px;
       width:min(100%, 560px);max-width:560px;
     }
@@ -281,6 +281,8 @@
       linear-gradient(135deg,#1a0f2e,#0c0714 70%);
     border:1px solid var(--glass-border);touch-action:none;cursor:default;user-select:none;
   }
+  .stage-viewport{overflow:hidden;border-radius:14px;aspect-ratio:16/9;}
+  .stage-viewport .stage{width:100%;height:100%;aspect-ratio:auto;border-radius:0;}
   .stage-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
   video.stage-bg{background:#000;}
   .drop-zone .overlay-text{
@@ -335,6 +337,7 @@
   .align-btn{
     flex:1;background:var(--glass-bg);border:1px solid var(--glass-border);color:var(--text-1);
     font-size:15px;padding:6px 4px;border-radius:8px;cursor:pointer;transition:all .18s ease;line-height:1;
+    display:flex;align-items:center;justify-content:center;
   }
   .align-btn:hover{background:var(--pink);color:#fff;border-color:var(--pink);}
   .align-icon{width:14px;height:14px;object-fit:contain;filter:brightness(0) invert(1);opacity:0.85;}
@@ -1271,6 +1274,7 @@
 
       card.innerHTML =
         '<h3>' + escapeHtml(tpl.name) + '</h3>' +
+        '<div class="stage-viewport">' +
         '<div class="stage">' +
           bgHtml +
           '<div class="stage-noise"></div><div class="stage-scan"></div>' +
@@ -1281,6 +1285,7 @@
             '<p>' + (tpl.allowImage ? 'Logo hier ablegen oder klicken' : 'Klicken für eigenen Text') + '</p>' +
             '<div class="resize-handle"></div>' +
           '</div>' +
+        '</div>' +
         '</div>' +
         '<div class="template-controls">' +
           toggleHtml + imagePanelHtml + textPanelHtml + shapePanelHtml +
@@ -1549,8 +1554,21 @@
       if(imagePanel){ imagePanel.style.display = newMode === 'image' ? '' : 'none'; }
       if(textPanel){ textPanel.style.display = newMode === 'text' ? '' : 'none'; }
       if(shapePanel){ shapePanel.style.display = newMode === 'shape' ? '' : 'none'; }
-      if(newMode === 'shape'){ showShape(); }
-      else if(!state.hasContent){ setStatus(newMode === 'image' ? 'Lade zuerst ein Logo hoch.' : 'Gib zuerst einen Text ein.'); }
+      if(newMode === 'shape'){
+        showShape();
+      } else if(newMode === 'text'){
+        showText(state.text || '');
+      } else if(newMode === 'image'){
+        if(state.logoImg){
+          showLogo(state.logoImg.src);
+        } else {
+          dropZone.innerHTML = defaultZoneHtml;
+          dropZone.classList.remove('has-logo');
+          state.hasContent = false;
+          downloadBtn.disabled = true;
+          setStatus('Lade zuerst ein Logo hoch.');
+        }
+      }
     }
     typeToggleBtns.forEach(function(b){
       b.addEventListener('click', function(){ setMode(b.getAttribute('data-mode')); });
