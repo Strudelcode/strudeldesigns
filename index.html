@@ -247,6 +247,7 @@
   .design-lightbox-body p{color:var(--text-1);font-size:14px;line-height:1.6;margin-bottom:14px;}
   .design-lightbox-tags{display:flex;flex-wrap:wrap;gap:6px;}
   .design-lightbox-tags span{background:rgba(255,63,164,0.14);color:#ff9fce;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;}
+  .design-lightbox-date{color:var(--text-2);font-size:12px;}
   .design-lightbox-close{
     position:absolute;top:14px;right:14px;z-index:2;background:rgba(5,3,9,0.6);color:#fff;
     width:34px;height:34px;border-radius:50%;font-size:18px;line-height:1;border:1px solid rgba(255,255,255,0.15);
@@ -898,6 +899,10 @@
           </div>
         </div>
         <div>
+          <label for="newDesignDate">Veröffentlichungsdatum</label>
+          <input type="text" id="newDesignDate" placeholder="z. B. 20. Juli 2026 – leer lassen für heute">
+        </div>
+        <div>
           <label>Datei (Bild oder Video)</label>
           <div class="admin-file-row">
             <label class="admin-mini-upload">
@@ -989,8 +994,12 @@
     <div class="design-lightbox-media" id="designLightboxMedia"></div>
     <div class="design-lightbox-body">
       <h3 id="designLightboxTitle"></h3>
+      <div class="design-lightbox-date" id="designLightboxDate" style="margin-bottom:10px;"></div>
       <p id="designLightboxDescription"></p>
       <div class="design-lightbox-tags" id="designLightboxTags"></div>
+      <div class="btn-row-mini" style="margin-top:16px;">
+        <a class="btn-download-mini" id="designLightboxDownload" href="#" download style="flex:1;text-align:center;">Herunterladen</a>
+      </div>
     </div>
   </div>
 </div>
@@ -1268,6 +1277,7 @@
     if(!Array.isArray(d.categories)){ d.categories = []; }
     if(d.assetType === undefined){ d.assetType = d.asset ? 'image' : null; }
     if(typeof d.description !== 'string'){ d.description = ''; }
+    if(typeof d.date !== 'string'){ d.date = ''; }
     return d;
   }
 
@@ -1346,9 +1356,19 @@
   var designLightboxOverlay = document.getElementById('designLightboxOverlay');
   var designLightboxMedia = document.getElementById('designLightboxMedia');
   var designLightboxTitle = document.getElementById('designLightboxTitle');
+  var designLightboxDate = document.getElementById('designLightboxDate');
   var designLightboxDescription = document.getElementById('designLightboxDescription');
   var designLightboxTags = document.getElementById('designLightboxTags');
+  var designLightboxDownload = document.getElementById('designLightboxDownload');
   var designLightboxCloseBtn = document.getElementById('designLightboxCloseBtn');
+
+  function designDownloadFilename(d){
+    var ext = 'png';
+    if(d.assetType === 'video'){ ext = 'mp4'; }
+    else if(/^data:image\/webp/.test(d.asset || '')){ ext = 'webp'; }
+    else if(/^data:image\/jpeg/.test(d.asset || '')){ ext = 'jpg'; }
+    return slugify(d.title) + '.' + ext;
+  }
 
   function openDesignLightbox(d){
     designLightboxMedia.innerHTML = d.asset
@@ -1357,9 +1377,19 @@
           : '<img src="' + d.asset + '" alt="' + escapeHtml(d.title) + '">')
       : '';
     designLightboxTitle.textContent = d.title;
+    designLightboxDate.textContent = d.date ? ('Veröffentlicht: ' + d.date) : '';
+    designLightboxDate.style.display = d.date ? '' : 'none';
     designLightboxDescription.textContent = d.description || '';
     designLightboxDescription.style.display = d.description ? '' : 'none';
     designLightboxTags.innerHTML = d.categories.map(function(c){ return '<span>' + escapeHtml(c) + '</span>'; }).join('');
+    if(d.asset){
+      designLightboxDownload.href = d.asset;
+      designLightboxDownload.setAttribute('download', designDownloadFilename(d));
+      designLightboxDownload.style.display = '';
+    } else {
+      designLightboxDownload.removeAttribute('href');
+      designLightboxDownload.style.display = 'none';
+    }
     designLightboxOverlay.classList.remove('hidden');
   }
   function closeDesignLightbox(){
@@ -2829,6 +2859,7 @@
               '<div><label>Titel</label><input type="text" class="edit-design-title" value="' + escapeHtml(d.title) + '"></div>' +
               '<div><label>Beschreibung</label><input type="text" class="edit-design-description" value="' + escapeHtml(d.description || '') + '"></div>' +
             '</div>' +
+            '<div><label>Veröffentlichungsdatum</label><input type="text" class="edit-design-date" value="' + escapeHtml(d.date || '') + '"></div>' +
             '<div><label>Kategorien / Tags</label><div class="admin-checkbox-row edit-design-tags">' +
               data.designCategories.map(function(cat){
                 var checked = d.categories.indexOf(cat) !== -1 ? ' checked' : '';
@@ -2849,6 +2880,7 @@
           if(!title){ setStatus('Bitte einen Titel angeben.'); return; }
           d.title = title;
           d.description = row.querySelector('.edit-design-description').value.trim();
+          d.date = row.querySelector('.edit-design-date').value.trim();
           d.categories = Array.prototype.map.call(
             row.querySelectorAll('.edit-design-tags input:checked'),
             function(cb){ return cb.value; }
@@ -2859,6 +2891,7 @@
         });
       } else {
         var metaText = (d.asset ? ('Datei ✓ (' + (d.assetType === 'video' ? 'Video' : 'Bild') + ')') : 'Keine Datei') +
+          (d.date ? ' · ' + d.date : '') +
           (d.categories.length ? ' · ' + d.categories.join(', ') : '');
         row.className = 'admin-list-item';
         row.innerHTML =
@@ -3038,19 +3071,21 @@
   document.getElementById('addDesignBtn').addEventListener('click', function(){
     var titleInput = document.getElementById('newDesignTitle');
     var descriptionInput = document.getElementById('newDesignDescription');
+    var dateInput = document.getElementById('newDesignDate');
     var title = titleInput.value.trim();
     if(!title){ setStatus('Bitte einen Titel angeben.'); titleInput.focus(); return; }
     var description = descriptionInput.value.trim();
+    var date = dateInput.value.trim() || todayGerman();
     var categories = Array.prototype.map.call(
       newDesignTagsRow.querySelectorAll('input:checked'),
       function(cb){ return cb.value; }
     );
     data.designs.push({
-      id: makeId('d'), title: title, description: description,
+      id: makeId('d'), title: title, description: description, date: date,
       asset: pendingDesignAsset, assetType: pendingDesignAssetType,
       categories: categories
     });
-    titleInput.value = ''; descriptionInput.value = ''; newDesignAssetInput.value = '';
+    titleInput.value = ''; descriptionInput.value = ''; dateInput.value = ''; newDesignAssetInput.value = '';
     pendingDesignAsset = null; pendingDesignAssetType = null;
     newDesignAssetName.textContent = 'Keine Datei ausgewählt.';
     renderAdminLists();
