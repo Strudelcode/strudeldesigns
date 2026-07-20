@@ -283,6 +283,19 @@
   }
   .stage-viewport{overflow:hidden;border-radius:14px;aspect-ratio:16/9;}
   .stage-viewport .stage{width:100%;height:100%;aspect-ratio:auto;border-radius:0;}
+
+  .watermark-layer{
+    position:absolute;pointer-events:none;user-select:none;z-index:5;object-fit:contain;
+  }
+  .watermark-layer.wm-top-left{top:4%;left:4%;}
+  .watermark-layer.wm-top-center{top:4%;left:50%;transform:translateX(-50%);}
+  .watermark-layer.wm-top-right{top:4%;right:4%;}
+  .watermark-layer.wm-center-left{top:50%;left:4%;transform:translateY(-50%);}
+  .watermark-layer.wm-center{top:50%;left:50%;transform:translate(-50%,-50%);}
+  .watermark-layer.wm-center-right{top:50%;right:4%;transform:translateY(-50%);}
+  .watermark-layer.wm-bottom-left{bottom:4%;left:4%;}
+  .watermark-layer.wm-bottom-center{bottom:4%;left:50%;transform:translateX(-50%);}
+  .watermark-layer.wm-bottom-right{bottom:4%;right:4%;}
   .stage-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
   video.stage-bg{background:#000;}
   .drop-zone .overlay-text{
@@ -579,6 +592,7 @@
     <ul class="nav-links" id="navLinks">
       <li><a href="#home" data-nav="home">Start</a></li>
       <li><a href="#news" data-nav="news">News</a></li>
+      <li><a href="#designs" data-nav="designs">Designs</a></li>
       <li><a href="#branding" data-nav="branding">Eigenes Branding</a></li>
       <li><a class="nav-cta" href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener">Discord</a></li>
     </ul>
@@ -674,6 +688,26 @@
     </div>
   </div>
 
+  <!-- ================= DESIGNS-GALERIE ================= -->
+  <div class="page" id="page-designs" hidden>
+    <div class="wrap page-header">
+      <a href="#home" class="back-link">
+        <img src="assets/ic_back.png" alt="" class="back-link-icon">
+        Zur Startseite
+      </a>
+      <div class="section-head" style="margin-bottom:36px;">
+        <div class="eyebrow" style="justify-content:center;display:flex;">Portfolio</div>
+        <h2>Unsere Designs</h2>
+        <p>Eine Auswahl an Arbeiten, die wir selbst umgesetzt haben.</p>
+      </div>
+      <div class="designs-toolbar">
+        <input type="text" id="designSearchInput" class="designs-search-input" placeholder="Suchen nach Titel, Beschreibung oder Kategorie …">
+        <div class="designs-cat-row" id="designsCatRow"></div>
+      </div>
+      <div class="designs-grid" id="designsContainer"></div>
+    </div>
+  </div>
+
   <div class="editor-modal" id="editorModal">
     <div class="editor-modal-backdrop" id="editorModalBackdrop"></div>
     <div class="editor-modal-panel">
@@ -697,6 +731,7 @@
       <ul class="footer-links">
         <li><a href="#team">Team</a></li>
         <li><a href="#news">News</a></li>
+        <li><a href="#designs">Designs</a></li>
         <li><a href="#branding">Eigenes Branding</a></li>
         <li><a href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener">Discord</a></li>
       </ul>
@@ -710,7 +745,11 @@
   <div class="glass code-modal">
     <h3>🔒 Zugangscode</h3>
     <form id="codeForm">
+      <div id="codeModalWorkerUrlRow" style="display:none;margin-bottom:10px;">
+        <input type="text" id="codeModalWorkerUrl" placeholder="Worker-URL (einmalig, z. B. https://…workers.dev)" autocomplete="off" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);border-radius:10px;padding:11px;color:var(--text-0);font-size:12.5px;margin-bottom:8px;">
+      </div>
       <input type="password" id="codeInput" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="····">
+      <p class="admin-form-hint" id="codeModalStatus" style="margin:8px 0 0;min-height:14px;"></p>
       <button type="submit">Bestätigen</button>
     </form>
   </div>
@@ -895,9 +934,11 @@
       }
     ],
     templates: [
-      { id:'t-starting-soon', name:'Stream Starting Soon', placeholder:'Stream startet gleich', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5 },
-      { id:'t-gameplay', name:'Main Gameplay Overlay', placeholder:'Live Gameplay', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5 }
-    ]
+      { id:'t-starting-soon', name:'Stream Starting Soon', placeholder:'Stream startet gleich', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5, watermarkAsset:null, watermarkPos:'bottom-right', watermarkSize:14, watermarkOpacity:80 },
+      { id:'t-gameplay', name:'Main Gameplay Overlay', placeholder:'Live Gameplay', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5, watermarkAsset:null, watermarkPos:'bottom-right', watermarkSize:14, watermarkOpacity:80 }
+    ],
+    designCategories: ['Logo', 'Banner', 'Overlay', 'Sonstiges'],
+    designs: []
   };
 
   function cloneData(d){ return JSON.parse(JSON.stringify(d)); }
@@ -911,7 +952,18 @@
     if(typeof tpl.defaultSize !== 'number'){ tpl.defaultSize = 0.22; }
     if(typeof tpl.defaultX !== 'number'){ tpl.defaultX = 0.5; }
     if(typeof tpl.defaultY !== 'number'){ tpl.defaultY = 0.5; }
+    if(tpl.watermarkAsset === undefined){ tpl.watermarkAsset = null; }
+    if(!tpl.watermarkPos){ tpl.watermarkPos = 'bottom-right'; }
+    if(typeof tpl.watermarkSize !== 'number'){ tpl.watermarkSize = 14; }
+    if(typeof tpl.watermarkOpacity !== 'number'){ tpl.watermarkOpacity = 80; }
     return tpl;
+  }
+
+  /* Sorgt dafür, dass ältere data.json/localStorage-Stände auch ohne designs-Feld funktionieren */
+  function normalizeRootData(d){
+    if(!Array.isArray(d.designs)){ d.designs = []; }
+    if(!Array.isArray(d.designCategories)){ d.designCategories = ['Logo', 'Banner', 'Overlay', 'Sonstiges']; }
+    return d;
   }
 
   function loadData(){
@@ -921,7 +973,7 @@
         var parsed = JSON.parse(raw);
         if(parsed && Array.isArray(parsed.members) && Array.isArray(parsed.news) && Array.isArray(parsed.templates)){
           parsed.templates.forEach(normalizeTemplate);
-          return parsed;
+          return normalizeRootData(parsed);
         }
       }
     }catch(e){ /* Daten beschädigt -> Standard verwenden */ }
@@ -1031,6 +1083,7 @@
   var pages = {
     home: document.getElementById('page-home'),
     news: document.getElementById('page-news'),
+    designs: document.getElementById('page-designs'),
     branding: document.getElementById('page-branding')
   };
   var navLinkEls = document.querySelectorAll('.nav-links a[data-nav]');
@@ -1043,11 +1096,12 @@
       a.classList.toggle('current', a.getAttribute('data-nav') === name);
     });
     if(name === 'branding'){ renderTemplates(); }
+    if(name === 'designs'){ renderDesigns(); }
   }
 
   function routeFromHash(){
     var h = (location.hash || '').replace('#','');
-    if(h === 'news' || h === 'branding'){
+    if(h === 'news' || h === 'branding' || h === 'designs'){
       showPage(h);
       window.scrollTo({ top:0, behavior:'auto' });
     } else {
@@ -1285,6 +1339,10 @@
             '<p>' + (tpl.allowImage ? 'Logo hier ablegen oder klicken' : 'Klicken für eigenen Text') + '</p>' +
             '<div class="resize-handle"></div>' +
           '</div>' +
+          (tpl.watermarkAsset
+            ? '<img class="watermark-layer wm-' + tpl.watermarkPos + '" src="' + tpl.watermarkAsset + '" alt="" ' +
+              'style="width:' + tpl.watermarkSize + '%;opacity:' + (tpl.watermarkOpacity/100) + ';">'
+            : '') +
         '</div>' +
         '</div>' +
         '<div class="template-controls">' +
@@ -2183,17 +2241,39 @@
 
   /* ============================================================
      6) GEHEIMER TRIGGER: 3x Klick auf das Logo in 1,5s
+     Die Code-Prüfung läuft über den Cloudflare-Worker (Action "unlock"),
+     damit im ausgelieferten Code kein prüfbarer Geheimcode mehr steht.
      ============================================================ */
   var brandTrigger = document.getElementById('brandTrigger');
   var codeModalOverlay = document.getElementById('codeModalOverlay');
   var codeForm = document.getElementById('codeForm');
   var codeInput = document.getElementById('codeInput');
+  var codeModalStatus = document.getElementById('codeModalStatus');
+  var codeModalWorkerUrlRow = document.getElementById('codeModalWorkerUrlRow');
+  var codeModalWorkerUrlInput = document.getElementById('codeModalWorkerUrl');
+  var codeSubmitBtn = codeForm.querySelector('button[type="submit"]');
   var adminFab = document.getElementById('adminFab');
+  var UNLOCK_SETTINGS_KEY = 'strudeldesigns_gh_settings_v2'; // dieselbe Ablage wie im GitHub-Tab
 
   var isAdmin = false;
   var clickCount = 0;
   var clickTimer = null;
-  var SECRET_CODE = '1601';
+
+  function getStoredWorkerUrl(){
+    try{
+      var raw = localStorage.getItem(UNLOCK_SETTINGS_KEY);
+      var s = raw ? JSON.parse(raw) : {};
+      return (s.workerUrl || '').trim();
+    }catch(e){ return ''; }
+  }
+  function storeWorkerUrl(url){
+    try{
+      var raw = localStorage.getItem(UNLOCK_SETTINGS_KEY);
+      var s = raw ? JSON.parse(raw) : {};
+      s.workerUrl = url;
+      localStorage.setItem(UNLOCK_SETTINGS_KEY, JSON.stringify(s));
+    }catch(e){ /* ignorieren */ }
+  }
 
   brandTrigger.addEventListener('click', function(e){
     clickCount++;
@@ -2209,6 +2289,15 @@
 
   function openCodeModal(){
     codeInput.value = '';
+    codeModalStatus.textContent = '';
+    var savedWorkerUrl = getStoredWorkerUrl();
+    if(savedWorkerUrl){
+      codeModalWorkerUrlRow.style.display = 'none';
+      codeModalWorkerUrlInput.value = savedWorkerUrl;
+    } else {
+      codeModalWorkerUrlRow.style.display = '';
+      codeModalWorkerUrlInput.value = '';
+    }
     codeModalOverlay.classList.remove('hidden');
     setTimeout(function(){ codeInput.focus(); }, 50);
   }
@@ -2216,13 +2305,35 @@
 
   codeForm.addEventListener('submit', function(e){
     e.preventDefault();
-    if(codeInput.value.trim() === SECRET_CODE){
-      isAdmin = true;
-      adminFab.classList.remove('hidden');
-      closeCodeModal();
-    } else {
-      closeCodeModal();
+    var code = codeInput.value.trim();
+    var workerUrl = (codeModalWorkerUrlInput.value || '').trim().replace(/\/+$/,'');
+    if(!code){ return; }
+    if(!workerUrl){
+      codeModalStatus.textContent = 'Bitte einmalig die Worker-URL eintragen.';
+      return;
     }
+    codeSubmitBtn.disabled = true;
+    codeModalStatus.textContent = 'Prüfe …';
+    fetch(workerUrl, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'unlock', code: code })
+    })
+      .then(function(res){ return res.json().catch(function(){ return {}; }); })
+      .then(function(body){
+        if(body && body.ok){
+          storeWorkerUrl(workerUrl); // ab jetzt merken, damit die URL nicht jedes Mal neu einzutippen ist
+          isAdmin = true;
+          adminFab.classList.remove('hidden');
+          closeCodeModal();
+        } else {
+          closeCodeModal();
+        }
+      })
+      .catch(function(){
+        codeModalStatus.textContent = 'Worker nicht erreichbar – prüfe die Worker-URL.';
+      })
+      .finally(function(){ codeSubmitBtn.disabled = false; });
   });
   codeModalOverlay.addEventListener('click', function(e){ if(e.target === codeModalOverlay){ closeCodeModal(); } });
 
@@ -2399,6 +2510,24 @@
               '<label><input type="checkbox" class="edit-tpl-allow-text"' + (tpl.allowText ? ' checked' : '') + '> Text erlauben</label>' +
             '</div>' +
             '<div><label>Standardgröße des Platzhalters</label><input type="range" class="edit-tpl-size size-range" min="10" max="45" value="' + Math.round((tpl.defaultSize||0.22)*100) + '"></div>' +
+            '<div style="border-top:1px dashed var(--glass-border);padding-top:12px;margin-top:2px;">' +
+              '<label style="margin-bottom:8px;">Wasserzeichen (immer oberste Ebene, vom Nutzer nicht verschiebbar)</label>' +
+              '<div class="admin-file-row" style="margin-bottom:10px;">' +
+                '<label class="admin-mini-upload">Bild wählen<input type="file" class="edit-tpl-wm-file" accept="image/png,image/webp"></label>' +
+                '<span class="admin-form-hint edit-tpl-wm-filename">' + (tpl.watermarkAsset ? 'Wasserzeichen gesetzt ✓' : 'Kein Wasserzeichen') + '</span>' +
+                (tpl.watermarkAsset ? '<button type="button" class="admin-cancel-btn edit-tpl-wm-remove">Entfernen</button>' : '') +
+              '</div>' +
+              '<div class="admin-form-row-2">' +
+                '<div><label>Position</label><select class="edit-tpl-wm-pos export-format-select">' +
+                  ['top-left','top-center','top-right','center-left','center','center-right','bottom-left','bottom-center','bottom-right'].map(function(p){
+                    var labels = {'top-left':'Oben links','top-center':'Oben Mitte','top-right':'Oben rechts','center-left':'Mitte links','center':'Zentriert','center-right':'Mitte rechts','bottom-left':'Unten links','bottom-center':'Unten Mitte','bottom-right':'Unten rechts'};
+                    return '<option value="' + p + '"' + (tpl.watermarkPos === p ? ' selected' : '') + '>' + labels[p] + '</option>';
+                  }).join('') +
+                '</select></div>' +
+                '<div><label>Größe (' + tpl.watermarkSize + '%)</label><input type="range" class="edit-tpl-wm-size size-range" min="4" max="40" value="' + tpl.watermarkSize + '"></div>' +
+              '</div>' +
+              '<div><label>Deckkraft (' + tpl.watermarkOpacity + '%)</label><input type="range" class="edit-tpl-wm-opacity size-range" min="10" max="100" value="' + tpl.watermarkOpacity + '"></div>' +
+            '</div>' +
             '<div class="item-actions" style="justify-content:flex-end;">' +
               '<button class="admin-cancel-btn" type="button">Abbrechen</button>' +
               '<button class="admin-save-inline-btn" type="button">Übernehmen</button>' +
@@ -2408,6 +2537,31 @@
           editingTemplateId = null;
           renderAdminLists();
         });
+        var wmFileInput = row.querySelector('.edit-tpl-wm-file');
+        if(wmFileInput){
+          wmFileInput.addEventListener('change', function(e){
+            var file = e.target.files && e.target.files[0];
+            if(!file){ return; }
+            setStatus('Wasserzeichen wird verarbeitet …');
+            compressImage(file, 500, function(dataUrl){
+              if(dataUrl){
+                tpl.watermarkAsset = dataUrl;
+                setStatus('Wasserzeichen hochgeladen – noch nicht auf GitHub veröffentlicht.');
+              } else {
+                setStatus('Bild konnte nicht verarbeitet werden.');
+              }
+              renderAdminLists();
+            });
+          });
+        }
+        var wmRemoveBtn = row.querySelector('.edit-tpl-wm-remove');
+        if(wmRemoveBtn){
+          wmRemoveBtn.addEventListener('click', function(){
+            tpl.watermarkAsset = null;
+            setStatus('Wasserzeichen entfernt – noch nicht auf GitHub veröffentlicht.');
+            renderAdminLists();
+          });
+        }
         row.querySelector('.admin-save-inline-btn').addEventListener('click', function(){
           var name = row.querySelector('.edit-tpl-name').value.trim();
           if(!name){ setStatus('Bitte einen Namen für die Vorlage angeben.'); return; }
@@ -2418,6 +2572,9 @@
           tpl.allowImage = allowImage || !allowText;
           tpl.allowText = allowText;
           tpl.defaultSize = (parseInt(row.querySelector('.edit-tpl-size').value,10) || 22) / 100;
+          tpl.watermarkPos = row.querySelector('.edit-tpl-wm-pos').value;
+          tpl.watermarkSize = parseInt(row.querySelector('.edit-tpl-wm-size').value, 10) || 14;
+          tpl.watermarkOpacity = parseInt(row.querySelector('.edit-tpl-wm-opacity').value, 10) || 80;
           editingTemplateId = null;
           renderAdminLists();
           setStatus('Vorlage aktualisiert – noch nicht gespeichert.');
@@ -2656,6 +2813,7 @@
           throw { code:'format' };
         }
         parsed.templates.forEach(normalizeTemplate);
+        normalizeRootData(parsed);
         lastKnownSha = json.sha;
         data = parsed;
         lastSyncedSnapshot = JSON.stringify(data);
