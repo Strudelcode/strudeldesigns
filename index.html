@@ -1139,8 +1139,7 @@
     reader.readAsDataURL(file);
   }
 
-  var MAX_VIDEO_BYTES = 4 * 1024 * 1024; // 4 MB – lokal (ohne GitHub), damit localStorage nicht gesprengt wird
-  var MAX_GITHUB_ASSET_BYTES = 20 * 1024 * 1024; // 20 MB – Dateien, die als echte Datei auf GitHub hochgeladen werden
+  var MAX_GITHUB_ASSET_BYTES = 50 * 1024 * 1024; // 50 MB – Dateien, die als echte Datei auf GitHub hochgeladen werden
 
   /* Liest eine Datei als reinen Base64-String (ohne "data:...;base64," Präfix) – für den GitHub-Upload */
   function readFileAsBase64(file, cb){
@@ -1154,32 +1153,36 @@
     reader.readAsDataURL(file);
   }
 
-  function readVideoAsDataURL(file, cb){
-    if(file.size > MAX_VIDEO_BYTES){
-      cb(null, 'Video zu groß (' + Math.round(file.size/1024/1024*10)/10 + ' MB) – bitte max. 4 MB, sonst wird der lokale Speicher gesprengt.');
+  /* Video: liefert eine lokale Vorschau (blob:-URL, kostet keinen localStorage-Speicher) sofort zurück
+     und liest parallel die Rohdatei als Base64 für den späteren echten GitHub-Upload beim Veröffentlichen. */
+  function loadVideoForGithubUpload(file, cb){
+    if(file.size > MAX_GITHUB_ASSET_BYTES){
+      cb(null, null, 'Video zu groß (' + Math.round(file.size/1024/1024*10)/10 + ' MB) – bitte max. ' + Math.round(MAX_GITHUB_ASSET_BYTES/1024/1024) + ' MB.', null);
       return;
     }
-    var reader = new FileReader();
-    reader.onload = function(e){ cb(e.target.result, null); };
-    reader.onerror = function(){ cb(null, 'Video konnte nicht gelesen werden.'); };
-    reader.readAsDataURL(file);
+    var previewUrl = URL.createObjectURL(file);
+    readFileAsBase64(file, function(base64, err){
+      if(err){ cb(null, null, err, null); return; }
+      var ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g,'') || 'mp4';
+      cb(previewUrl, 'video', null, { base64: base64, ext: ext });
+    });
   }
 
-  /* Lädt eine Hintergrund-Datei (Bild ODER Video) und liefert {dataUrl, assetType} zurück */
+  /* Lädt eine Hintergrund-Datei (Bild ODER Video) und liefert (previewUrl, assetType, err, pendingUpload) zurück.
+     Bei Bildern ist pendingUpload immer null (die komprimierte Data-URL wird direkt eingebettet).
+     Bei Videos enthält pendingUpload {base64, ext} – das muss beim Veröffentlichen erst noch echt
+     auf GitHub hochgeladen werden (siehe uploadPendingAssets). */
   function loadTemplateAsset(file, cb){
-    if(!file){ cb(null, null, null); return; }
+    if(!file){ cb(null, null, null, null); return; }
     if(/^video\//.test(file.type)){
-      readVideoAsDataURL(file, function(dataUrl, err){
-        if(err){ cb(null, null, err); return; }
-        cb(dataUrl, 'video', null);
-      });
+      loadVideoForGithubUpload(file, cb);
     } else if(/^image\//.test(file.type)){
       compressImage(file, 1920, function(dataUrl){
-        if(!dataUrl){ cb(null, null, 'Bild konnte nicht verarbeitet werden.'); return; }
-        cb(dataUrl, 'image', null);
+        if(!dataUrl){ cb(null, null, 'Bild konnte nicht verarbeitet werden.', null); return; }
+        cb(dataUrl, 'image', null, null);
       });
     } else {
-      cb(null, null, 'Nicht unterstütztes Dateiformat.');
+      cb(null, null, 'Nicht unterstütztes Dateiformat.', null);
     }
   }
 
@@ -2836,11 +2839,14 @@
           var file = e.target.files && e.target.files[0];
           if(!file){ return; }
           setStatus('Datei wird verarbeitet …');
-          loadTemplateAsset(file, function(dataUrl, assetType, err){
+          loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload){
             if(err){ setStatus(err); return; }
             tpl.asset = dataUrl;
             tpl.assetType = assetType;
-            setStatus('Hintergrund aktualisiert – noch nicht gespeichert.');
+            registerPendingAssetUpload('template', tpl.id, pendingUpload, tpl.name);
+            setStatus(assetType === 'video'
+              ? 'Video ausgewählt – wird beim Veröffentlichen auf GitHub hochgeladen.'
+              : 'Hintergrund aktualisiert – noch nicht gespeichert.');
             renderAdminLists();
           });
         });
@@ -2851,6 +2857,7 @@
         row.querySelector('.admin-del-btn').addEventListener('click', function(){
           if(!confirm('Vorlage "' + tpl.name + '" wirklich löschen?')){ return; }
           data.templates = data.templates.filter(function(x){ return x.id !== tpl.id; });
+          clearPendingAssetUpload('template', tpl.id);
           renderAdminLists();
           setStatus('Änderung noch nicht gespeichert.');
         });
@@ -2919,11 +2926,14 @@
           var file = e.target.files && e.target.files[0];
           if(!file){ return; }
           setStatus('Datei wird verarbeitet …');
-          loadTemplateAsset(file, function(dataUrl, assetType, err){
+          loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload){
             if(err){ setStatus(err); return; }
             d.asset = dataUrl;
             d.assetType = assetType;
-            setStatus('Datei aktualisiert – noch nicht gespeichert.');
+            registerPendingAssetUpload('design', d.id, pendingUpload, d.title);
+            setStatus(assetType === 'video'
+              ? 'Video ausgewählt – wird beim Veröffentlichen auf GitHub hochgeladen.'
+              : 'Datei aktualisiert – noch nicht gespeichert.');
             renderAdminLists();
           });
         });
@@ -2934,6 +2944,7 @@
         row.querySelector('.admin-del-btn').addEventListener('click', function(){
           if(!confirm('Design "' + d.title + '" wirklich löschen?')){ return; }
           data.designs = data.designs.filter(function(x){ return x.id !== d.id; });
+          clearPendingAssetUpload('design', d.id);
           renderAdminLists();
           setStatus('Änderung noch nicht gespeichert.');
         });
@@ -2995,28 +3006,53 @@
     setStatus('News hinzugefügt – noch nicht gespeichert.');
   });
 
+  /* --- GitHub-Datei-Uploads, die erst beim Veröffentlichen wirklich passieren ---
+     Videos werden nicht mehr als Base64 in data.json eingebettet, sondern als
+     "pending" gemerkt (Vorschau via blob:-URL) und erst beim Klick auf
+     "Auf GitHub veröffentlichen" als echte Datei committet. */
+  var pendingAssetUploads = []; // { targetKind:'template'|'design', targetId, base64, ext, label }
+  function registerPendingAssetUpload(targetKind, targetId, pendingUpload, label){
+    pendingAssetUploads = pendingAssetUploads.filter(function(p){
+      return !(p.targetKind === targetKind && p.targetId === targetId);
+    });
+    if(pendingUpload){
+      pendingAssetUploads.push({
+        targetKind: targetKind, targetId: targetId,
+        base64: pendingUpload.base64, ext: pendingUpload.ext, label: label
+      });
+    }
+  }
+  function clearPendingAssetUpload(targetKind, targetId){
+    pendingAssetUploads = pendingAssetUploads.filter(function(p){
+      return !(p.targetKind === targetKind && p.targetId === targetId);
+    });
+  }
+
   /* --- Vorlage hinzufügen --- */
   var pendingTemplateAsset = null;
   var pendingTemplateAssetType = null;
+  var pendingTemplateAssetUpload = null; // {base64, ext} bei Video, sonst null
   var newTemplateAssetInput = document.getElementById('newTemplateAsset');
   var newTemplateAssetName = document.getElementById('newTemplateAssetName');
   newTemplateAssetInput.addEventListener('change', function(e){
     var file = e.target.files && e.target.files[0];
     if(!file){
-      pendingTemplateAsset = null; pendingTemplateAssetType = null;
+      pendingTemplateAsset = null; pendingTemplateAssetType = null; pendingTemplateAssetUpload = null;
       newTemplateAssetName.textContent = 'Keine Datei ausgewählt – Standard-Overlay wird genutzt.';
       return;
     }
     newTemplateAssetName.textContent = 'Datei wird verarbeitet …';
-    loadTemplateAsset(file, function(dataUrl, assetType, err){
+    loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload){
       if(err){
-        pendingTemplateAsset = null; pendingTemplateAssetType = null;
+        pendingTemplateAsset = null; pendingTemplateAssetType = null; pendingTemplateAssetUpload = null;
         newTemplateAssetName.textContent = err;
         return;
       }
       pendingTemplateAsset = dataUrl;
       pendingTemplateAssetType = assetType;
-      newTemplateAssetName.textContent = 'Ausgewählt: ' + file.name + (assetType === 'video' ? ' (Video)' : '');
+      pendingTemplateAssetUpload = pendingUpload;
+      newTemplateAssetName.textContent = 'Ausgewählt: ' + file.name +
+        (assetType === 'video' ? ' (Video – wird beim Veröffentlichen auf GitHub hochgeladen)' : '');
     });
   });
 
@@ -3032,16 +3068,18 @@
     var allowImage = allowImageInput.checked;
     var allowText = allowTextInput.checked;
     if(!allowImage && !allowText){ allowImage = true; allowImageInput.checked = true; }
+    var newTplId = makeId('t');
     data.templates.push({
-      id:makeId('t'), name:name, placeholder:placeholder,
+      id:newTplId, name:name, placeholder:placeholder,
       asset:pendingTemplateAsset, assetType:pendingTemplateAssetType,
       allowImage:allowImage, allowText:allowText,
       defaultSize: (parseInt(sizeInput.value,10) || 22) / 100,
       defaultX:0.5, defaultY:0.5
     });
+    registerPendingAssetUpload('template', newTplId, pendingTemplateAssetUpload, name);
     nameInput.value = ''; placeholderInput.value = ''; newTemplateAssetInput.value = '';
     allowImageInput.checked = true; allowTextInput.checked = false; sizeInput.value = 22;
-    pendingTemplateAsset = null; pendingTemplateAssetType = null;
+    pendingTemplateAsset = null; pendingTemplateAssetType = null; pendingTemplateAssetUpload = null;
     newTemplateAssetName.textContent = 'Keine Datei ausgewählt – Standard-Overlay wird genutzt.';
     renderAdminLists();
     setStatus('Vorlage hinzugefügt – noch nicht gespeichert.');
@@ -3050,25 +3088,28 @@
   /* --- Design hinzufügen --- */
   var pendingDesignAsset = null;
   var pendingDesignAssetType = null;
+  var pendingDesignAssetUpload = null; // {base64, ext} bei Video, sonst null
   var newDesignAssetInput = document.getElementById('newDesignAsset');
   var newDesignAssetName = document.getElementById('newDesignAssetName');
   newDesignAssetInput.addEventListener('change', function(e){
     var file = e.target.files && e.target.files[0];
     if(!file){
-      pendingDesignAsset = null; pendingDesignAssetType = null;
+      pendingDesignAsset = null; pendingDesignAssetType = null; pendingDesignAssetUpload = null;
       newDesignAssetName.textContent = 'Keine Datei ausgewählt.';
       return;
     }
     newDesignAssetName.textContent = 'Datei wird verarbeitet …';
-    loadTemplateAsset(file, function(dataUrl, assetType, err){
+    loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload){
       if(err){
-        pendingDesignAsset = null; pendingDesignAssetType = null;
+        pendingDesignAsset = null; pendingDesignAssetType = null; pendingDesignAssetUpload = null;
         newDesignAssetName.textContent = err;
         return;
       }
       pendingDesignAsset = dataUrl;
       pendingDesignAssetType = assetType;
-      newDesignAssetName.textContent = 'Ausgewählt: ' + file.name + (assetType === 'video' ? ' (Video)' : '');
+      pendingDesignAssetUpload = pendingUpload;
+      newDesignAssetName.textContent = 'Ausgewählt: ' + file.name +
+        (assetType === 'video' ? ' (Video – wird beim Veröffentlichen auf GitHub hochgeladen)' : '');
     });
   });
 
@@ -3093,13 +3134,15 @@
       newDesignTagsRow.querySelectorAll('input:checked'),
       function(cb){ return cb.value; }
     );
+    var newDesignId = makeId('d');
     data.designs.push({
-      id: makeId('d'), title: title, description: description, date: date,
+      id: newDesignId, title: title, description: description, date: date,
       asset: pendingDesignAsset, assetType: pendingDesignAssetType,
       categories: categories
     });
+    registerPendingAssetUpload('design', newDesignId, pendingDesignAssetUpload, title);
     titleInput.value = ''; descriptionInput.value = ''; dateInput.value = ''; newDesignAssetInput.value = '';
-    pendingDesignAsset = null; pendingDesignAssetType = null;
+    pendingDesignAsset = null; pendingDesignAssetType = null; pendingDesignAssetUpload = null;
     newDesignAssetName.textContent = 'Keine Datei ausgewählt.';
     renderAdminLists();
     setStatus('Design hinzugefügt – noch nicht gespeichert.');
@@ -3252,45 +3295,109 @@
       });
   });
 
+  /* Lädt ausstehende Video-Uploads (siehe pendingAssetUploads) nacheinander als echte
+     Dateien auf GitHub hoch (Git-Data-API im Worker) und trägt danach den finalen
+     relativen Pfad (z. B. "designs/xyz.mp4") in data.templates/data.designs ein.
+     Läuft NACHEINANDER, nicht parallel, weil jeder Upload einen eigenen Commit auf
+     denselben Branch schreibt – gleichzeitige Commits würden sich gegenseitig blockieren. */
+  function uploadPendingAssets(workerUrl, password, cb){
+    if(pendingAssetUploads.length === 0){ cb(null); return; }
+    var queue = pendingAssetUploads.slice();
+    var total = queue.length;
+
+    function next(){
+      if(queue.length === 0){ cb(null); return; }
+      var item = queue.shift();
+      var doneCount = total - queue.length;
+      setGhStatus('Lade Datei ' + doneCount + ' von ' + total + ' auf GitHub hoch …');
+
+      var folder = item.targetKind === 'design' ? 'designs' : 'templates';
+      var path = folder + '/' + slugify(item.label) + '-' + Date.now().toString(36) + '.' + item.ext;
+
+      fetch(workerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({
+          action: 'uploadAsset',
+          password: password,
+          path: path,
+          contentBase64: item.base64,
+          message: 'Datei hochgeladen: ' + item.label
+        })
+      })
+        .then(function(res){
+          return res.json().catch(function(){ return {}; }).then(function(body){
+            if(!res.ok || !body.ok){ throw { code:res.status, message: body && body.error }; }
+            return body;
+          });
+        })
+        .then(function(body){
+          var list = item.targetKind === 'design' ? data.designs : data.templates;
+          var target = list.filter(function(x){ return x.id === item.targetId; })[0];
+          if(target){
+            if(target.asset && target.asset.indexOf('blob:') === 0){ URL.revokeObjectURL(target.asset); }
+            target.asset = body.path;
+            target.assetType = 'video';
+          }
+          pendingAssetUploads = pendingAssetUploads.filter(function(p){ return p !== item; });
+          next();
+        })
+        .catch(function(err){
+          cb((err && err.message) ? err.message : ('Datei-Upload fehlgeschlagen (' + (err && err.code || '?') + ').'));
+        });
+    }
+    next();
+  }
+
   // Veröffentlichen läuft über deine eigene Cloudflare-Worker-Funktion. Der Browser sendet nur das
   // Admin-Passwort + die Daten – der echte GitHub-Token bleibt ausschließlich im Worker gespeichert.
   ghPublishBtn.addEventListener('click', function(){
     var s = saveGhSettings();
     if(!s.workerUrl){ setGhStatus('Bitte zuerst die Worker-URL eintragen (siehe Einrichtungsanleitung).'); return; }
     if(!s.password){ setGhStatus('Bitte das Admin-Passwort eintragen.'); return; }
-    setGhStatus('Veröffentliche auf GitHub …');
     ghPublishBtn.disabled = true;
 
-    fetch(s.workerUrl, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({
-        password: s.password,
-        content: JSON.stringify(data, null, 2)
+    uploadPendingAssets(s.workerUrl, s.password, function(uploadErr){
+      if(uploadErr){
+        setGhStatus('Datei-Upload fehlgeschlagen: ' + uploadErr + ' – data.json wurde NICHT veröffentlicht, damit nichts kaputte Links enthält.');
+        ghPublishBtn.disabled = false;
+        return;
+      }
+
+      renderAdminLists(); // aktualisierte Asset-Pfade in der Liste anzeigen
+      setGhStatus('Veröffentliche auf GitHub …');
+
+      fetch(s.workerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({
+          password: s.password,
+          content: JSON.stringify(data, null, 2)
+        })
       })
-    })
-      .then(function(res){
-        return res.json().catch(function(){ return {}; }).then(function(body){
-          if(!res.ok || !body.ok){ throw { code:res.status, message: body && body.error }; }
-          return body;
-        });
-      })
-      .then(function(){
-        lastSyncedSnapshot = JSON.stringify(data);
-        setGhStatus('Veröffentlicht ✓ – GitHub Pages aktualisiert die Live-Seite in Kürze für alle Besucher.', true);
-      })
-      .catch(function(err){
-        if(err && err.code === 401){
-          setGhStatus('Falsches Admin-Passwort (401).');
-        } else if(err && err.code === 409){
-          setGhStatus('Konflikt: Die Datei wurde gerade zeitgleich extern geändert. Bitte kurz erneut auf „Auf GitHub veröffentlichen“ klicken.');
-        } else if(err && err.code === 0){
-          setGhStatus('Worker nicht erreichbar. Prüfe die Worker-URL und ob der Worker deployed ist.');
-        } else {
-          setGhStatus('Veröffentlichen fehlgeschlagen' + (err && err.message ? (': ' + err.message) : '.'));
-        }
-      })
-      .finally(function(){ ghPublishBtn.disabled = false; ghAdminPasswordInput.value = ''; });
+        .then(function(res){
+          return res.json().catch(function(){ return {}; }).then(function(body){
+            if(!res.ok || !body.ok){ throw { code:res.status, message: body && body.error }; }
+            return body;
+          });
+        })
+        .then(function(){
+          lastSyncedSnapshot = JSON.stringify(data);
+          setGhStatus('Veröffentlicht ✓ – GitHub Pages aktualisiert die Live-Seite in Kürze für alle Besucher.', true);
+        })
+        .catch(function(err){
+          if(err && err.code === 401){
+            setGhStatus('Falsches Admin-Passwort (401).');
+          } else if(err && err.code === 409){
+            setGhStatus('Konflikt: Die Datei wurde gerade zeitgleich extern geändert. Bitte kurz erneut auf „Auf GitHub veröffentlichen“ klicken.');
+          } else if(err && err.code === 0){
+            setGhStatus('Worker nicht erreichbar. Prüfe die Worker-URL und ob der Worker deployed ist.');
+          } else {
+            setGhStatus('Veröffentlichen fehlgeschlagen' + (err && err.message ? (': ' + err.message) : '.'));
+          }
+        })
+        .finally(function(){ ghPublishBtn.disabled = false; ghAdminPasswordInput.value = ''; });
+    });
   });
 
   /* ============================================================
