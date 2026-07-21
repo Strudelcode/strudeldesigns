@@ -11,7 +11,7 @@
 - In "Eigenes Branding" kann man auch suchen.
 - Ich kann in "Eigenes Brandign" eine .mp4 datei hochladen. sie wird mir dann auch angezeigt als vorschau und so. Jedoch kann ich sie nur als .webp, jpg und png runterladen....
 - Wenn ein Bild einen Transparenten hintergrund hat soll acuh kein untergrund sein sondern einfach nur dieses Dunkel-blau/schwarz nicht so etwas pinkes!
-
+- Es gibt einen Tag bei "Designs" für Sponsor oder so. halt jemand der gespendet hat was dan extra hervorgeheben wird!
 
 
 ## PC
