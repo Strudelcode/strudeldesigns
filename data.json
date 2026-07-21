@@ -24,11 +24,6 @@
   ],
   "news": [
     {
-      "id": "n-mrur0sad-nlhu2",
-      "date": "21. Juli 2026",
-      "content": "# 🎨 Neuer \"Designs\"-Tab ist da!\n\nAb sofort steht euch auf unserer Webseite der neue Tab **\"Designs\"** zur Verfügung. Dort könnt ihr unsere erstellten Arbeiten ansehen und direkt herunterladen.\n\n---\n**Danke:** Ein großes Dankeschön an **DaMaxl** für das Hochladen der ganzen Designs!"
-    },
-    {
       "id": "n-launch",
       "date": "18. Juli 2026",
       "content": "# Neue eigene Webseite \nAb sofort werden Mitglieder und News dynamisch geladen – und du kannst dein Logo direkt auf unseren Vorlagen platzieren.\n- Eigener Bereich \"Eigenes Branding\"\n- **Alle News** jetzt auf einer eigenen Seite"
@@ -54,10 +49,21 @@
   ],
   "designs": [
     {
+      "id": "d-mrup089n-wpian",
+      "title": "Gleich gehts los",
+      "description": "",
+      "date": "21. Juli 2026",
+      "asset": "designs/gleich-gehts-los-mrup09wi.mp4",
+      "assetType": "video",
+      "width": 1280,
+      "height": 720,
+      "categories": []
+    },
+    {
       "id": "d-mrupso73-zry09",
       "title": "Thumbnail für Lauenberger",
       "description": "Ein Minecraft Hardcore Thumbnail für Lauenberger",
-      "date": "06. Juni 2026",
+      "date": "21. Juli 2026",
       "asset": "designs/thumbnail-f-r-lauenberger-mruqb4rn.png",
       "assetType": "image",
       "width": 1280,
@@ -70,7 +76,7 @@
       "id": "d-mrupxg5l-cqndj",
       "title": "Logo für KomptncV1",
       "description": "Ein Minecraft Logo für KomptncV1",
-      "date": "06. Juli 2026",
+      "date": "21. Juli 2026",
       "asset": "designs/logo-f-r-komptncv1-mrupxku0.png",
       "assetType": "image",
       "width": 1563,
@@ -83,7 +89,7 @@
       "id": "d-mruq1uad-i0mcn",
       "title": "Banner für Lauenberger",
       "description": "Ein Minecraft Banner für Lauenberger",
-      "date": "23. Februar 2026",
+      "date": "21. Juli 2026",
       "asset": "designs/banner-f-r-lauenberger-mruq1z86.png",
       "assetType": "image",
       "width": 6912,
@@ -96,11 +102,297 @@
       "id": "d-mruq7dv0-2tm8y",
       "title": "Thumbnail für Lauenberger",
       "description": "Ein Minecraft Thumbnail für Lauenberger",
-      "date": "15. Mai 2026",
+      "date": "21. Juli 2026",
       "asset": "designs/thumbnail-f-r-lauenberger-mruq84rk.png",
       "assetType": "image",
       "width": 1280,
       "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mruqeze7-i6q0k",
+      "title": "Logo für Lauenberger",
+      "description": "Ein Minecraft Logo für Lauenberger",
+      "date": "21. Juli 2026",
+      "asset": "designs/logo-f-r-lauenberger-mrurh71f.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mruquuza-bq85v",
+      "title": "Logo für Silx24",
+      "description": "Ein Minecraft Logo für Silx24",
+      "date": "13. Februar 2026",
+      "asset": "designs/logo-f-r-silx24-mrurh9bd.png",
+      "assetType": "image",
+      "width": 750,
+      "height": 750,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mruqwgsc-gt082",
+      "title": "Logo für Fixx Craft",
+      "description": "Ein Minecraft Logo für Fixx Craft",
+      "date": "17. Februar 2026",
+      "asset": "designs/logo-f-r-fixx-craft-mrurhc2w.png",
+      "assetType": "image",
+      "width": 625,
+      "height": 625,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mruqypdt-spaez",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "18. Februar 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mrurhe5f.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mruqzwhg-oxzld",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "26. Februar 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mrurhgog.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrur0vq3-ztewd",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "27. Februar 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mrurhjne.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrur27mw-gt5t3",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "27.Februar 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mrurhmnq.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrur35nc-ghijy",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "6. März 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mrurhpof.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrur45y7-cv7dh",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "6. März 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mrurhssj.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrur4y9c-xya4p",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "14. März 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mrurhvbq.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrur5oti-oduzu",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "21. März 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mrurhy05.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrur6vkd-97fjl",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "25. März 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mruri0wg.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrur84ra-9mvhe",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "1. April 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mruri3go.png",
+      "assetType": "image",
+      "width": 1120,
+      "height": 630,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrur9e1f-qvsem",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "1. April 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mruri611.png",
+      "assetType": "image",
+      "width": 1120,
+      "height": 630,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrura5ee-616sz",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "1. April 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mruri8uy.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mruratn7-h35ik",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "9. April 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mruribs0.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrurbzw1-ftt71",
+      "title": "Banner für Bloodbyte",
+      "description": "Ein Minecraft banner für Bloodbyte",
+      "date": "12. April 2026",
+      "asset": "designs/banner-f-r-bloodbyte-mruriegu.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrurcv78-xbhye",
+      "title": "Logo für Eisicey",
+      "description": "Ein Minecraft Logo für Eisicey",
+      "date": "12. April 2026",
+      "asset": "designs/logo-f-r-eisicey-mrurihcl.png",
+      "assetType": "image",
+      "width": 1000,
+      "height": 1000,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrurdwji-n6qq3",
+      "title": "Banner für Eisicey",
+      "description": "Ein MInecraft banner für Eisicey",
+      "date": "12. April 2026",
+      "asset": "designs/banner-f-r-eisicey-mrurikiq.png",
+      "assetType": "image",
+      "width": 880,
+      "height": 494,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrurelfj-z3zn8",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "13. April 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mrurinev.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrurfi0v-jumbn",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "19. April 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mruriqdq.png",
+      "assetType": "image",
+      "width": 880,
+      "height": 494,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrurgbiq-7pgq5",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "25. April 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mruriszz.png",
+      "assetType": "image",
+      "width": 880,
+      "height": 494,
       "categories": [
         "Thumbnail"
       ]
