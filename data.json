@@ -49,38 +49,22 @@
   ],
   "designs": [
     {
-      "id": "d-mruofz2g-3pq83",
-      "title": "dubble eisy",
-      "description": "<3",
-      "date": "21. Juli 2026",
-      "asset": "designs/dubble-eisy-mruogolk.png",
-      "assetType": "image",
-      "width": 800,
-      "height": 450,
-      "categories": [
-        "Banner"
-      ]
-    },
-    {
-      "id": "d-mruogfvh-ecu0j",
-      "title": "solo",
+      "id": "d-mrup089n-wpian",
+      "title": "Gleich gehts los",
       "description": "",
-      "date": "16. Jannuar 2012",
-      "asset": "designs/solo-mruogrfz.png",
-      "assetType": "image",
-      "width": 1920,
-      "height": 1080,
-      "categories": [
-        "Logo",
-        "Overlay"
-      ]
+      "date": "21. Juli 2026",
+      "asset": "designs/gleich-gehts-los-mrup09wi.mp4",
+      "assetType": "video",
+      "width": 1280,
+      "height": 720,
+      "categories": []
     },
     {
       "id": "d-mrupso73-zry09",
       "title": "Thumbnail für Lauenberger",
       "description": "Ein Minecraft Hardcore Thumbnail für Lauenberger",
       "date": "21. Juli 2026",
-      "asset": "designs/thumbnail-f-r-lauenberger-mrupuoqm.png",
+      "asset": "designs/thumbnail-f-r-lauenberger-mrupt48e.png",
       "assetType": "image",
       "width": 1280,
       "height": 720,
@@ -89,16 +73,29 @@
       ]
     },
     {
-      "id": "d-mrupymkh-7y4bw",
+      "id": "d-mrupxg5l-cqndj",
       "title": "Logo für KomptncV1",
       "description": "Ein Minecraft Logo für KomptncV1",
       "date": "21. Juli 2026",
-      "asset": "designs/logo-f-r-komptncv1-mruq07ip.png",
+      "asset": "designs/logo-f-r-komptncv1-mrupxku0.png",
       "assetType": "image",
       "width": 1563,
       "height": 1563,
       "categories": [
         "Logo"
+      ]
+    },
+    {
+      "id": "d-mruq1uad-i0mcn",
+      "title": "Banner für Lauenberger",
+      "description": "Ein Minecraft Banner für Lauenberger",
+      "date": "21. Juli 2026",
+      "asset": "designs/banner-f-r-lauenberger-mruq1z86.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "categories": [
+        "Banner"
       ]
     }
   ],
