@@ -10,6 +10,7 @@
 - Wenn man in "Eigenes Branding" Ein Bild öffnet sollte erst nur die Virschau wie bei "Designs" kommen und dann gibt es noch einen Button "Editieren" wo man dann zum editor kommt!
 - In "Eigenes Branding" kann man auch suchen.
 - Ich kann in "Eigenes Brandign" eine .mp4 datei hochladen. sie wird mir dann auch angezeigt als vorschau und so. Jedoch kann ich sie nur als .webp, jpg und png runterladen....
+- Wenn ein Bild einen Transparenten hintergrund hat soll acuh kein untergrund sein sondern einfach nur dieses Dunkel-blau/schwarz nicht so etwas pinkes!
 
 
 ## PC
