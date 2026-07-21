@@ -1,3 +1,5 @@
 # Infos für mich ;)
 
-- Wenn ein Design hochgeladen wird, wird es nciht nicht  Ordner originell getrue versetzt. Auserdem wird das "Designs" nich in der Originellen AUflösung und Format heruntergeladen!
+- Wenn man News schreibt gibt es keine markdown formatierung wie ">", "-#" und so. Wenn mann einen aufzählungspunkt macht "-" wird es nur eingerastet aber es ist kein aufzählungs punkt!
+- Bei upload für designs sollen .gif, .jpg, .webp.... dateien funktionieren!
+- Wenn man bei "Designs" ein Designs öffnet kann man ja "< / >" zum nächsten oder vorherigen designs gehen, dabei sit oben rechts ein "X" schließungs X. Dieses x wird durch der riesigen ">"-hitbox überdeckt
