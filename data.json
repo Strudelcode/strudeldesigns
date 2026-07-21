@@ -477,11 +477,11 @@
       ]
     },
     {
-      "id": "d-mrus06yc-1wny9",
-      "title": "Thumbnail für MMC",
+      "id": "d-mrus8315-njufc",
+      "title": "Minecraft Thumbnail für MMC",
       "description": "Ein Minecraft Thumbnail für MMC",
       "date": "10. Mai 2026",
-      "asset": "designs/thumbnail-f-r-mmc-mrus2x8u.png",
+      "asset": "designs/minecraft-thumbnail-f-r-mmc-mrusfvyj.png",
       "assetType": "image",
       "width": 880,
       "height": 494,
@@ -490,11 +490,11 @@
       ]
     },
     {
-      "id": "d-mrus1gu3-pj9xe",
+      "id": "d-mrus8vmy-68ej8",
       "title": "Logo für Finn99876",
       "description": "Ein Minecraft Logo für Finn99876",
       "date": "12. Mai 2026",
-      "asset": "designs/logo-f-r-finn99876-mrus301q.png",
+      "asset": "designs/logo-f-r-finn99876-mrusfyyc.png",
       "assetType": "image",
       "width": 500,
       "height": 500,
@@ -503,16 +503,68 @@
       ]
     },
     {
-      "id": "d-mrus2ilo-6lsb0",
+      "id": "d-mrusa4jl-zln2m",
       "title": "Thumbnail für Finn99876",
       "description": "Ein Minecraft Thumbnail für Finn99876",
       "date": "12. Mai 2026",
-      "asset": null,
-      "assetType": null,
-      "width": null,
-      "height": null,
+      "asset": "designs/thumbnail-f-r-finn99876-mrusg1xx.png",
+      "assetType": "image",
+      "width": 880,
+      "height": 494,
       "categories": [
         "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrusbn1p-nn5eb",
+      "title": "Logo für Xyra_TV",
+      "description": "Ein Minimalistisches Logo für Xyra_TV",
+      "date": "26. Mai 2026",
+      "asset": "designs/logo-f-r-xyra-tv-mrusgaqx.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrusd3bw-8wzjr",
+      "title": "Logo für Silast26",
+      "description": "Ein minimalistisches Logo für Silast29",
+      "date": "10. Juni 2026",
+      "asset": "designs/logo-f-r-silast26-mrusgdbl.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrusdzvg-q8xak",
+      "title": "Logo für NG_Gold",
+      "description": "Ein Logo für NG_Gold",
+      "date": "16. Juli 2026",
+      "asset": "designs/logo-f-r-ng-gold-mrusgffz.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrusevto-mrz4d",
+      "title": "Banner für NG_Gold",
+      "description": "Ein Banner für NG_Gold",
+      "date": "16. Juli 2026",
+      "asset": "designs/banner-f-r-ng-gold-mrusghya.png",
+      "assetType": "image",
+      "width": 1286,
+      "height": 723,
+      "categories": [
+        "Banner"
       ]
     }
   ],
