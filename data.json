@@ -896,6 +896,219 @@
       "categories": [
         "Logo"
       ]
+    },
+    {
+      "id": "d-mrv0mrsy-xx3h0",
+      "title": "Banner für Endocrinix",
+      "description": "MC Banner für Endocrinix",
+      "date": "13. April 2026",
+      "asset": "designs/banner-f-r-endocrinix-mrv1ed36.png",
+      "assetType": "image",
+      "width": 2560,
+      "height": 1440,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrv0nhn4-lbb88",
+      "title": "Logo für Endocrinix",
+      "description": "MC Logo für Endocrinix",
+      "date": "13. April 2026",
+      "asset": "designs/logo-f-r-endocrinix-mrv1efor.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv0r7yb-4mtgu",
+      "title": "Stream Overlay für Endocrinix",
+      "description": "Stream Overlay",
+      "date": "13. April 2026",
+      "asset": "designs/stream-overlay-f-r-endocrinix-mrv1ei0q.mp4",
+      "assetType": "video",
+      "width": 1920,
+      "height": 1080,
+      "categories": [
+        "Overlay",
+        "Stream Overlay"
+      ]
+    },
+    {
+      "id": "d-mrv0t43u-txl57",
+      "title": "Stream Overlay für Endocrinix",
+      "description": "Stream Overlay",
+      "date": "13. April 2026",
+      "asset": "designs/stream-overlay-f-r-endocrinix-mrv1emft.mp4",
+      "assetType": "video",
+      "width": 1920,
+      "height": 1080,
+      "categories": [
+        "Overlay",
+        "Stream Overlay"
+      ]
+    },
+    {
+      "id": "d-mrv0ue1s-q90uq",
+      "title": "Stream Overlay für Endocrinix",
+      "description": "Stream Overlay",
+      "date": "13. April 2026",
+      "asset": "designs/stream-overlay-f-r-endocrinix-mrv1eqc5.mp4",
+      "assetType": "video",
+      "width": 1000,
+      "height": 1000,
+      "categories": [
+        "Overlay",
+        "Stream Overlay"
+      ]
+    },
+    {
+      "id": "d-mrv0vb64-yiaw5",
+      "title": "Logo für ✰𝒦ℯ𝒶𝓃ℴ✰",
+      "description": "MC Logo für ✰𝒦ℯ𝒶𝓃ℴ✰",
+      "date": "7. Mai 2026",
+      "asset": "designs/logo-f-r-mrv1espw.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv0x4g7-ejtwq",
+      "title": "Banner für ✰𝒦ℯ𝒶𝓃ℴ✰",
+      "description": "MC Banner für ✰𝒦ℯ𝒶𝓃ℴ✰",
+      "date": "7. Mai 2026",
+      "asset": "designs/banner-f-r-mrv1ev18.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrv0yus7-ipds8",
+      "title": "Logo für Haferbrei_07",
+      "description": "Logo für Haferbrei_07",
+      "date": "13. Dezember 2025",
+      "asset": "designs/logo-f-r-haferbrei-07-mrv1ezus.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv0zp63-wgyvu",
+      "title": "Banner für Haferbrei_07",
+      "description": "Banner für Haferbrei_07",
+      "date": "13. Dezember 2025",
+      "asset": "designs/banner-f-r-haferbrei-07-mrv1f24d.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrv12i0e-zbbee",
+      "title": "Stream Overlay für Haferbrei_07",
+      "description": "Stream overlay für Haferbrei_07",
+      "date": "13. Dezember 2025",
+      "asset": "designs/stream-overlay-f-r-haferbrei-07-mrv1f5xe.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "categories": [
+        "Overlay",
+        "Stream Overlay"
+      ]
+    },
+    {
+      "id": "d-mrv151u8-ekc1y",
+      "title": "TikTok Stream Overlay für Haferbrei_07",
+      "description": "Stream Overlay für Haferbrei_07",
+      "date": "13. Dezember 2026",
+      "asset": "designs/tiktok-stream-overlay-f-r-haferbrei-07-mrv1f9gh.png",
+      "assetType": "image",
+      "width": 1080,
+      "height": 1920,
+      "categories": [
+        "Overlay",
+        "Stream Overlay"
+      ]
+    },
+    {
+      "id": "d-mrv1604y-q1yec",
+      "title": "Logo für BenFn",
+      "description": "MC Logo für BenFn",
+      "date": "24. März 2026",
+      "asset": "designs/logo-f-r-benfn-mrv1fbtm.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv17tba-84b52",
+      "title": "Logo für Thunfisch",
+      "description": "MC Logo für Thunfisch",
+      "date": "16. März 2026",
+      "asset": "designs/logo-f-r-thunfisch-mrv1fe3x.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv19rik-bkp2z",
+      "title": "Logo für Fabinjohd",
+      "description": "MC Logo für Fabinjohd",
+      "date": "28. Februar 2026",
+      "asset": "designs/logo-f-r-fabinjohd-mrv1fg3a.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv1cplr-23rlj",
+      "title": "Logo für Typisch Kevin",
+      "description": "Fautlier Logo für Typisch Kevin",
+      "date": "22. Februar 2026",
+      "asset": "designs/logo-f-r-typisch-kevin-mrv1ficq.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv1e4wx-7jx4w",
+      "title": "Banner für Typisch Kevin",
+      "description": "Faultier Banner für  Typisch Kevin",
+      "date": "22. Februar 2026",
+      "asset": "designs/banner-f-r-typisch-kevin-mrv1fkfv.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "categories": [
+        "Banner"
+      ]
     }
   ],
   "designCategories": [
