@@ -76,19 +76,6 @@
       ]
     },
     {
-      "id": "d-mruovydk-wodgs",
-      "title": "Windows Logo",
-      "description": "just for fun",
-      "date": "21. Juli 2026",
-      "asset": "designs/windows-logo-mruovzo9.png",
-      "assetType": "image",
-      "width": 2000,
-      "height": 2000,
-      "categories": [
-        "Logo"
-      ]
-    },
-    {
       "id": "d-mrup089n-wpian",
       "title": "Gleich gehts los",
       "description": "",
@@ -98,6 +85,19 @@
       "width": 1280,
       "height": 720,
       "categories": []
+    },
+    {
+      "id": "d-mrupso73-zry09",
+      "title": "Thumbnail für Lauenberger",
+      "description": "Ein Minecraft Hardcore Thumbnail für Lauenberger",
+      "date": "21. Juli 2026",
+      "asset": "designs/thumbnail-f-r-lauenberger-mrupt48e.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
     }
   ],
   "designCategories": [
