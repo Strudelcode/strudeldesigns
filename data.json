@@ -49,17 +49,6 @@
   ],
   "designs": [
     {
-      "id": "d-mrup089n-wpian",
-      "title": "Gleich gehts los",
-      "description": "",
-      "date": "21. Juli 2026",
-      "asset": "designs/gleich-gehts-los-mrup09wi.mp4",
-      "assetType": "video",
-      "width": 1280,
-      "height": 720,
-      "categories": []
-    },
-    {
       "id": "d-mrupso73-zry09",
       "title": "Thumbnail für Lauenberger",
       "description": "Ein Minecraft Hardcore Thumbnail für Lauenberger",
@@ -504,7 +493,7 @@
     },
     {
       "id": "d-mrusa4jl-zln2m",
-      "title": "Thumbnail für Finn99876",
+      "title": "Discord Banner für Finn99876",
       "description": "Ein Minecraft Thumbnail für Finn99876",
       "date": "12. Mai 2026",
       "asset": "designs/thumbnail-f-r-finn99876-mrusg1xx.png",
@@ -512,7 +501,8 @@
       "width": 880,
       "height": 494,
       "categories": [
-        "Thumbnail"
+        "Banner",
+        "Sonstiges"
       ]
     },
     {
