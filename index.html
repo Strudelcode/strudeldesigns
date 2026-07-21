@@ -239,7 +239,7 @@
   .designs-cat-chip.active{background:var(--pink);color:#fff;border-color:var(--pink);}
   .designs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;}
 
-  .design-lightbox{width:100%;max-width:720px;max-height:88vh;overflow-y:auto;padding:0;position:relative;}
+  .design-lightbox{width:100%;max-width:720px;max-height:88vh;overflow-y:auto;overflow-x:hidden;padding:0;position:relative;}
   .design-lightbox-media{width:100%;aspect-ratio:16/9;background:#0c0714;overflow:hidden;}
   .design-lightbox-media img, .design-lightbox-media video{width:100%;height:100%;object-fit:contain;background:#000;display:block;}
   .design-lightbox-body{padding:22px 26px;}
@@ -938,8 +938,8 @@
         <code>data.json</code> direkt aus deinem (öffentlichen) Repo – dafür ist kein Token nötig.<br><br>
         Zum <strong>Veröffentlichen</strong> schickt „Auf GitHub veröffentlichen“ die Daten an deine eigene
         kleine Cloudflare-Worker-Funktion. Nur diese Funktion kennt den echten GitHub-Token – der taucht in
-        diesem Browser nie mehr auf. Stattdessen brauchst du hier nur die <strong>Worker-URL</strong> und das
-        <strong>Admin-Passwort</strong>, das du beim Einrichten des Workers selbst festgelegt hast.
+        diesem Browser nie mehr auf. Dein <strong>Zugangscode</strong> (derselbe, mit dem du dieses Panel
+        geöffnet hast) reicht dafür aus – ein zusätzliches Passwort brauchst du nicht.
       </p>
       <div class="admin-form" style="border-top:none;padding-top:0;">
         <div class="admin-form-row-2">
@@ -965,11 +965,6 @@
         <div>
           <label for="ghWorkerUrl">Worker-URL (zum Veröffentlichen)</label>
           <input type="text" id="ghWorkerUrl" placeholder="https://strudeldesigns-sync.DEINNAME.workers.dev" autocomplete="off">
-        </div>
-        <div>
-          <label for="ghAdminPassword">Admin-Passwort (im Worker festgelegt)</label>
-          <input type="password" id="ghAdminPassword" placeholder="Dein selbst gewähltes Passwort" autocomplete="off">
-          <p class="admin-form-hint" style="margin-top:4px;">Wird nicht gespeichert – nach jedem Veröffentlichen musst du es neu eingeben.</p>
         </div>
         <div class="btn-row-mini" style="margin-top:4px;">
           <button class="admin-add-btn" id="ghLoadBtn" type="button">Von GitHub laden</button>
@@ -998,9 +993,9 @@
       <div class="design-lightbox-date" id="designLightboxRes" style="margin-bottom:10px;"></div>
       <p id="designLightboxDescription"></p>
       <div class="design-lightbox-tags" id="designLightboxTags"></div>
-      <div class="btn-row-mini" style="margin-top:16px;">
-        <select class="export-format-select" id="designLightboxResSelect" style="flex:0 0 auto;min-width:180px;display:none;"></select>
-        <a class="btn-download-mini" id="designLightboxDownload" href="#" download style="flex:1;text-align:center;">Herunterladen</a>
+      <div class="btn-row-mini" style="margin-top:16px;flex-direction:column;gap:10px;">
+        <select class="export-format-select" id="designLightboxResSelect" style="width:100%;display:none;"></select>
+        <a class="btn-download-mini" id="designLightboxDownload" href="#" download style="width:100%;text-align:center;">Herunterladen</a>
       </div>
     </div>
   </div>
@@ -1399,16 +1394,13 @@
   var designLightboxCloseBtn = document.getElementById('designLightboxCloseBtn');
   var currentLightboxDesign = null;
 
-  // Gängige Zielauflösungen fürs verkleinerte Herunterladen (nur für Bilder – Videos
-  // müssten dafür client-seitig neu kodiert werden, das ist ohne größere Zusatz-Library
-  // wie ffmpeg.wasm nicht sauber machbar).
-  var DOWNSCALE_PRESETS = [
-    { label: '4K', w: 3840 },
-    { label: '2K', w: 2560 },
-    { label: 'Full HD', w: 1920 },
-    { label: 'HD', w: 1280 },
-    { label: 'SD', w: 854 }
-  ];
+  // Prozentuale Verkleinerung statt fester Zielauflösungen – funktioniert für jede
+  // Ausgangsgröße sinnvoll (z. B. 1000×1000 -> 750×750 / 500×500 / 250×250).
+  var DOWNSCALE_PERCENTS = [75, 50, 25];
+
+  function canDownscaleVideo(){
+    return !!(window.MediaRecorder && document.createElement('canvas').captureStream);
+  }
 
   function designDownloadFilename(d){
     var ext = d.assetType === 'video' ? 'mp4' : 'png';
@@ -1436,15 +1428,17 @@
 
   function populateLightboxResSelect(d){
     var sel = designLightboxResSelect;
-    if(!d.asset || d.assetType === 'video' || !d.width || !d.height){
+    var isVideo = d.assetType === 'video';
+    if(!d.asset || !d.width || !d.height || (isVideo && !canDownscaleVideo())){
       sel.innerHTML = ''; sel.style.display = 'none';
       return;
     }
     var opts = ['<option value="original">Original (' + d.width + '×' + d.height + ')</option>'];
-    DOWNSCALE_PRESETS.forEach(function(p){
-      if(p.w < d.width * 0.95){
-        var h2 = Math.max(1, Math.round(p.w * (d.height / d.width)));
-        opts.push('<option value="' + p.w + '">' + p.label + ' (' + p.w + '×' + h2 + ')</option>');
+    DOWNSCALE_PERCENTS.forEach(function(p){
+      var w = Math.max(2, Math.round(d.width * p / 100));
+      var h = Math.max(2, Math.round(d.height * p / 100));
+      if(w < d.width){
+        opts.push('<option value="' + p + '">' + p + '% (' + w + '×' + h + ')</option>');
       }
     });
     if(opts.length > 1){
@@ -1455,32 +1449,106 @@
     }
   }
 
+  function setLightboxDownloadBusy(busy, text){
+    designLightboxDownload.classList.toggle('disabled', busy);
+    designLightboxDownload.style.pointerEvents = busy ? 'none' : '';
+    designLightboxDownload.style.opacity = busy ? '0.55' : '';
+    designLightboxDownload.textContent = busy ? (text || 'Wird verarbeitet …') : 'Herunterladen';
+  }
+
   /* Skaliert das Bild client-seitig per Canvas auf die gewünschte Breite herunter und
      löst den Download der verkleinerten Version aus (Original-Datei bleibt unverändert). */
-  function downloadScaledImage(d, targetW){
+  function downloadScaledImage(d, percent){
     var img = new Image();
     img.onload = function(){
-      var scale = Math.min(1, targetW / img.naturalWidth);
-      var w = Math.max(1, Math.round(img.naturalWidth * scale));
-      var h = Math.max(1, Math.round(img.naturalHeight * scale));
+      var w = Math.max(2, Math.round(img.naturalWidth * percent / 100));
+      var h = Math.max(2, Math.round(img.naturalHeight * percent / 100));
       var canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       var isJpeg = /\.jpe?g(\?.*)?$/i.test(d.asset || '') || /^data:image\/jpeg/.test(d.asset || '');
       var mime = isJpeg ? 'image/jpeg' : 'image/png';
       canvas.toBlob(function(blob){
-        if(!blob){ setStatus && setStatus('Verkleinerung fehlgeschlagen.'); return; }
+        if(!blob){ setLightboxDownloadBusy(false); return; }
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;
-        a.download = slugify(d.title) + '-' + w + 'x' + h + (isJpeg ? '.jpg' : '.png');
+        a.download = slugify(d.title) + '-' + percent + 'pct' + (isJpeg ? '.jpg' : '.png');
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+        setLightboxDownloadBusy(false);
       }, mime, 0.92);
     };
+    img.onerror = function(){ setLightboxDownloadBusy(false); };
     img.src = d.asset;
+  }
+
+  /* Skaliert ein Video client-seitig herunter: spielt es unsichtbar in Echtzeit ab, zeichnet
+     jedes Frame verkleinert auf ein <canvas> und zeichnet den Canvas-Stream per MediaRecorder
+     als neues WebM auf. Läuft ohne externe Bibliothek (kein ffmpeg.wasm nötig), dauert dafür
+     etwa so lange wie das Video selbst und funktioniert nur in Browsern mit MediaRecorder-
+     Unterstützung (Desktop Chrome/Firefox/Edge; Safari/iOS meist nicht zuverlässig).
+     Export-Format ist WebM statt MP4, weil Browser nur WebM zuverlässig selbst aufzeichnen können. */
+  function downloadScaledVideo(d, percent){
+    if(!canDownscaleVideo()){
+      setLightboxDownloadBusy(false);
+      return;
+    }
+    var recVideo = document.createElement('video');
+    recVideo.src = d.asset;
+    recVideo.muted = true;
+    recVideo.playsInline = true;
+
+    recVideo.addEventListener('loadedmetadata', function(){
+      var w = Math.max(2, Math.round((d.width || recVideo.videoWidth) * percent / 100));
+      var h = Math.max(2, Math.round((d.height || recVideo.videoHeight) * percent / 100));
+      w -= w % 2; h -= h % 2; // gerade Zahlen sind für Video-Codecs zuverlässiger
+
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      var ctx = canvas.getContext('2d');
+
+      var stream = canvas.captureStream(30);
+      var mimeCandidates = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
+      var mime = mimeCandidates.filter(function(m){ return MediaRecorder.isTypeSupported(m); })[0] || 'video/webm';
+      var recorder;
+      try{ recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 4000000 }); }
+      catch(err){ setLightboxDownloadBusy(false); return; }
+
+      var chunks = [];
+      var drawTimer = null;
+      recorder.ondataavailable = function(e){ if(e.data && e.data.size){ chunks.push(e.data); } };
+      recorder.onstop = function(){
+        var blob = new Blob(chunks, { type: mime });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = slugify(d.title) + '-' + percent + 'pct.webm';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+        setLightboxDownloadBusy(false);
+      };
+
+      function drawFrame(){
+        ctx.drawImage(recVideo, 0, 0, w, h);
+        drawTimer = requestAnimationFrame(drawFrame);
+      }
+      recVideo.addEventListener('ended', function(){
+        if(drawTimer){ cancelAnimationFrame(drawTimer); }
+        if(recorder.state !== 'inactive'){ recorder.stop(); }
+      }, { once:true });
+
+      setLightboxDownloadBusy(true, 'Video wird verkleinert … (dauert ca. so lange wie das Video)');
+      recVideo.play().then(function(){
+        recorder.start();
+        drawFrame();
+      }).catch(function(){ setLightboxDownloadBusy(false); });
+    }, { once:true });
+    recVideo.addEventListener('error', function(){ setLightboxDownloadBusy(false); }, { once:true });
   }
 
   function openDesignLightbox(d){
@@ -1543,7 +1611,12 @@
     var sel = designLightboxResSelect;
     if(currentLightboxDesign && sel && sel.style.display !== 'none' && sel.value && sel.value !== 'original'){
       e.preventDefault();
-      downloadScaledImage(currentLightboxDesign, parseInt(sel.value, 10));
+      var percent = parseInt(sel.value, 10);
+      if(currentLightboxDesign.assetType === 'video'){
+        downloadScaledVideo(currentLightboxDesign, percent);
+      } else {
+        downloadScaledImage(currentLightboxDesign, percent);
+      }
     }
   });
   designLightboxCloseBtn.addEventListener('click', closeDesignLightbox);
@@ -2629,6 +2702,7 @@
   var UNLOCK_SETTINGS_KEY = 'strudeldesigns_gh_settings_v2'; // dieselbe Ablage wie im GitHub-Tab
 
   var isAdmin = false;
+  var adminCode = ''; // im Speicher gehalten, NIE in localStorage – reicht künftig für alle Worker-Aktionen
   var clickCount = 0;
   var clickTimer = null;
 
@@ -2696,6 +2770,7 @@
       .then(function(body){
         if(body && body.ok){
           storeWorkerUrl(workerUrl); // ab jetzt merken, damit die URL nicht jedes Mal neu einzutippen ist
+          adminCode = code; // derselbe Code dient künftig auch als Zugangsdaten fürs Veröffentlichen/Hoch-/Runterladen
           isAdmin = true;
           adminFab.classList.remove('hidden');
           closeCodeModal();
@@ -2973,8 +3048,10 @@
           var file = e.target.files && e.target.files[0];
           if(!file){ return; }
           setStatus('Datei wird verarbeitet …');
+          var oldAsset = tpl.asset;
           loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload, width, height){
             if(err){ setStatus(err); return; }
+            queueAssetDeletion(oldAsset);
             tpl.asset = dataUrl;
             tpl.assetType = assetType;
             tpl.width = width; tpl.height = height;
@@ -2988,7 +3065,8 @@
           renderAdminLists();
         });
         row.querySelector('.admin-del-btn').addEventListener('click', function(){
-          if(!confirm('Vorlage "' + tpl.name + '" wirklich löschen?')){ return; }
+          if(!confirm('Vorlage "' + tpl.name + '" wirklich löschen? Eine bereits hochgeladene Datei wird beim nächsten Veröffentlichen auch aus dem GitHub-Repo entfernt.')){ return; }
+          queueAssetDeletion(tpl.asset);
           data.templates = data.templates.filter(function(x){ return x.id !== tpl.id; });
           clearPendingAssetUpload('template', tpl.id);
           renderAdminLists();
@@ -3059,8 +3137,10 @@
           var file = e.target.files && e.target.files[0];
           if(!file){ return; }
           setStatus('Datei wird verarbeitet …');
+          var oldAsset = d.asset;
           loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload, width, height){
             if(err){ setStatus(err); return; }
+            queueAssetDeletion(oldAsset);
             d.asset = dataUrl;
             d.assetType = assetType;
             d.width = width; d.height = height;
@@ -3074,7 +3154,8 @@
           renderAdminLists();
         });
         row.querySelector('.admin-del-btn').addEventListener('click', function(){
-          if(!confirm('Design "' + d.title + '" wirklich löschen?')){ return; }
+          if(!confirm('Design "' + d.title + '" wirklich löschen? Eine bereits hochgeladene Datei wird beim nächsten Veröffentlichen auch aus dem GitHub-Repo entfernt.')){ return; }
+          queueAssetDeletion(d.asset);
           data.designs = data.designs.filter(function(x){ return x.id !== d.id; });
           clearPendingAssetUpload('design', d.id);
           renderAdminLists();
@@ -3159,6 +3240,20 @@
     pendingAssetUploads = pendingAssetUploads.filter(function(p){
       return !(p.targetKind === targetKind && p.targetId === targetId);
     });
+  }
+
+  /* --- GitHub-Datei-Löschungen, die erst beim Veröffentlichen wirklich passieren ---
+     Wird ein Design/eine Vorlage gelöscht (oder die Datei ersetzt), deren asset bereits ein
+     echter GitHub-Pfad ist (z. B. "designs/foo.png", kein blob:/data:-Preview), landet der
+     Pfad hier und wird beim nächsten "Auf GitHub veröffentlichen" wirklich aus dem Repo entfernt –
+     sonst blieben verwaiste Dateien für immer im Repo liegen. */
+  var pendingAssetDeletions = [];
+  function isRealGithubAssetPath(asset){
+    return !!asset && asset.indexOf('blob:') !== 0 && asset.indexOf('data:') !== 0;
+  }
+  function queueAssetDeletion(asset){
+    if(!isRealGithubAssetPath(asset)){ return; }
+    if(pendingAssetDeletions.indexOf(asset) === -1){ pendingAssetDeletions.push(asset); }
   }
 
   /* --- Vorlage hinzufügen --- */
@@ -3339,7 +3434,6 @@
   var ghBranchInput = document.getElementById('ghBranch');
   var ghPathInput = document.getElementById('ghPath');
   var ghWorkerUrlInput = document.getElementById('ghWorkerUrl');
-  var ghAdminPasswordInput = document.getElementById('ghAdminPassword');
   var ghStatusEl = document.getElementById('ghStatus');
   var ghLoadBtn = document.getElementById('ghLoadBtn');
   var ghPublishBtn = document.getElementById('ghPublishBtn');
@@ -3355,8 +3449,8 @@
       ghBranchInput.value = s.branch || 'main';
       ghPathInput.value = s.path || 'data.json';
       ghWorkerUrlInput.value = s.workerUrl || '';
-      // Das Admin-Passwort wird bewusst NICHT gespeichert/wiederhergestellt –
-      // es muss bei jedem Veröffentlichen neu eingetippt werden (mehr Sicherheit statt Komfort).
+      // Der Zugangscode wird bewusst NICHT in localStorage gespeichert – er lebt nur im
+      // Speicher (adminCode), solange das Panel offen/entsperrt ist.
     }catch(e){ /* ignorieren, leere Felder verwenden */ }
   }
   function saveGhSettings(){
@@ -3368,10 +3462,10 @@
       workerUrl: ghWorkerUrlInput.value.trim().replace(/\/+$/,'')
     };
     localStorage.setItem(GH_SETTINGS_KEY, JSON.stringify(persisted));
-    // Passwort nur zur Laufzeit zurückgeben, nie in localStorage schreiben.
+    // Passwort/Code nur zur Laufzeit zurückgeben, nie in localStorage schreiben.
     var s = {};
     for(var k in persisted){ s[k] = persisted[k]; }
-    s.password = ghAdminPasswordInput.value;
+    s.password = adminCode;
     return s;
   }
   loadGhSettings();
@@ -3442,6 +3536,50 @@
       });
   });
 
+  /* Löscht vorgemerkte GitHub-Dateien (siehe pendingAssetDeletions) nacheinander über den
+     Worker (Contents-API DELETE), BEVOR neue Dateien hochgeladen und data.json veröffentlicht
+     werden. Nacheinander aus demselben Grund wie bei Uploads: jeder Löschvorgang ist ein
+     eigener Commit auf denselben Branch. */
+  function deletePendingAssets(workerUrl, password, cb){
+    if(pendingAssetDeletions.length === 0){ cb(null); return; }
+    var queue = pendingAssetDeletions.slice();
+    var total = queue.length;
+
+    function next(){
+      if(queue.length === 0){ cb(null); return; }
+      var path = queue.shift();
+      var doneCount = total - queue.length;
+      setGhStatus('Entferne Datei ' + doneCount + ' von ' + total + ' aus GitHub …');
+
+      fetch(workerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({ action:'deleteAsset', password: password, path: path })
+      })
+        .then(function(res){
+          return res.json().catch(function(){ return {}; }).then(function(body){
+            if(!res.ok || !body.ok){ throw { code:res.status, message: body && body.error }; }
+            return body;
+          });
+        })
+        .then(function(){
+          pendingAssetDeletions = pendingAssetDeletions.filter(function(p){ return p !== path; });
+          next();
+        })
+        .catch(function(err){
+          // Datei evtl. schon nicht mehr vorhanden (404) -> einfach weitermachen statt den ganzen
+          // Veröffentlichungs-Vorgang abzubrechen.
+          if(err && err.code === 404){
+            pendingAssetDeletions = pendingAssetDeletions.filter(function(p){ return p !== path; });
+            next();
+            return;
+          }
+          cb((err && err.message) ? err.message : ('Datei-Löschung fehlgeschlagen (' + (err && err.code || '?') + ').'));
+        });
+    }
+    next();
+  }
+
   /* Lädt ausstehende Datei-Uploads (Bild ODER Video, siehe pendingAssetUploads) nacheinander als
      echte Dateien auf GitHub hoch (Git-Data-API im Worker) und trägt danach den finalen
      relativen Pfad (z. B. "designs/xyz.png" oder "designs/xyz.mp4") in data.templates/data.designs ein.
@@ -3497,14 +3635,21 @@
   }
 
   // Veröffentlichen läuft über deine eigene Cloudflare-Worker-Funktion. Der Browser sendet nur das
-  // Admin-Passwort + die Daten – der echte GitHub-Token bleibt ausschließlich im Worker gespeichert.
+  // Admin-Zugangscode + die Daten – der echte GitHub-Token bleibt ausschließlich im Worker gespeichert.
   ghPublishBtn.addEventListener('click', function(){
     var s = saveGhSettings();
     if(!s.workerUrl){ setGhStatus('Bitte zuerst die Worker-URL eintragen (siehe Einrichtungsanleitung).'); return; }
-    if(!s.password){ setGhStatus('Bitte das Admin-Passwort eintragen.'); return; }
+    if(!s.password){ setGhStatus('Bitte das Panel zuerst über den Zugangscode entsperren.'); return; }
     ghPublishBtn.disabled = true;
 
-    uploadPendingAssets(s.workerUrl, s.password, function(uploadErr){
+    deletePendingAssets(s.workerUrl, s.password, function(deleteErr){
+      if(deleteErr){
+        setGhStatus('Datei-Löschung fehlgeschlagen: ' + deleteErr + ' – data.json wurde NICHT veröffentlicht.');
+        ghPublishBtn.disabled = false;
+        return;
+      }
+
+      uploadPendingAssets(s.workerUrl, s.password, function(uploadErr){
       if(uploadErr){
         setGhStatus('Datei-Upload fehlgeschlagen: ' + uploadErr + ' – data.json wurde NICHT veröffentlicht, damit nichts kaputte Links enthält.');
         ghPublishBtn.disabled = false;
@@ -3534,7 +3679,7 @@
         })
         .catch(function(err){
           if(err && err.code === 401){
-            setGhStatus('Falsches Admin-Passwort (401).');
+            setGhStatus('Falscher Zugangscode (401).');
           } else if(err && err.code === 409){
             setGhStatus('Konflikt: Die Datei wurde gerade zeitgleich extern geändert. Bitte kurz erneut auf „Auf GitHub veröffentlichen“ klicken.');
           } else if(err && err.code === 0){
@@ -3543,7 +3688,8 @@
             setGhStatus('Veröffentlichen fehlgeschlagen' + (err && err.message ? (': ' + err.message) : '.'));
           }
         })
-        .finally(function(){ ghPublishBtn.disabled = false; ghAdminPasswordInput.value = ''; });
+        .finally(function(){ ghPublishBtn.disabled = false; });
+      });
     });
   });
 
