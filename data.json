@@ -49,14 +49,15 @@
   ],
   "designs": [
     {
-      "id": "d-mruc904k-ptcly",
-      "title": "So cute",
-      "description": "Test datei",
+      "id": "d-mructgry-prksj",
+      "title": "My name is Chippy",
+      "description": "Tets design",
       "date": "21. Juli 2026",
-      "asset": "designs/so-cute-mruc94c6.png",
+      "asset": "designs/my-name-is-chippy-mructori.png",
       "assetType": "image",
+      "width": 1920,
+      "height": 1080,
       "categories": [
-        "Logo",
         "Banner"
       ]
     }
