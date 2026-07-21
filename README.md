@@ -4,6 +4,7 @@
 ## Allgemein
 - Wenn man bei "Designs" ein Designs öffnet kann man ja "< / >" zum nächsten oder vorherigen designs gehen, dabei sit oben rechts ein "X" schließungs X. Dieses x wird durch der riesigen ">"-hitbox überdeckt (die hitbox soll einfach nur den kleinen radius vom "</>" enthalten! 
 - Wenn man bei "Eigenes Branding" bei **"Bild"** oder sonst einem untertab etwas einstellt gilt das für die anderen auch was etwas nerfig ist.
+- Hinzufügen das man bei "Designs" nach Datei Format Filtern kann bzw. generell Filter hinzufügen
 
 
 ## PC
