@@ -2738,12 +2738,12 @@
     codeInput.value = '';
     codeModalStatus.textContent = '';
     var savedWorkerUrl = getStoredWorkerUrl();
-    if(savedWorkerUrl){
+    if(savedWorkerUrl && isValidHttpUrl(savedWorkerUrl)){
       codeModalWorkerUrlRow.style.display = 'none';
       codeModalWorkerUrlInput.value = savedWorkerUrl;
     } else {
       codeModalWorkerUrlRow.style.display = '';
-      codeModalWorkerUrlInput.value = '';
+      codeModalWorkerUrlInput.value = (savedWorkerUrl && !isValidHttpUrl(savedWorkerUrl)) ? '' : (savedWorkerUrl || '');
     }
     codeModalOverlay.classList.remove('hidden');
     setTimeout(function(){ codeInput.focus(); }, 50);
@@ -3484,6 +3484,12 @@
   loadGhSettings();
   [ghOwnerInput, ghRepoInput, ghBranchInput, ghPathInput, ghWorkerUrlInput].forEach(function(inp){
     inp.addEventListener('change', saveGhSettings);
+  });
+  ghWorkerUrlInput.addEventListener('blur', function(){
+    var v = ghWorkerUrlInput.value.trim().replace(/\/+$/,'');
+    if(v && !isValidHttpUrl(v)){
+      setGhStatus('Achtung: Diese Worker-URL sieht ungültig aus (z. B. Tippfehler) – bitte prüfen.');
+    }
   });
 
   function setGhStatus(text, ok){
