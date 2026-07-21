@@ -6,7 +6,8 @@
 - Wenn man bei "Eigenes Branding" bei **"Bild"** oder sonst einem untertab etwas einstellt gilt das für die anderen auch was etwas nerfig ist.
 - Hinzufügen das man bei "Designs" nach Datei Format Filtern kann bzw. generell Filter hinzufügen
 - Designs die in 1:1 oder anderen formaten hochgeladen werden die nicht 16:9 sind werden nicht an gallery-card glass angepasst sondern ausgefüllt was nicht so passt da das design dann abgeshcnitten wird. Wenn man es dann öffnet ist es Normal aber da passt es auch 👍
-- Admins können bei "Eigenes Branding" einen FIRST Layer hinzufügen. das ist dann ein Bild das der Admin beliebig auf dem Design fixieren kann. Das wird ganz oben angezeigt. vor dem logo/text oder was auch immer. Das ist sozusagen das wasserzeichen
+- Admins können bei "Eigenes Branding" einen FIRST Layer hinzufügen. das ist dann ein Bild das der Admin beliebig auf dem Design fixieren kann. Das wird ganz oben angezeigt. vor dem logo/text oder was auch immer. Das ist sozusagen das wasserzeichen. Admins können wie bei "Designs" Tags hinzufügen und so
+- In "Eigenes Branding" kann man auch suchen.
 
 ## PC
 - Wenn man News schreibt gibt es keine markdown formatierung wie ">", "-#" und so. Wenn mann einen aufzählungspunkt macht "-" wird es nur eingerastet aber es ist kein aufzählungs punkt!
