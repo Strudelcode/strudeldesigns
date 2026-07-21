@@ -2759,6 +2759,10 @@
       codeModalStatus.textContent = 'Bitte einmalig die Worker-URL eintragen.';
       return;
     }
+    if(!isValidHttpUrl(workerUrl)){
+      codeModalStatus.textContent = 'Die Worker-URL sieht ungültig aus (z. B. Tippfehler) – bitte prüfen.';
+      return;
+    }
     codeSubmitBtn.disabled = true;
     codeModalStatus.textContent = 'Prüfe …';
     fetch(workerUrl, {
@@ -3428,6 +3432,15 @@
   /* ============================================================
      7b) GITHUB-SYNC: data.json direkt im Repo lesen & schreiben
      ============================================================ */
+  // Prüft, ob ein String eine grundsätzlich brauchbare http(s)-URL ist – fängt Tippfehler
+  // oder versehentlich stehen gelassenen Platzhaltertext ab, BEVOR fetch() mit einer
+  // kryptischen "Failed to parse URL"-Meldung abbricht.
+  function isValidHttpUrl(str){
+    try{
+      var u = new URL(str);
+      return u.protocol === 'https:' || u.protocol === 'http:';
+    }catch(e){ return false; }
+  }
   var GH_SETTINGS_KEY = 'strudeldesigns_gh_settings_v2';
   var ghOwnerInput = document.getElementById('ghOwner');
   var ghRepoInput = document.getElementById('ghRepo');
@@ -3574,7 +3587,14 @@
             next();
             return;
           }
-          cb((err && err.message) ? err.message : ('Datei-Löschung fehlgeschlagen (' + (err && err.code || '?') + ').'));
+          // Andere Fehler (z. B. Worker gerade nicht erreichbar) sollen NICHT den kompletten
+          // Veröffentlichungs-Vorgang blockieren – die verwaiste Datei bleibt einfach in der
+          // Warteschlange (pendingAssetDeletions) und wird beim nächsten Veröffentlichen erneut
+          // versucht. Steckt hier tatsächlich ein grundlegendes Problem (z. B. eine falsche
+          // Worker-URL), zeigt sich das ohnehin spätestens beim anschließenden Upload/Publish-Schritt.
+          console.warn('Datei-Löschung übersprungen (wird beim nächsten Mal erneut versucht): ' +
+            ((err && err.message) || 'unbekannter Fehler') + ' · Pfad: ' + path);
+          next();
         });
     }
     next();
@@ -3639,6 +3659,10 @@
   ghPublishBtn.addEventListener('click', function(){
     var s = saveGhSettings();
     if(!s.workerUrl){ setGhStatus('Bitte zuerst die Worker-URL eintragen (siehe Einrichtungsanleitung).'); return; }
+    if(!isValidHttpUrl(s.workerUrl)){
+      setGhStatus('Die Worker-URL sieht ungültig aus (z. B. Tippfehler oder Platzhaltertext) – bitte im GitHub-Tab prüfen.');
+      return;
+    }
     if(!s.password){ setGhStatus('Bitte das Panel zuerst über den Zugangscode entsperren.'); return; }
     ghPublishBtn.disabled = true;
 
