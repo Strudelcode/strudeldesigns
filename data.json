@@ -475,6 +475,45 @@
       "categories": [
         "Logo"
       ]
+    },
+    {
+      "id": "d-mrus06yc-1wny9",
+      "title": "Thumbnail für MMC",
+      "description": "Ein Minecraft Thumbnail für MMC",
+      "date": "10. Mai 2026",
+      "asset": "designs/thumbnail-f-r-mmc-mrus2x8u.png",
+      "assetType": "image",
+      "width": 880,
+      "height": 494,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrus1gu3-pj9xe",
+      "title": "Logo für Finn99876",
+      "description": "Ein Minecraft Logo für Finn99876",
+      "date": "12. Mai 2026",
+      "asset": "designs/logo-f-r-finn99876-mrus301q.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrus2ilo-6lsb0",
+      "title": "Thumbnail für Finn99876",
+      "description": "Ein Minecraft Thumbnail für Finn99876",
+      "date": "12. Mai 2026",
+      "asset": null,
+      "assetType": null,
+      "width": null,
+      "height": null,
+      "categories": [
+        "Thumbnail"
+      ]
     }
   ],
   "designCategories": [
