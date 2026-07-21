@@ -74,6 +74,19 @@
         "Logo",
         "Overlay"
       ]
+    },
+    {
+      "id": "d-mruovydk-wodgs",
+      "title": "Windows Logo",
+      "description": "just for fun",
+      "date": "21. Juli 2026",
+      "asset": "designs/windows-logo-mruovzo9.png",
+      "assetType": "image",
+      "width": 2000,
+      "height": 2000,
+      "categories": [
+        "Logo"
+      ]
     }
   ],
   "designCategories": [
