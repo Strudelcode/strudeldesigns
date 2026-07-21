@@ -994,10 +994,12 @@
     <div class="design-lightbox-media" id="designLightboxMedia"></div>
     <div class="design-lightbox-body">
       <h3 id="designLightboxTitle"></h3>
-      <div class="design-lightbox-date" id="designLightboxDate" style="margin-bottom:10px;"></div>
+      <div class="design-lightbox-date" id="designLightboxDate" style="margin-bottom:2px;"></div>
+      <div class="design-lightbox-date" id="designLightboxRes" style="margin-bottom:10px;"></div>
       <p id="designLightboxDescription"></p>
       <div class="design-lightbox-tags" id="designLightboxTags"></div>
       <div class="btn-row-mini" style="margin-top:16px;">
+        <select class="export-format-select" id="designLightboxResSelect" style="flex:0 0 auto;min-width:180px;display:none;"></select>
         <a class="btn-download-mini" id="designLightboxDownload" href="#" download style="flex:1;text-align:center;">Herunterladen</a>
       </div>
     </div>
@@ -1155,19 +1157,35 @@
 
   /* Bild ODER Video: liefert eine lokale Vorschau (blob:-URL, kostet keinen localStorage-Speicher) sofort
      zurück und liest parallel die Rohdatei als Base64 für den späteren echten GitHub-Upload beim
-     Veröffentlichen. Die Datei wird NICHT verändert – Originalauflösung und -format bleiben erhalten. */
+     Veröffentlichen. Die Datei wird NICHT verändert – Originalauflösung und -format bleiben erhalten.
+     Erkennt zusätzlich die Auflösung (Breite/Höhe) der Datei. */
   function loadMediaForGithubUpload(file, assetType, cb){
     if(file.size > MAX_GITHUB_ASSET_BYTES){
-      cb(null, null, 'Datei zu groß (' + Math.round(file.size/1024/1024*10)/10 + ' MB) – bitte max. ' + Math.round(MAX_GITHUB_ASSET_BYTES/1024/1024) + ' MB.', null);
+      cb(null, null, 'Datei zu groß (' + Math.round(file.size/1024/1024*10)/10 + ' MB) – bitte max. ' + Math.round(MAX_GITHUB_ASSET_BYTES/1024/1024) + ' MB.', null, null, null);
       return;
     }
     var previewUrl = URL.createObjectURL(file);
-    readFileAsBase64(file, function(base64, err){
-      if(err){ cb(null, null, err, null); return; }
-      var fallbackExt = assetType === 'video' ? 'mp4' : 'png';
-      var ext = (file.name.split('.').pop() || fallbackExt).toLowerCase().replace(/[^a-z0-9]/g,'') || fallbackExt;
-      cb(previewUrl, assetType, null, { base64: base64, ext: ext, assetType: assetType });
-    });
+    function withDimensions(width, height){
+      readFileAsBase64(file, function(base64, err){
+        if(err){ cb(null, null, err, null, null, null); return; }
+        var fallbackExt = assetType === 'video' ? 'mp4' : 'png';
+        var ext = (file.name.split('.').pop() || fallbackExt).toLowerCase().replace(/[^a-z0-9]/g,'') || fallbackExt;
+        cb(previewUrl, assetType, null, { base64: base64, ext: ext, assetType: assetType }, width || null, height || null);
+      });
+    }
+    if(assetType === 'video'){
+      var probe = document.createElement('video');
+      probe.preload = 'metadata';
+      probe.muted = true;
+      probe.onloadedmetadata = function(){ withDimensions(probe.videoWidth, probe.videoHeight); };
+      probe.onerror = function(){ withDimensions(null, null); };
+      probe.src = previewUrl;
+    } else {
+      var img = new Image();
+      img.onload = function(){ withDimensions(img.naturalWidth, img.naturalHeight); };
+      img.onerror = function(){ withDimensions(null, null); };
+      img.src = previewUrl;
+    }
   }
 
   /* Lädt eine Hintergrund-Datei (Bild ODER Video) und liefert (previewUrl, assetType, err, pendingUpload) zurück.
@@ -1292,6 +1310,8 @@
     if(d.assetType === undefined){ d.assetType = d.asset ? 'image' : null; }
     if(typeof d.description !== 'string'){ d.description = ''; }
     if(typeof d.date !== 'string'){ d.date = ''; }
+    if(typeof d.width !== 'number'){ d.width = null; }
+    if(typeof d.height !== 'number'){ d.height = null; }
     return d;
   }
 
@@ -1371,10 +1391,24 @@
   var designLightboxMedia = document.getElementById('designLightboxMedia');
   var designLightboxTitle = document.getElementById('designLightboxTitle');
   var designLightboxDate = document.getElementById('designLightboxDate');
+  var designLightboxRes = document.getElementById('designLightboxRes');
   var designLightboxDescription = document.getElementById('designLightboxDescription');
   var designLightboxTags = document.getElementById('designLightboxTags');
+  var designLightboxResSelect = document.getElementById('designLightboxResSelect');
   var designLightboxDownload = document.getElementById('designLightboxDownload');
   var designLightboxCloseBtn = document.getElementById('designLightboxCloseBtn');
+  var currentLightboxDesign = null;
+
+  // Gängige Zielauflösungen fürs verkleinerte Herunterladen (nur für Bilder – Videos
+  // müssten dafür client-seitig neu kodiert werden, das ist ohne größere Zusatz-Library
+  // wie ffmpeg.wasm nicht sauber machbar).
+  var DOWNSCALE_PRESETS = [
+    { label: '4K', w: 3840 },
+    { label: '2K', w: 2560 },
+    { label: 'Full HD', w: 1920 },
+    { label: 'HD', w: 1280 },
+    { label: 'SD', w: 854 }
+  ];
 
   function designDownloadFilename(d){
     var ext = d.assetType === 'video' ? 'mp4' : 'png';
@@ -1390,7 +1424,67 @@
     return slugify(d.title) + '.' + ext;
   }
 
+  function setLightboxResolutionText(w, h){
+    if(w && h){
+      designLightboxRes.textContent = 'Auflösung: ' + w + '×' + h;
+      designLightboxRes.style.display = '';
+    } else {
+      designLightboxRes.textContent = '';
+      designLightboxRes.style.display = 'none';
+    }
+  }
+
+  function populateLightboxResSelect(d){
+    var sel = designLightboxResSelect;
+    if(!d.asset || d.assetType === 'video' || !d.width || !d.height){
+      sel.innerHTML = ''; sel.style.display = 'none';
+      return;
+    }
+    var opts = ['<option value="original">Original (' + d.width + '×' + d.height + ')</option>'];
+    DOWNSCALE_PRESETS.forEach(function(p){
+      if(p.w < d.width * 0.95){
+        var h2 = Math.max(1, Math.round(p.w * (d.height / d.width)));
+        opts.push('<option value="' + p.w + '">' + p.label + ' (' + p.w + '×' + h2 + ')</option>');
+      }
+    });
+    if(opts.length > 1){
+      sel.innerHTML = opts.join('');
+      sel.style.display = '';
+    } else {
+      sel.innerHTML = ''; sel.style.display = 'none';
+    }
+  }
+
+  /* Skaliert das Bild client-seitig per Canvas auf die gewünschte Breite herunter und
+     löst den Download der verkleinerten Version aus (Original-Datei bleibt unverändert). */
+  function downloadScaledImage(d, targetW){
+    var img = new Image();
+    img.onload = function(){
+      var scale = Math.min(1, targetW / img.naturalWidth);
+      var w = Math.max(1, Math.round(img.naturalWidth * scale));
+      var h = Math.max(1, Math.round(img.naturalHeight * scale));
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      var isJpeg = /\.jpe?g(\?.*)?$/i.test(d.asset || '') || /^data:image\/jpeg/.test(d.asset || '');
+      var mime = isJpeg ? 'image/jpeg' : 'image/png';
+      canvas.toBlob(function(blob){
+        if(!blob){ setStatus && setStatus('Verkleinerung fehlgeschlagen.'); return; }
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = slugify(d.title) + '-' + w + 'x' + h + (isJpeg ? '.jpg' : '.png');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+      }, mime, 0.92);
+    };
+    img.src = d.asset;
+  }
+
   function openDesignLightbox(d){
+    currentLightboxDesign = d;
     designLightboxMedia.innerHTML = d.asset
       ? (d.assetType === 'video'
           ? '<video src="' + d.asset + '" controls autoplay muted loop playsinline></video>'
@@ -1402,6 +1496,34 @@
     designLightboxDescription.textContent = d.description || '';
     designLightboxDescription.style.display = d.description ? '' : 'none';
     designLightboxTags.innerHTML = d.categories.map(function(c){ return '<span>' + escapeHtml(c) + '</span>'; }).join('');
+
+    setLightboxResolutionText(d.width, d.height);
+    populateLightboxResSelect(d);
+
+    // Ältere Designs, bei denen die Auflösung noch nicht gespeichert wurde: nachträglich ermitteln.
+    if(d.asset && (!d.width || !d.height)){
+      if(d.assetType === 'video'){
+        var videoEl = designLightboxMedia.querySelector('video');
+        if(videoEl){
+          videoEl.addEventListener('loadedmetadata', function(){
+            if(currentLightboxDesign !== d){ return; }
+            d.width = videoEl.videoWidth; d.height = videoEl.videoHeight;
+            setLightboxResolutionText(d.width, d.height);
+            populateLightboxResSelect(d);
+          }, { once:true });
+        }
+      } else {
+        var probeImg = new Image();
+        probeImg.onload = function(){
+          if(currentLightboxDesign !== d){ return; }
+          d.width = probeImg.naturalWidth; d.height = probeImg.naturalHeight;
+          setLightboxResolutionText(d.width, d.height);
+          populateLightboxResSelect(d);
+        };
+        probeImg.src = d.asset;
+      }
+    }
+
     if(d.asset){
       designLightboxDownload.href = d.asset;
       designLightboxDownload.setAttribute('download', designDownloadFilename(d));
@@ -1415,7 +1537,15 @@
   function closeDesignLightbox(){
     designLightboxOverlay.classList.add('hidden');
     designLightboxMedia.innerHTML = ''; // Video stoppen
+    currentLightboxDesign = null;
   }
+  designLightboxDownload.addEventListener('click', function(e){
+    var sel = designLightboxResSelect;
+    if(currentLightboxDesign && sel && sel.style.display !== 'none' && sel.value && sel.value !== 'original'){
+      e.preventDefault();
+      downloadScaledImage(currentLightboxDesign, parseInt(sel.value, 10));
+    }
+  });
   designLightboxCloseBtn.addEventListener('click', closeDesignLightbox);
   designLightboxOverlay.addEventListener('click', function(e){ if(e.target === designLightboxOverlay){ closeDesignLightbox(); } });
 
@@ -2828,7 +2958,7 @@
           setStatus('Vorlage aktualisiert – noch nicht gespeichert.');
         });
       } else {
-        var metaText = (tpl.asset ? ('Eigener Hintergrund ✓ (' + (tpl.assetType === 'video' ? 'Video' : 'Bild') + ')') : 'Standard-Overlay (kein Hintergrund)') +
+        var metaText = (tpl.asset ? ('Eigener Hintergrund ✓ (' + (tpl.assetType === 'video' ? 'Video' : 'Bild') + (tpl.width && tpl.height ? ' · ' + tpl.width + '×' + tpl.height : '') + ')') : 'Standard-Overlay (kein Hintergrund)') +
           ' · ' + (tpl.allowImage && tpl.allowText ? 'Bild + Text' : (tpl.allowText ? 'nur Text' : 'nur Bild'));
         row.className = 'admin-list-item';
         row.innerHTML =
@@ -2843,10 +2973,11 @@
           var file = e.target.files && e.target.files[0];
           if(!file){ return; }
           setStatus('Datei wird verarbeitet …');
-          loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload){
+          loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload, width, height){
             if(err){ setStatus(err); return; }
             tpl.asset = dataUrl;
             tpl.assetType = assetType;
+            tpl.width = width; tpl.height = height;
             registerPendingAssetUpload('template', tpl.id, pendingUpload, tpl.name);
             setStatus((assetType === 'video' ? 'Video' : 'Bild') + ' ausgewählt – wird beim Veröffentlichen auf GitHub hochgeladen.');
             renderAdminLists();
@@ -2912,7 +3043,7 @@
           setStatus('Design aktualisiert – noch nicht gespeichert.');
         });
       } else {
-        var metaText = (d.asset ? ('Datei ✓ (' + (d.assetType === 'video' ? 'Video' : 'Bild') + ')') : 'Keine Datei') +
+        var metaText = (d.asset ? ('Datei ✓ (' + (d.assetType === 'video' ? 'Video' : 'Bild') + (d.width && d.height ? ' · ' + d.width + '×' + d.height : '') + ')') : 'Keine Datei') +
           (d.date ? ' · ' + d.date : '') +
           (d.categories.length ? ' · ' + d.categories.join(', ') : '');
         row.className = 'admin-list-item';
@@ -2928,10 +3059,11 @@
           var file = e.target.files && e.target.files[0];
           if(!file){ return; }
           setStatus('Datei wird verarbeitet …');
-          loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload){
+          loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload, width, height){
             if(err){ setStatus(err); return; }
             d.asset = dataUrl;
             d.assetType = assetType;
+            d.width = width; d.height = height;
             registerPendingAssetUpload('design', d.id, pendingUpload, d.title);
             setStatus((assetType === 'video' ? 'Video' : 'Bild') + ' ausgewählt – wird beim Veröffentlichen auf GitHub hochgeladen.');
             renderAdminLists();
@@ -3033,26 +3165,31 @@
   var pendingTemplateAsset = null;
   var pendingTemplateAssetType = null;
   var pendingTemplateAssetUpload = null; // {base64, ext} bei Video, sonst null
+  var pendingTemplateWidth = null, pendingTemplateHeight = null;
   var newTemplateAssetInput = document.getElementById('newTemplateAsset');
   var newTemplateAssetName = document.getElementById('newTemplateAssetName');
   newTemplateAssetInput.addEventListener('change', function(e){
     var file = e.target.files && e.target.files[0];
     if(!file){
       pendingTemplateAsset = null; pendingTemplateAssetType = null; pendingTemplateAssetUpload = null;
+      pendingTemplateWidth = null; pendingTemplateHeight = null;
       newTemplateAssetName.textContent = 'Keine Datei ausgewählt – Standard-Overlay wird genutzt.';
       return;
     }
     newTemplateAssetName.textContent = 'Datei wird verarbeitet …';
-    loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload){
+    loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload, width, height){
       if(err){
         pendingTemplateAsset = null; pendingTemplateAssetType = null; pendingTemplateAssetUpload = null;
+        pendingTemplateWidth = null; pendingTemplateHeight = null;
         newTemplateAssetName.textContent = err;
         return;
       }
       pendingTemplateAsset = dataUrl;
       pendingTemplateAssetType = assetType;
       pendingTemplateAssetUpload = pendingUpload;
+      pendingTemplateWidth = width; pendingTemplateHeight = height;
       newTemplateAssetName.textContent = 'Ausgewählt: ' + file.name +
+        (width && height ? ' (' + width + '×' + height + ')' : '') +
         ' (wird beim Veröffentlichen im Original auf GitHub hochgeladen)';
     });
   });
@@ -3073,6 +3210,7 @@
     data.templates.push({
       id:newTplId, name:name, placeholder:placeholder,
       asset:pendingTemplateAsset, assetType:pendingTemplateAssetType,
+      width: pendingTemplateWidth, height: pendingTemplateHeight,
       allowImage:allowImage, allowText:allowText,
       defaultSize: (parseInt(sizeInput.value,10) || 22) / 100,
       defaultX:0.5, defaultY:0.5
@@ -3081,6 +3219,7 @@
     nameInput.value = ''; placeholderInput.value = ''; newTemplateAssetInput.value = '';
     allowImageInput.checked = true; allowTextInput.checked = false; sizeInput.value = 22;
     pendingTemplateAsset = null; pendingTemplateAssetType = null; pendingTemplateAssetUpload = null;
+    pendingTemplateWidth = null; pendingTemplateHeight = null;
     newTemplateAssetName.textContent = 'Keine Datei ausgewählt – Standard-Overlay wird genutzt.';
     renderAdminLists();
     setStatus('Vorlage hinzugefügt – noch nicht gespeichert.');
@@ -3090,26 +3229,31 @@
   var pendingDesignAsset = null;
   var pendingDesignAssetType = null;
   var pendingDesignAssetUpload = null; // {base64, ext} bei Video, sonst null
+  var pendingDesignWidth = null, pendingDesignHeight = null;
   var newDesignAssetInput = document.getElementById('newDesignAsset');
   var newDesignAssetName = document.getElementById('newDesignAssetName');
   newDesignAssetInput.addEventListener('change', function(e){
     var file = e.target.files && e.target.files[0];
     if(!file){
       pendingDesignAsset = null; pendingDesignAssetType = null; pendingDesignAssetUpload = null;
+      pendingDesignWidth = null; pendingDesignHeight = null;
       newDesignAssetName.textContent = 'Keine Datei ausgewählt.';
       return;
     }
     newDesignAssetName.textContent = 'Datei wird verarbeitet …';
-    loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload){
+    loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload, width, height){
       if(err){
         pendingDesignAsset = null; pendingDesignAssetType = null; pendingDesignAssetUpload = null;
+        pendingDesignWidth = null; pendingDesignHeight = null;
         newDesignAssetName.textContent = err;
         return;
       }
       pendingDesignAsset = dataUrl;
       pendingDesignAssetType = assetType;
       pendingDesignAssetUpload = pendingUpload;
+      pendingDesignWidth = width; pendingDesignHeight = height;
       newDesignAssetName.textContent = 'Ausgewählt: ' + file.name +
+        (width && height ? ' (' + width + '×' + height + ')' : '') +
         ' (wird beim Veröffentlichen im Original auf GitHub hochgeladen)';
     });
   });
@@ -3139,11 +3283,13 @@
     data.designs.push({
       id: newDesignId, title: title, description: description, date: date,
       asset: pendingDesignAsset, assetType: pendingDesignAssetType,
+      width: pendingDesignWidth, height: pendingDesignHeight,
       categories: categories
     });
     registerPendingAssetUpload('design', newDesignId, pendingDesignAssetUpload, title);
     titleInput.value = ''; descriptionInput.value = ''; dateInput.value = ''; newDesignAssetInput.value = '';
     pendingDesignAsset = null; pendingDesignAssetType = null; pendingDesignAssetUpload = null;
+    pendingDesignWidth = null; pendingDesignHeight = null;
     newDesignAssetName.textContent = 'Keine Datei ausgewählt.';
     renderAdminLists();
     setStatus('Design hinzugefügt – noch nicht gespeichert.');
