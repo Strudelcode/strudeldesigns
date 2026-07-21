@@ -240,6 +240,7 @@
   .designs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;}
 
   .design-lightbox{width:100%;max-width:720px;max-height:88vh;overflow-y:auto;overflow-x:hidden;padding:0;position:relative;}
+  .design-lightbox-media-wrap{position:relative;}
   .design-lightbox-media{width:100%;aspect-ratio:16/9;background:#0c0714;overflow:hidden;}
   .design-lightbox-media img, .design-lightbox-media video{width:100%;height:100%;object-fit:contain;background:#000;display:block;}
   .design-lightbox-body{padding:22px 26px;}
@@ -252,6 +253,19 @@
     position:absolute;top:14px;right:14px;z-index:2;background:rgba(5,3,9,0.6);color:#fff;
     width:34px;height:34px;border-radius:50%;font-size:18px;line-height:1;border:1px solid rgba(255,255,255,0.15);
   }
+  .design-lightbox-nav{
+    position:absolute;top:0;bottom:0;display:flex;align-items:center;z-index:2;
+    background:transparent;color:#fff;width:64px;font-size:26px;line-height:1;border:none;
+    transition:background .15s ease;
+  }
+  .design-lightbox-nav:hover{background:rgba(5,3,9,0.35);}
+  .design-lightbox-nav span{
+    width:36px;height:36px;border-radius:50%;background:rgba(5,3,9,0.6);border:1px solid rgba(255,255,255,0.15);
+    display:flex;align-items:center;justify-content:center;margin:0 auto;
+  }
+  .design-lightbox-nav.prev{left:0;justify-content:flex-start;padding-left:10px;}
+  .design-lightbox-nav.next{right:0;justify-content:flex-end;padding-right:10px;}
+  .design-lightbox-nav[disabled]{opacity:0;pointer-events:none;}
 
   /* ---------- Editor-Modal (Vollbild-Editor mit fixierter Vorschau) ---------- */
   .editor-modal{position:fixed;inset:0;z-index:300;display:none;}
@@ -986,7 +1000,11 @@
 <div class="modal-overlay hidden" id="designLightboxOverlay">
   <div class="glass design-lightbox">
     <button class="design-lightbox-close" id="designLightboxCloseBtn" aria-label="Schließen">×</button>
-    <div class="design-lightbox-media" id="designLightboxMedia"></div>
+    <div class="design-lightbox-media-wrap">
+      <div class="design-lightbox-media" id="designLightboxMedia"></div>
+      <button class="design-lightbox-nav prev" id="designLightboxPrevBtn" type="button" aria-label="Vorheriges Design"><span>‹</span></button>
+      <button class="design-lightbox-nav next" id="designLightboxNextBtn" type="button" aria-label="Nächstes Design"><span>›</span></button>
+    </div>
     <div class="design-lightbox-body">
       <h3 id="designLightboxTitle"></h3>
       <div class="design-lightbox-date" id="designLightboxDate" style="margin-bottom:2px;"></div>
@@ -1356,6 +1374,8 @@
     return g;
   }
 
+  var currentDesignsFiltered = [];
+
   function renderDesigns(){
     data.designs.forEach(normalizeDesign);
     renderDesignCatChips();
@@ -1367,6 +1387,7 @@
       var hay = (d.title + ' ' + d.description + ' ' + d.categories.join(' ')).toLowerCase();
       return hay.indexOf(query) !== -1;
     });
+    currentDesignsFiltered = filtered;
 
     designsContainer.innerHTML = '';
     if(data.designs.length === 0){
@@ -1392,6 +1413,8 @@
   var designLightboxResSelect = document.getElementById('designLightboxResSelect');
   var designLightboxDownload = document.getElementById('designLightboxDownload');
   var designLightboxCloseBtn = document.getElementById('designLightboxCloseBtn');
+  var designLightboxPrevBtn = document.getElementById('designLightboxPrevBtn');
+  var designLightboxNextBtn = document.getElementById('designLightboxNextBtn');
   var currentLightboxDesign = null;
 
   // Prozentuale Verkleinerung statt fester Zielauflösungen – funktioniert für jede
@@ -1600,8 +1623,29 @@
       designLightboxDownload.removeAttribute('href');
       designLightboxDownload.style.display = 'none';
     }
+    updateDesignLightboxNav();
     designLightboxOverlay.classList.remove('hidden');
   }
+  function updateDesignLightboxNav(){
+    var idx = currentDesignsFiltered.indexOf(currentLightboxDesign);
+    var hasList = idx !== -1 && currentDesignsFiltered.length > 1;
+    designLightboxPrevBtn.disabled = !hasList;
+    designLightboxNextBtn.disabled = !hasList;
+  }
+  function showDesignByOffset(offset){
+    var idx = currentDesignsFiltered.indexOf(currentLightboxDesign);
+    if(idx === -1 || currentDesignsFiltered.length < 2){ return; }
+    var nextIdx = (idx + offset + currentDesignsFiltered.length) % currentDesignsFiltered.length;
+    openDesignLightbox(currentDesignsFiltered[nextIdx]);
+  }
+  designLightboxPrevBtn.addEventListener('click', function(e){ e.stopPropagation(); showDesignByOffset(-1); });
+  designLightboxNextBtn.addEventListener('click', function(e){ e.stopPropagation(); showDesignByOffset(1); });
+  document.addEventListener('keydown', function(e){
+    if(designLightboxOverlay.classList.contains('hidden')){ return; }
+    if(e.key === 'ArrowLeft'){ showDesignByOffset(-1); }
+    else if(e.key === 'ArrowRight'){ showDesignByOffset(1); }
+    else if(e.key === 'Escape'){ closeDesignLightbox(); }
+  });
   function closeDesignLightbox(){
     designLightboxOverlay.classList.add('hidden');
     designLightboxMedia.innerHTML = ''; // Video stoppen
