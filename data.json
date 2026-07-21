@@ -49,22 +49,11 @@
   ],
   "designs": [
     {
-      "id": "d-mrup089n-wpian",
-      "title": "Gleich gehts los",
-      "description": "",
-      "date": "21. Juli 2026",
-      "asset": "designs/gleich-gehts-los-mrup09wi.mp4",
-      "assetType": "video",
-      "width": 1280,
-      "height": 720,
-      "categories": []
-    },
-    {
       "id": "d-mrupso73-zry09",
       "title": "Thumbnail für Lauenberger",
       "description": "Ein Minecraft Hardcore Thumbnail für Lauenberger",
-      "date": "21. Juli 2026",
-      "asset": "designs/thumbnail-f-r-lauenberger-mruq9dgn.png",
+      "date": "06. Juni 2026",
+      "asset": "designs/thumbnail-f-r-lauenberger-mruqb4rn.png",
       "assetType": "image",
       "width": 1280,
       "height": 720,
@@ -76,7 +65,7 @@
       "id": "d-mrupxg5l-cqndj",
       "title": "Logo für KomptncV1",
       "description": "Ein Minecraft Logo für KomptncV1",
-      "date": "21. Juli 2026",
+      "date": "06. Juli 2026",
       "asset": "designs/logo-f-r-komptncv1-mrupxku0.png",
       "assetType": "image",
       "width": 1563,
@@ -89,7 +78,7 @@
       "id": "d-mruq1uad-i0mcn",
       "title": "Banner für Lauenberger",
       "description": "Ein Minecraft Banner für Lauenberger",
-      "date": "21. Juli 2026",
+      "date": "23. Februar 2026",
       "asset": "designs/banner-f-r-lauenberger-mruq1z86.png",
       "assetType": "image",
       "width": 6912,
@@ -99,29 +88,16 @@
       ]
     },
     {
-      "id": "d-mruq52wm-n6kfn",
+      "id": "d-mruq7dv0-2tm8y",
       "title": "Thumbnail für Lauenberger",
       "description": "Ein Minecraft Thumbnail für Lauenberger",
-      "date": "21. Juli 2026",
-      "asset": "designs/thumbnail-f-r-lauenberger-mruq5blo.png",
+      "date": "15. Mai 2026",
+      "asset": "designs/thumbnail-f-r-lauenberger-mruq84rk.png",
       "assetType": "image",
       "width": 1280,
       "height": 720,
       "categories": [
         "Thumbnail"
-      ]
-    },
-    {
-      "id": "d-mruqd5o9-f2fj4",
-      "title": "Logo für Lauenberger",
-      "description": "Ein Minecraft Logo für Lauenberger",
-      "date": "21. Juli 2026",
-      "asset": "designs/logo-f-r-lauenberger-mruqdcu6.png",
-      "assetType": "image",
-      "width": 500,
-      "height": 500,
-      "categories": [
-        "Logo"
       ]
     }
   ],
