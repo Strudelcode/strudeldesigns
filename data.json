@@ -96,7 +96,11 @@
       "allowText": false,
       "defaultSize": 0.22,
       "defaultX": 0.5,
-      "defaultY": 0.5
+      "defaultY": 0.5,
+      "watermarkAsset": null,
+      "watermarkPos": "bottom-right",
+      "watermarkSize": 14,
+      "watermarkOpacity": 80
     }
   ],
   "designs": [
@@ -619,6 +623,279 @@
       "width": null,
       "height": null,
       "categories": []
+    },
+    {
+      "id": "d-mruyyc4u-lpq6a",
+      "title": "Thumbnail für Lauenberger",
+      "description": "MC Thumbnail für Lauenberger",
+      "date": "12. Juli 2026",
+      "asset": "designs/thumbnail-f-r-lauenberger-mrv0edtn.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mruz9bai-4rlk1",
+      "title": "Thumbnail für Lauenberger",
+      "description": "MC Thumbnail für Lauenberger",
+      "date": "10. Juli 2026",
+      "asset": "designs/thumbnail-f-r-lauenberger-mrv0ehbo.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mruzcsim-7r4gp",
+      "title": "Logo für Pf@ndi",
+      "description": "MC Logo für Pf@ndi",
+      "date": "18. Juli 2026",
+      "asset": "designs/logo-f-r-pf-ndi-mrv0ejya.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mruzez5g-kns9q",
+      "title": "Logo für Pf@ndi",
+      "description": "MC Logo für Pf@ndi",
+      "date": "18. Juli 2026",
+      "asset": "designs/logo-f-r-pf-ndi-mrv0em9h.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mruzgttr-rq9we",
+      "title": "Logo für Pakubo",
+      "description": "Raben Logo für Pakubo",
+      "date": "9. Juli 2026",
+      "asset": "designs/logo-f-r-pakubo-mrv0eos8.png",
+      "assetType": "image",
+      "width": 882,
+      "height": 806,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mruzibu3-kft06",
+      "title": "Banner für Ravesmp",
+      "description": "Raben Banner für Ravesmp",
+      "date": "9. Juli 2026",
+      "asset": "designs/banner-f-r-ravesmp-mrv0er7s.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mruzjxe0-wdaww",
+      "title": "Logo für Gumber2009",
+      "description": "MC Logo für Gumber2009",
+      "date": "27. Juni 2026",
+      "asset": "designs/logo-f-r-gumber2009-mrv0evx9.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mruzl7pt-uzmzc",
+      "title": "Banner für Gumber2009",
+      "description": "MC Banner für Gumber2009",
+      "date": "27. Juni 2026",
+      "asset": "designs/banner-f-r-gumber2009-mrv0ey9i.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mruzmzd5-6zcfx",
+      "title": "Logo für Bloodbyte",
+      "description": "MC Logo für Bloodbyte",
+      "date": "3. April 2026",
+      "asset": "designs/logo-f-r-bloodbyte-mrv0f2f2.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mruznvz5-zvanw",
+      "title": "Logo für Bloodbyte",
+      "description": "Gezeichnetes Logo für Bloodbyte",
+      "date": "15. Juli 2026",
+      "asset": "designs/logo-f-r-bloodbyte-mrv0f4tj.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mruzput9-7ch6m",
+      "title": "Logo für Jan_Bedwars",
+      "description": "MC Logo für Jan_Bedwars",
+      "date": "21. Juni 2026",
+      "asset": "designs/logo-f-r-jan-bedwars-mrv0f717.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mruzsk7k-dcn5s",
+      "title": "Banner für KomptncV1",
+      "description": "MC Banner für KomptncV1",
+      "date": "26. Juni 2026",
+      "asset": "designs/banner-f-r-komptncv1-mrv0f98u.png",
+      "assetType": "image",
+      "width": 2560,
+      "height": 1440,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mruzxaxb-gcpl2",
+      "title": "Logo für Nasenharald",
+      "description": "MC Logo für Nasenharald",
+      "date": "25. Mai 2026",
+      "asset": "designs/logo-f-r-nasenharald-mrv0fc2k.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mruzyb24-60w3d",
+      "title": "Logo für 00Cdte_kwphenixYt",
+      "description": "Roblox Logo für 00Cdte_kwphenixYt",
+      "date": "13. Mai 2026",
+      "asset": "designs/logo-f-r-00cdte-kwphenixyt-mrv0fejk.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv001e1-cvjbs",
+      "title": "Logo für LouisObiwan",
+      "description": "MC Logo für LouisObiwan",
+      "date": "7. Mai 2026",
+      "asset": "designs/logo-f-r-louisobiwan-mrv0fgo2.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv042qv-y9btj",
+      "title": "Logo für Julian_Zockt",
+      "description": "Logo für Julian_Zockt",
+      "date": "3. Mai 2026",
+      "asset": "designs/logo-f-r-julian-zockt-mrv0fita.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv05fqy-i069s",
+      "title": "Banner für Simon1088",
+      "description": "MC Banner für  Simon1088",
+      "date": "16. Mai 2026",
+      "asset": "designs/banner-f-r-simon1088-mrv0fkzm.png",
+      "assetType": "image",
+      "width": 2560,
+      "height": 1440,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrv064c5-u5tmg",
+      "title": "Logo für Simon1088",
+      "description": "MC Logo für Simon1088",
+      "date": "16. Mai 2026",
+      "asset": "designs/logo-f-r-simon1088-mrv0fnlm.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv0b9i4-15x99",
+      "title": "Logo für L4ca412",
+      "description": "MC Logo für L4ca412",
+      "date": "18. Mai 2026",
+      "asset": "designs/logo-f-r-l4ca412-mrv0fppc.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv0cgo7-ukx35",
+      "title": "Logo für  Treuer (v1)",
+      "description": "MC Logo für Treuer (v1)",
+      "date": "21. April 2026",
+      "asset": "designs/logo-f-r-treuer-v1-mrv0frsj.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv0e7kt-phx3i",
+      "title": "Logo für Treuer (v2)",
+      "description": "MC Logo für  Treuer (v2)",
+      "date": "21. April 2026",
+      "asset": "designs/logo-f-r-treuer-v2-mrv0ftxl.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
     }
   ],
   "designCategories": [
