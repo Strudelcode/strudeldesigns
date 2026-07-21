@@ -83,6 +83,20 @@
       "watermarkPos": "bottom-right",
       "watermarkSize": 14,
       "watermarkOpacity": 80
+    },
+    {
+      "id": "t-mruw59h9-48frg",
+      "name": "Kamera Umrandung / Blau & Grün",
+      "placeholder": "Kamera Umrandung / Blau & Grün",
+      "asset": "templates/kamera-umrandung-blau-gr-n-mruw5bm7.png",
+      "assetType": "image",
+      "width": 5200,
+      "height": 3400,
+      "allowImage": true,
+      "allowText": false,
+      "defaultSize": 0.22,
+      "defaultX": 0.5,
+      "defaultY": 0.5
     }
   ],
   "designs": [
