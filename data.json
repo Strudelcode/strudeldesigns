@@ -396,6 +396,85 @@
       "categories": [
         "Thumbnail"
       ]
+    },
+    {
+      "id": "d-mrurmsjk-t3oks",
+      "title": "Thumbnail für Strudelgame",
+      "description": "Ein Minecraft Thumbnail für Strudelgame",
+      "date": "3. Mai 2026",
+      "asset": "designs/thumbnail-f-r-strudelgame-mrurvhwx.png",
+      "assetType": "image",
+      "width": 880,
+      "height": 494,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mruro1on-xgycl",
+      "title": "Thumbnail für Supercat42",
+      "description": "Ein Minecraft Thumbnail für Supercat42",
+      "date": "3. Mai 2026",
+      "asset": "designs/thumbnail-f-r-supercat42-mrurvklw.png",
+      "assetType": "image",
+      "width": 880,
+      "height": 494,
+      "categories": [
+        "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mrurqr3r-6vl13",
+      "title": "Eine Follow animation für Nasenharald",
+      "description": "Eine Minecraft Follow animation für Nasenharald",
+      "date": "1. Mai 2026",
+      "asset": "designs/eine-follow-animation-f-r-nasenharald-mrurvn8o.mp4",
+      "assetType": "video",
+      "width": 1080,
+      "height": 1080,
+      "categories": [
+        "Stream Overlay"
+      ]
+    },
+    {
+      "id": "d-mrursgf8-dm99s",
+      "title": "Eine Abo Animation für Julian zockt",
+      "description": "Eine Abo Animation für Julian zockt",
+      "date": "1. Mai 2026",
+      "asset": "designs/eine-abo-animation-f-r-julian-zockt-mrurvpwz.mp4",
+      "assetType": "video",
+      "width": 1920,
+      "height": 1920,
+      "categories": [
+        "Overlay",
+        "Sonstiges"
+      ]
+    },
+    {
+      "id": "d-mruru1kr-iekj6",
+      "title": "Banner für SuperCat42",
+      "description": "Ein minimalistischer Banner für SuperCat42",
+      "date": "4. Mai 2026",
+      "asset": "designs/banner-f-r-supercat42-mrurvsgf.png",
+      "assetType": "image",
+      "width": 880,
+      "height": 494,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrurvbdq-bezvx",
+      "title": "Logo für SuperCat42",
+      "description": "Ein minimalistisches Logo für SuperCat42",
+      "date": "4. Mai 2026",
+      "asset": "designs/logo-f-r-supercat42-mrurvuua.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
     }
   ],
   "designCategories": [
