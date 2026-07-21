@@ -1109,6 +1109,59 @@
       "categories": [
         "Banner"
       ]
+    },
+    {
+      "id": "d-mrv1mb1t-9p60n",
+      "title": "Logo für CYB4LOL",
+      "description": "MC Logo für CYB4LOL",
+      "date": "12 .Februar 2026",
+      "asset": "designs/logo-f-r-cyb4lol-mrv1vrc2.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv1n9pd-4chb5",
+      "title": "Logo für Bliss SMP",
+      "description": "Diamant Logo für Bliss SMP",
+      "date": "25. Januar 2026",
+      "asset": "designs/logo-f-r-bliss-smp-mrv1vtmo.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrv1obrb-92njm",
+      "title": "Banner für Bliss SMP",
+      "description": "Banner für Bliss SMP",
+      "date": "25. Januar 2026",
+      "asset": "designs/banner-f-r-bliss-smp-mrv1vvz7.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Banner",
+        "Sonstiges"
+      ]
+    },
+    {
+      "id": "d-mrv1voae-2pe1e",
+      "title": "GEMS Banner",
+      "description": "Banner für GEMS",
+      "date": "25. Januar 2026",
+      "asset": "designs/gems-banner-mrv1vz2b.png",
+      "assetType": "image",
+      "width": 1280,
+      "height": 720,
+      "categories": [
+        "Banner"
+      ]
     }
   ],
   "designCategories": [
