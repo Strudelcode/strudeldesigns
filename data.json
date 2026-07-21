@@ -64,7 +64,7 @@
       "title": "Thumbnail für Lauenberger",
       "description": "Ein Minecraft Hardcore Thumbnail für Lauenberger",
       "date": "21. Juli 2026",
-      "asset": "designs/thumbnail-f-r-lauenberger-mruqb4rn.png",
+      "asset": "designs/thumbnail-f-r-lauenberger-mruq9dgn.png",
       "assetType": "image",
       "width": 1280,
       "height": 720,
@@ -99,16 +99,29 @@
       ]
     },
     {
-      "id": "d-mruq7dv0-2tm8y",
+      "id": "d-mruq52wm-n6kfn",
       "title": "Thumbnail für Lauenberger",
       "description": "Ein Minecraft Thumbnail für Lauenberger",
       "date": "21. Juli 2026",
-      "asset": "designs/thumbnail-f-r-lauenberger-mruq84rk.png",
+      "asset": "designs/thumbnail-f-r-lauenberger-mruq5blo.png",
       "assetType": "image",
       "width": 1280,
       "height": 720,
       "categories": [
         "Thumbnail"
+      ]
+    },
+    {
+      "id": "d-mruqd5o9-f2fj4",
+      "title": "Logo für Lauenberger",
+      "description": "Ein Minecraft Logo für Lauenberger",
+      "date": "21. Juli 2026",
+      "asset": "designs/logo-f-r-lauenberger-mruqdcu6.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
       ]
     }
   ],
