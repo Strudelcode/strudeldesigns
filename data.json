@@ -49,16 +49,30 @@
   ],
   "designs": [
     {
-      "id": "d-mructgry-prksj",
-      "title": "My name is Chippy",
-      "description": "Tets design",
+      "id": "d-mruofz2g-3pq83",
+      "title": "dubble eisy",
+      "description": "<3",
       "date": "21. Juli 2026",
-      "asset": "designs/my-name-is-chippy-mructori.png",
+      "asset": "designs/dubble-eisy-mruogolk.png",
+      "assetType": "image",
+      "width": 800,
+      "height": 450,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mruogfvh-ecu0j",
+      "title": "solo",
+      "description": "",
+      "date": "16. Jannuar 2012",
+      "asset": "designs/solo-mruogrfz.png",
       "assetType": "image",
       "width": 1920,
       "height": 1080,
       "categories": [
-        "Banner"
+        "Logo",
+        "Overlay"
       ]
     }
   ],
