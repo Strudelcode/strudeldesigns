@@ -42,7 +42,11 @@
       "allowText": false,
       "defaultSize": 0.22,
       "defaultX": 0.5,
-      "defaultY": 0.5
+      "defaultY": 0.5,
+      "watermarkAsset": null,
+      "watermarkPos": "bottom-right",
+      "watermarkSize": 14,
+      "watermarkOpacity": 80
     },
     {
       "id": "t-mruuwtv0-ba9co",
@@ -54,6 +58,24 @@
       "height": 1080,
       "allowImage": true,
       "allowText": false,
+      "defaultSize": 0.22,
+      "defaultX": 0.5,
+      "defaultY": 0.5,
+      "watermarkAsset": null,
+      "watermarkPos": "bottom-right",
+      "watermarkSize": 14,
+      "watermarkOpacity": 80
+    },
+    {
+      "id": "t-mruv89a3-nqq0b",
+      "name": "Eisige Winter Landschaft / Blau töne",
+      "placeholder": "Eisige Winter Landschaft / Blau töne",
+      "asset": "templates/eisige-winter-landschaft-blau-t-ne-mruv8bda.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "allowImage": true,
+      "allowText": true,
       "defaultSize": 0.22,
       "defaultX": 0.5,
       "defaultY": 0.5
