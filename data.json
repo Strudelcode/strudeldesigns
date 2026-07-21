@@ -79,6 +79,34 @@
       "defaultSize": 0.22,
       "defaultX": 0.5,
       "defaultY": 0.5
+    },
+    {
+      "id": "t-mruvx3ux-81j65",
+      "name": "Kamera Umrandung / Grün, Blau",
+      "placeholder": "Kamera Umrandung / Grün, Blau",
+      "asset": "templates/kamera-umrandung-gr-n-blau-mruvxuw1.png",
+      "assetType": "image",
+      "width": 5200,
+      "height": 3400,
+      "allowImage": true,
+      "allowText": false,
+      "defaultSize": 0.22,
+      "defaultX": 0.5,
+      "defaultY": 0.5
+    },
+    {
+      "id": "t-mruvxssh-f3yuu",
+      "name": "Stream Endet / Blau",
+      "placeholder": "Stream Endet / Blau",
+      "asset": null,
+      "assetType": null,
+      "width": null,
+      "height": null,
+      "allowImage": true,
+      "allowText": false,
+      "defaultSize": 0.22,
+      "defaultX": 0.5,
+      "defaultY": 0.5
     }
   ],
   "designs": [
