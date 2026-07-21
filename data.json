@@ -97,15 +97,15 @@
       "assetType": "video",
       "width": 1280,
       "height": 720,
-      "categories": [
-        "Sonstiges"
-      ]
+      "categories": []
     }
   ],
   "designCategories": [
     "Logo",
     "Banner",
     "Overlay",
+    "Thumbnail",
+    "Stream Overlay",
     "Sonstiges"
   ]
 }
