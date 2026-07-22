@@ -249,6 +249,41 @@
   .designs-cat-chip.active{background:var(--pink);color:#fff;border-color:var(--pink);}
   .designs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;}
 
+  /* ---------- Filter-Dropdown (Designs) ---------- */
+  .designs-filter-wrap{position:relative;align-self:flex-start;}
+  .designs-filter-btn{
+    display:flex;align-items:center;gap:8px;background:var(--glass-bg);border:1px solid var(--glass-border);
+    color:var(--text-0);font-size:13.5px;font-weight:700;padding:10px 16px;border-radius:12px;transition:all .18s ease;
+  }
+  .designs-filter-btn:hover{border-color:var(--pink);}
+  .designs-filter-btn .chev{font-size:11px;color:var(--text-2);transition:transform .18s ease;}
+  .designs-filter-btn.open .chev{transform:rotate(180deg);}
+  .designs-filter-count{
+    background:var(--pink);color:#fff;font-size:11px;font-weight:700;min-width:18px;height:18px;
+    border-radius:999px;display:none;align-items:center;justify-content:center;padding:0 5px;
+  }
+  .designs-filter-count.visible{display:inline-flex;}
+  .designs-filter-panel{
+    position:absolute;top:calc(100% + 8px);left:0;z-index:20;min-width:260px;max-width:320px;
+    background:rgba(12,7,20,0.98);border:1px solid var(--glass-border);border-radius:14px;
+    padding:16px;box-shadow:0 20px 50px rgba(0,0,0,0.5);backdrop-filter:blur(20px);
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .designs-filter-panel.hidden{display:none;}
+  .designs-filter-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-2);margin-bottom:8px;}
+  .designs-filter-check{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--text-1);padding:5px 0;cursor:pointer;}
+  .designs-filter-check input{accent-color:var(--pink);width:15px;height:15px;flex:0 0 auto;}
+  .designs-filter-sort{
+    width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:10px;
+    padding:9px 11px;color:var(--text-0);font-family:inherit;font-size:13px;cursor:pointer;
+  }
+  .designs-filter-sort:focus{outline:none;border-color:var(--pink);}
+  .designs-filter-reset-btn{
+    background:none;border:1px solid var(--glass-border);color:var(--text-2);font-size:12.5px;font-weight:600;
+    padding:8px;border-radius:9px;transition:all .18s ease;
+  }
+  .designs-filter-reset-btn:hover{border-color:var(--pink);color:var(--text-0);}
+
   .design-lightbox{width:100%;max-width:720px;max-height:88vh;overflow-y:auto;overflow-x:hidden;padding:0;position:relative;}
   .design-lightbox-media-wrap{position:relative;}
   .design-lightbox-media{width:100%;aspect-ratio:16/9;background:#0c0714;overflow:hidden;}
@@ -262,14 +297,16 @@
   .design-lightbox-close{
     position:absolute;top:14px;right:14px;z-index:2;background:rgba(5,3,9,0.6);color:#fff;
     width:34px;height:34px;border-radius:50%;font-size:18px;line-height:1;border:1px solid rgba(255,255,255,0.15);
+    transition:background .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
   }
+  .design-lightbox-close:hover{background:var(--pink);border-color:var(--pink);transform:scale(1.06);}
   .design-lightbox-nav{
     position:absolute;top:50%;transform:translateY(-50%);z-index:2;
     width:36px;height:36px;border-radius:50%;background:rgba(5,3,9,0.6);border:1px solid rgba(255,255,255,0.15);
     color:#fff;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;
-    transition:background .15s ease;
+    transition:background .15s ease, border-color .15s ease, transform .15s ease;
   }
-  .design-lightbox-nav:hover{background:rgba(5,3,9,0.85);}
+  .design-lightbox-nav:hover{background:var(--pink);border-color:var(--pink);transform:translateY(-50%) scale(1.08);}
   .design-lightbox-nav span{display:flex;align-items:center;justify-content:center;}
   .design-lightbox-nav.prev{left:10px;}
   .design-lightbox-nav.next{right:10px;}
@@ -330,6 +367,17 @@
       radial-gradient(circle at 75% 75%, rgba(139,92,246,0.35), transparent 55%),
       linear-gradient(135deg,#1a0f2e,#0c0714 70%);
     border:1px solid var(--glass-border);touch-action:none;cursor:default;user-select:none;
+  }
+  /* Neutrales Schachbrett statt des lila Verlaufs, damit transparente PNG-Bereiche im
+     eigenen Hintergrund-Bild nicht wie ein Farbfehler aussehen, sondern klar als
+     "durchsichtig" erkennbar sind. */
+  .stage.stage-has-image{
+    background-color:#3a3a3a;
+    background-image:
+      linear-gradient(45deg, #4a4a4a 25%, transparent 25%, transparent 75%, #4a4a4a 75%, #4a4a4a),
+      linear-gradient(45deg, #4a4a4a 25%, transparent 25%, transparent 75%, #4a4a4a 75%, #4a4a4a);
+    background-size:20px 20px;
+    background-position:0 0, 10px 10px;
   }
   .stage-viewport{overflow:hidden;border-radius:14px;aspect-ratio:16/9;}
   .stage-viewport .stage{width:100%;height:100%;aspect-ratio:auto;border-radius:0;}
@@ -516,17 +564,22 @@
   @media (max-width:760px){
     .nav-links{
       position:fixed;inset:76px 16px auto 16px;flex-direction:column;align-items:flex-start;gap:4px;
-      padding:14px;background:rgba(12,8,20,0.96);border:1px solid var(--glass-border);border-radius:16px;
+      padding:14px;background:rgba(10,6,16,0.99);border:1px solid var(--glass-border);border-radius:16px;
       backdrop-filter:blur(20px);transform:translateY(-14px);opacity:0;pointer-events:none;
-      transition:transform .22s ease, opacity .22s ease;
+      transition:transform .22s ease, opacity .22s ease;z-index:40;box-shadow:0 20px 50px rgba(0,0,0,0.5);
     }
     .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto;}
     .nav-links a{padding:11px 8px;width:100%;border-left:3px solid transparent;}
     .nav-links a::after{display:none;}
     .nav-links a.current{border-left-color:var(--pink);background:rgba(255,63,164,0.08);border-radius:6px;}
     .nav-links .nav-cta{margin-top:6px;}
-    .burger{display:flex;}
+    .burger{display:flex;position:relative;z-index:41;}
   }
+  .nav-backdrop{
+    position:fixed;inset:0;z-index:39;background:rgba(5,3,9,0.7);opacity:0;pointer-events:none;
+    transition:opacity .22s ease;
+  }
+  .nav-backdrop.visible{opacity:1;pointer-events:auto;}
 
   /* ---------- Modals: Geheimcode & Admin-Panel ---------- */
   .modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(5,3,9,0.72);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -594,6 +647,23 @@
   .admin-form-row{display:grid;grid-template-columns:1fr 1fr 76px;gap:10px;}
   .admin-form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .admin-form-hint{font-size:11.5px;color:var(--text-2);line-height:1.5;}
+  .admin-expand-toggle-btn{
+    width:100%;margin-top:4px;padding:10px;background:var(--glass-bg);border:1px solid var(--glass-border);
+    border-radius:10px;color:var(--text-1);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .18s ease;
+  }
+  .admin-expand-toggle-btn:hover{background:var(--pink);color:#fff;border-color:var(--pink);}
+
+  .scroll-top-btn{
+    position:fixed;right:18px;bottom:18px;z-index:150;width:46px;height:46px;border-radius:50%;
+    background:linear-gradient(135deg,var(--pink),var(--violet));color:#fff;font-size:20px;border:none;
+    box-shadow:0 8px 22px rgba(192,38,211,0.4);opacity:0;transform:translateY(12px);pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .scroll-top-btn.visible{opacity:1;transform:translateY(0);pointer-events:auto;}
+  .scroll-top-btn:hover{transform:translateY(-3px);}
+  @media (max-width:760px){
+    .scroll-top-btn{right:14px;bottom:14px;width:42px;height:42px;font-size:18px;}
+  }
   .admin-add-btn{align-self:flex-start;background:var(--glass-bg-strong);border:1px solid var(--glass-border);color:var(--text-0);padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;}
   #addMemberBtn, #addNewsBtn, #addTemplateBtn{display:inline-flex;align-items:center;gap:8px;}
   #addMemberBtn::before, #addNewsBtn::before, #addTemplateBtn::before{
@@ -755,8 +825,30 @@
       </div>
       <div class="designs-toolbar">
         <input type="text" id="designSearchInput" class="designs-search-input" placeholder="Suchen nach Titel, Beschreibung oder Kategorie …">
-        <div class="designs-cat-row" id="designsCatRow"></div>
-        <div class="designs-cat-row" id="designsFormatRow"></div>
+        <div class="designs-filter-wrap">
+          <button type="button" class="designs-filter-btn" id="designsFilterBtn">
+            <span>Filter</span><span class="designs-filter-count" id="designsFilterCount"></span><span class="chev">▾</span>
+          </button>
+          <div class="designs-filter-panel hidden" id="designsFilterPanel">
+            <div class="designs-filter-section">
+              <div class="designs-filter-section-title">Format</div>
+              <label class="designs-filter-check"><input type="checkbox" class="designs-filter-type" value="image" checked> Bilder</label>
+              <label class="designs-filter-check"><input type="checkbox" class="designs-filter-type" value="video" checked> Videos</label>
+            </div>
+            <div class="designs-filter-section" id="designsFilterCatsSection">
+              <div class="designs-filter-section-title">Kategorien</div>
+              <div id="designsFilterCats"></div>
+            </div>
+            <div class="designs-filter-section">
+              <div class="designs-filter-section-title">Sortierung</div>
+              <select id="designsSortSelect" class="designs-filter-sort">
+                <option value="new">Veröffentlichung: neueste zuerst</option>
+                <option value="old">Veröffentlichung: älteste zuerst</option>
+              </select>
+            </div>
+            <button type="button" class="designs-filter-reset-btn" id="designsFilterResetBtn">Filter zurücksetzen</button>
+          </div>
+        </div>
       </div>
       <div class="designs-grid" id="designsContainer"></div>
     </div>
@@ -774,6 +866,8 @@
   </div>
 
 </main>
+
+<button type="button" class="scroll-top-btn" id="scrollTopBtn" aria-label="Nach oben scrollen">↑</button>
 
 <footer>
   <div class="wrap">
@@ -1347,29 +1441,69 @@
   }
 
   var designSearchInput = document.getElementById('designSearchInput');
-  var designsCatRow = document.getElementById('designsCatRow');
   var designsContainer = document.getElementById('designsContainer');
-  var activeDesignCategory = null; // null = alle Kategorien
+  var designsFilterBtn = document.getElementById('designsFilterBtn');
+  var designsFilterPanel = document.getElementById('designsFilterPanel');
+  var designsFilterCount = document.getElementById('designsFilterCount');
+  var designsFilterCats = document.getElementById('designsFilterCats');
+  var designsFilterCatsSection = document.getElementById('designsFilterCatsSection');
+  var designsFilterResetBtn = document.getElementById('designsFilterResetBtn');
+  var designsSortSelect = document.getElementById('designsSortSelect');
+  var activeDesignCategories = []; // leer = alle Kategorien
 
-  function renderDesignCatChips(){
-    designsCatRow.innerHTML = '';
-    var allBtn = document.createElement('button');
-    allBtn.type = 'button';
-    allBtn.className = 'designs-cat-chip' + (activeDesignCategory === null ? ' active' : '');
-    allBtn.textContent = 'Alle';
-    allBtn.addEventListener('click', function(){ activeDesignCategory = null; renderDesigns(); });
-    designsCatRow.appendChild(allBtn);
+  designsFilterBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var willOpen = designsFilterPanel.classList.contains('hidden');
+    designsFilterPanel.classList.toggle('hidden', !willOpen);
+    designsFilterBtn.classList.toggle('open', willOpen);
+  });
+  document.addEventListener('click', function(e){
+    if(!designsFilterPanel.contains(e.target) && e.target !== designsFilterBtn){
+      designsFilterPanel.classList.add('hidden');
+      designsFilterBtn.classList.remove('open');
+    }
+  });
+  designsFilterPanel.querySelectorAll('.designs-filter-type').forEach(function(cb){
+    cb.addEventListener('change', renderDesigns);
+  });
+  designsSortSelect.addEventListener('change', renderDesigns);
+  designsFilterResetBtn.addEventListener('click', function(){
+    designsFilterPanel.querySelectorAll('.designs-filter-type').forEach(function(cb){ cb.checked = true; });
+    activeDesignCategories = [];
+    designsSortSelect.value = 'new';
+    designSearchInput.value = '';
+    renderDesigns();
+  });
+
+  function renderDesignFilterCats(){
+    designsFilterCats.innerHTML = '';
+    if(data.designCategories.length === 0){
+      designsFilterCatsSection.style.display = 'none';
+      return;
+    }
+    designsFilterCatsSection.style.display = '';
     data.designCategories.forEach(function(cat){
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'designs-cat-chip' + (activeDesignCategory === cat ? ' active' : '');
-      b.textContent = cat;
-      b.addEventListener('click', function(){
-        activeDesignCategory = (activeDesignCategory === cat ? null : cat);
+      var label = document.createElement('label');
+      label.className = 'designs-filter-check';
+      var checked = activeDesignCategories.indexOf(cat) !== -1;
+      label.innerHTML = '<input type="checkbox" value="' + escapeHtml(cat) + '"' + (checked ? ' checked' : '') + '> ' + escapeHtml(cat);
+      label.querySelector('input').addEventListener('change', function(e){
+        if(e.target.checked){
+          if(activeDesignCategories.indexOf(cat) === -1){ activeDesignCategories.push(cat); }
+        } else {
+          activeDesignCategories = activeDesignCategories.filter(function(c){ return c !== cat; });
+        }
         renderDesigns();
       });
-      designsCatRow.appendChild(b);
+      designsFilterCats.appendChild(label);
     });
+  }
+
+  function updateDesignsFilterCount(){
+    var typeChecks = designsFilterPanel.querySelectorAll('.designs-filter-type:checked').length;
+    var n = activeDesignCategories.length + (typeChecks < 2 ? 1 : 0) + (designsSortSelect.value !== 'new' ? 1 : 0);
+    designsFilterCount.textContent = n;
+    designsFilterCount.classList.toggle('visible', n > 0);
   }
 
   function designFileExt(d){
@@ -1381,37 +1515,6 @@
     var m = /\.([a-z0-9]+)(?:\?.*)?$/i.exec(asset.split('#')[0]);
     if(m){ return m[1].toLowerCase(); }
     return d.assetType === 'video' ? 'mp4' : 'png';
-  }
-
-  var designsFormatRow = document.getElementById('designsFormatRow');
-  var activeDesignFormat = null; // null = alle Formate
-
-  function renderDesignFormatChips(){
-    var formats = [];
-    data.designs.forEach(function(d){
-      var ext = designFileExt(d);
-      if(formats.indexOf(ext) === -1){ formats.push(ext); }
-    });
-    formats.sort();
-    designsFormatRow.innerHTML = '';
-    if(formats.length < 2){ return; } // Filter nur sinnvoll, wenn es überhaupt mehrere Formate gibt
-    var allBtn = document.createElement('button');
-    allBtn.type = 'button';
-    allBtn.className = 'designs-cat-chip' + (activeDesignFormat === null ? ' active' : '');
-    allBtn.textContent = 'Alle Formate';
-    allBtn.addEventListener('click', function(){ activeDesignFormat = null; renderDesigns(); });
-    designsFormatRow.appendChild(allBtn);
-    formats.forEach(function(ext){
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'designs-cat-chip' + (activeDesignFormat === ext ? ' active' : '');
-      b.textContent = '.' + ext;
-      b.addEventListener('click', function(){
-        activeDesignFormat = (activeDesignFormat === ext ? null : ext);
-        renderDesigns();
-      });
-      designsFormatRow.appendChild(b);
-    });
   }
 
   function buildDesignCard(d){
@@ -1434,20 +1537,41 @@
     return g;
   }
 
+  function parseGermanDate(str){
+    // Format "21. Juli 2026" -> Timestamp; unbekannt/leer -> 0 (landet am Ende bei "neueste zuerst")
+    if(!str) return 0;
+    var months = ['januar','februar','märz','april','mai','juni','juli','august','september','oktober','november','dezember'];
+    var m = /^(\d{1,2})\.\s*([a-zäöüß]+)\s*(\d{4})$/i.exec(str.trim());
+    if(!m) return 0;
+    var mi = months.indexOf(m[2].toLowerCase());
+    if(mi === -1) return 0;
+    return new Date(parseInt(m[3],10), mi, parseInt(m[1],10)).getTime();
+  }
+
   var currentDesignsFiltered = [];
 
   function renderDesigns(){
     data.designs.forEach(normalizeDesign);
-    renderDesignCatChips();
-    renderDesignFormatChips();
+    renderDesignFilterCats();
+    updateDesignsFilterCount();
 
+    var showImages = designsFilterPanel.querySelector('.designs-filter-type[value="image"]').checked;
+    var showVideos = designsFilterPanel.querySelector('.designs-filter-type[value="video"]').checked;
     var query = (designSearchInput.value || '').trim().toLowerCase();
+
     var filtered = data.designs.filter(function(d){
-      if(activeDesignCategory && d.categories.indexOf(activeDesignCategory) === -1){ return false; }
-      if(activeDesignFormat && designFileExt(d) !== activeDesignFormat){ return false; }
+      var isVideo = d.assetType === 'video';
+      if(isVideo && !showVideos){ return false; }
+      if(!isVideo && !showImages){ return false; }
+      if(activeDesignCategories.length && !activeDesignCategories.some(function(c){ return d.categories.indexOf(c) !== -1; })){ return false; }
       if(!query){ return true; }
       var hay = (d.title + ' ' + d.description + ' ' + d.categories.join(' ')).toLowerCase();
       return hay.indexOf(query) !== -1;
+    });
+
+    var sortDir = designsSortSelect.value === 'old' ? 1 : -1;
+    filtered = filtered.slice().sort(function(a, b){
+      return sortDir * (parseGermanDate(a.date) - parseGermanDate(b.date));
     });
     currentDesignsFiltered = filtered;
 
@@ -1871,7 +1995,7 @@
       card.innerHTML =
         '<h3>' + escapeHtml(tpl.name) + '</h3>' +
         '<div class="stage-viewport">' +
-        '<div class="stage">' +
+        '<div class="stage' + (tpl.asset && tpl.assetType === 'image' ? ' stage-has-image' : '') + '">' +
           bgHtml +
           '<div class="stage-noise"></div><div class="stage-scan"></div>' +
           '<div class="snap-guide snap-guide-v"></div><div class="snap-guide snap-guide-h"></div>' +
@@ -2935,6 +3059,7 @@
   var editingNewsId = null;
   var editingTemplateId = null;
   var editingDesignId = null;
+  var adminDesignsExpanded = false;
 
   function renderAdminLists(){
     renderPublic(); // Startseite/News/Team immer sofort mit aktualisieren, nicht erst nach "Speichern"
@@ -3179,7 +3304,8 @@
     // ---------- Designs (Galerie) ----------
     data.designs.forEach(normalizeDesign);
     adminDesignsList.innerHTML = data.designs.length ? '' : '<div class="admin-form-hint">Noch keine Designs.</div>';
-    data.designs.forEach(function(d){
+    var designsToRender = adminDesignsExpanded ? data.designs : data.designs.slice(0, 5);
+    designsToRender.forEach(function(d){
       var row = document.createElement('div');
 
       if(editingDesignId === d.id){
@@ -3251,6 +3377,7 @@
         });
         row.querySelector('.admin-edit-btn').addEventListener('click', function(){
           editingDesignId = d.id;
+          if(data.designs.indexOf(d) >= 5){ adminDesignsExpanded = true; }
           renderAdminLists();
         });
         row.querySelector('.admin-del-btn').addEventListener('click', function(){
@@ -3264,6 +3391,19 @@
       }
       adminDesignsList.appendChild(row);
     });
+    if(data.designs.length > 5){
+      var toggleBtn = document.createElement('button');
+      toggleBtn.type = 'button';
+      toggleBtn.className = 'admin-expand-toggle-btn';
+      toggleBtn.textContent = adminDesignsExpanded
+        ? '▲ Weniger anzeigen'
+        : '▼ Alle anzeigen (' + (data.designs.length - 5) + ' weitere)';
+      toggleBtn.addEventListener('click', function(){
+        adminDesignsExpanded = !adminDesignsExpanded;
+        renderAdminLists();
+      });
+      adminDesignsList.appendChild(toggleBtn);
+    }
 
     // ---------- Tags verwalten ----------
     adminTagsList.innerHTML = data.designCategories.length ? '' : '<div class="admin-form-hint">Noch keine Tags.</div>';
@@ -3824,15 +3964,33 @@
      ============================================================ */
   var burgerBtn = document.getElementById('burgerBtn');
   var navLinks = document.getElementById('navLinks');
+  var navBackdrop = document.createElement('div');
+  navBackdrop.className = 'nav-backdrop';
+  document.body.appendChild(navBackdrop);
+  function closeMobileNav(){
+    navLinks.classList.remove('open');
+    navBackdrop.classList.remove('visible');
+    burgerBtn.setAttribute('aria-expanded','false');
+  }
   burgerBtn.addEventListener('click', function(){
     var isOpen = navLinks.classList.toggle('open');
+    navBackdrop.classList.toggle('visible', isOpen);
     burgerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   });
+  navBackdrop.addEventListener('click', closeMobileNav);
   navLinks.querySelectorAll('a').forEach(function(a){
-    a.addEventListener('click', function(){
-      navLinks.classList.remove('open');
-      burgerBtn.setAttribute('aria-expanded','false');
-    });
+    a.addEventListener('click', closeMobileNav);
+  });
+
+  /* ============================================================
+     8b) Scroll-to-top-Button (v. a. für lange Listen auf dem Handy)
+     ============================================================ */
+  var scrollTopBtn = document.getElementById('scrollTopBtn');
+  window.addEventListener('scroll', function(){
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 500);
+  }, { passive:true });
+  scrollTopBtn.addEventListener('click', function(){
+    window.scrollTo({ top:0, behavior:'smooth' });
   });
 
   /* ============================================================
