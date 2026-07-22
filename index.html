@@ -1125,6 +1125,27 @@
   </div>
 </div>
 
+<!-- ================= Vorlagen-Vorschau (Eigenes Branding) ================= -->
+<div class="modal-overlay hidden" id="templateLightboxOverlay">
+  <div class="glass design-lightbox">
+    <button class="design-lightbox-close" id="templateLightboxCloseBtn" aria-label="Schließen">×</button>
+    <div class="design-lightbox-media-wrap">
+      <div class="design-lightbox-media" id="templateLightboxMedia"></div>
+      <button class="design-lightbox-nav prev" id="templateLightboxPrevBtn" type="button" aria-label="Vorherige Vorlage"><span>‹</span></button>
+      <button class="design-lightbox-nav next" id="templateLightboxNextBtn" type="button" aria-label="Nächste Vorlage"><span>›</span></button>
+    </div>
+    <div class="design-lightbox-body">
+      <h3 id="templateLightboxTitle"></h3>
+      <div class="design-lightbox-date" id="templateLightboxRes" style="margin-bottom:10px;"></div>
+      <div class="btn-row-mini" style="margin-top:6px;flex-direction:column;gap:10px;">
+        <button type="button" class="btn-download-mini" id="templateLightboxEditorBtn" style="width:100%;text-align:center;background:linear-gradient(135deg,var(--pink),var(--violet));border:none;">✏️ Im Editor öffnen</button>
+        <select class="export-format-select" id="templateLightboxResSelect" style="width:100%;display:none;"></select>
+        <a class="btn-download-mini" id="templateLightboxDownload" href="#" download style="width:100%;text-align:center;">Herunterladen</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 (function(){
   "use strict";
@@ -1506,6 +1527,8 @@
     designsFilterCount.classList.toggle('visible', n > 0);
   }
 
+  function itemLabel(item){ return item.title || item.name || ''; }
+
   function designFileExt(d){
     var asset = d.asset || '';
     if(/^data:image\/webp/.test(asset)){ return 'webp'; }
@@ -1612,21 +1635,20 @@
   }
 
   function designDownloadFilename(d){
-    return slugify(d.title) + '.' + designFileExt(d);
+    return slugify(itemLabel(d)) + '.' + designFileExt(d);
   }
 
-  function setLightboxResolutionText(w, h){
+  function setLightboxResolutionText(el, w, h){
     if(w && h){
-      designLightboxRes.textContent = 'Auflösung: ' + w + '×' + h;
-      designLightboxRes.style.display = '';
+      el.textContent = 'Auflösung: ' + w + '×' + h;
+      el.style.display = '';
     } else {
-      designLightboxRes.textContent = '';
-      designLightboxRes.style.display = 'none';
+      el.textContent = '';
+      el.style.display = 'none';
     }
   }
 
-  function populateLightboxResSelect(d){
-    var sel = designLightboxResSelect;
+  function populateLightboxResSelect(sel, d){
     var isVideo = d.assetType === 'video';
     if(!d.asset || !d.width || !d.height || (isVideo && !canDownscaleVideo())){
       sel.innerHTML = ''; sel.style.display = 'none';
@@ -1648,16 +1670,16 @@
     }
   }
 
-  function setLightboxDownloadBusy(busy, text){
-    designLightboxDownload.classList.toggle('disabled', busy);
-    designLightboxDownload.style.pointerEvents = busy ? 'none' : '';
-    designLightboxDownload.style.opacity = busy ? '0.55' : '';
-    designLightboxDownload.textContent = busy ? (text || 'Wird verarbeitet …') : 'Herunterladen';
+  function setLightboxDownloadBusy(btn, busy, text){
+    btn.classList.toggle('disabled', busy);
+    btn.style.pointerEvents = busy ? 'none' : '';
+    btn.style.opacity = busy ? '0.55' : '';
+    btn.textContent = busy ? (text || 'Wird verarbeitet …') : 'Herunterladen';
   }
 
   /* Skaliert das Bild client-seitig per Canvas auf die gewünschte Breite herunter und
      löst den Download der verkleinerten Version aus (Original-Datei bleibt unverändert). */
-  function downloadScaledImage(d, percent){
+  function downloadScaledImage(d, percent, downloadBtn){
     var img = new Image();
     img.onload = function(){
       var w = Math.max(2, Math.round(img.naturalWidth * percent / 100));
@@ -1668,19 +1690,19 @@
       var isJpeg = /\.jpe?g(\?.*)?$/i.test(d.asset || '') || /^data:image\/jpeg/.test(d.asset || '');
       var mime = isJpeg ? 'image/jpeg' : 'image/png';
       canvas.toBlob(function(blob){
-        if(!blob){ setLightboxDownloadBusy(false); return; }
+        if(!blob){ setLightboxDownloadBusy(downloadBtn, false); return; }
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;
-        a.download = slugify(d.title) + '-' + percent + 'pct' + (isJpeg ? '.jpg' : '.png');
+        a.download = slugify(itemLabel(d)) + '-' + percent + 'pct' + (isJpeg ? '.jpg' : '.png');
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
-        setLightboxDownloadBusy(false);
+        setLightboxDownloadBusy(downloadBtn, false);
       }, mime, 0.92);
     };
-    img.onerror = function(){ setLightboxDownloadBusy(false); };
+    img.onerror = function(){ setLightboxDownloadBusy(downloadBtn, false); };
     img.src = d.asset;
   }
 
@@ -1690,9 +1712,9 @@
      etwa so lange wie das Video selbst und funktioniert nur in Browsern mit MediaRecorder-
      Unterstützung (Desktop Chrome/Firefox/Edge; Safari/iOS meist nicht zuverlässig).
      Export-Format ist WebM statt MP4, weil Browser nur WebM zuverlässig selbst aufzeichnen können. */
-  function downloadScaledVideo(d, percent){
+  function downloadScaledVideo(d, percent, downloadBtn){
     if(!canDownscaleVideo()){
-      setLightboxDownloadBusy(false);
+      setLightboxDownloadBusy(downloadBtn, false);
       return;
     }
     var recVideo = document.createElement('video');
@@ -1714,7 +1736,7 @@
       var mime = mimeCandidates.filter(function(m){ return MediaRecorder.isTypeSupported(m); })[0] || 'video/webm';
       var recorder;
       try{ recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 4000000 }); }
-      catch(err){ setLightboxDownloadBusy(false); return; }
+      catch(err){ setLightboxDownloadBusy(downloadBtn, false); return; }
 
       var chunks = [];
       var drawTimer = null;
@@ -1724,12 +1746,12 @@
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;
-        a.download = slugify(d.title) + '-' + percent + 'pct.webm';
+        a.download = slugify(itemLabel(d)) + '-' + percent + 'pct.webm';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
-        setLightboxDownloadBusy(false);
+        setLightboxDownloadBusy(downloadBtn, false);
       };
 
       function drawFrame(){
@@ -1741,13 +1763,13 @@
         if(recorder.state !== 'inactive'){ recorder.stop(); }
       }, { once:true });
 
-      setLightboxDownloadBusy(true, 'Video wird verkleinert … (dauert ca. so lange wie das Video)');
+      setLightboxDownloadBusy(downloadBtn, true, 'Video wird verkleinert … (dauert ca. so lange wie das Video)');
       recVideo.play().then(function(){
         recorder.start();
         drawFrame();
-      }).catch(function(){ setLightboxDownloadBusy(false); });
+      }).catch(function(){ setLightboxDownloadBusy(downloadBtn, false); });
     }, { once:true });
-    recVideo.addEventListener('error', function(){ setLightboxDownloadBusy(false); }, { once:true });
+    recVideo.addEventListener('error', function(){ setLightboxDownloadBusy(downloadBtn, false); }, { once:true });
   }
 
   function openDesignLightbox(d){
@@ -1764,8 +1786,8 @@
     designLightboxDescription.style.display = d.description ? '' : 'none';
     designLightboxTags.innerHTML = d.categories.map(function(c){ return '<span>' + escapeHtml(c) + '</span>'; }).join('');
 
-    setLightboxResolutionText(d.width, d.height);
-    populateLightboxResSelect(d);
+    setLightboxResolutionText(designLightboxRes, d.width, d.height);
+    populateLightboxResSelect(designLightboxResSelect, d);
 
     // Ältere Designs, bei denen die Auflösung noch nicht gespeichert wurde: nachträglich ermitteln.
     if(d.asset && (!d.width || !d.height)){
@@ -1775,8 +1797,8 @@
           videoEl.addEventListener('loadedmetadata', function(){
             if(currentLightboxDesign !== d){ return; }
             d.width = videoEl.videoWidth; d.height = videoEl.videoHeight;
-            setLightboxResolutionText(d.width, d.height);
-            populateLightboxResSelect(d);
+            setLightboxResolutionText(designLightboxRes, d.width, d.height);
+            populateLightboxResSelect(designLightboxResSelect, d);
           }, { once:true });
         }
       } else {
@@ -1784,8 +1806,8 @@
         probeImg.onload = function(){
           if(currentLightboxDesign !== d){ return; }
           d.width = probeImg.naturalWidth; d.height = probeImg.naturalHeight;
-          setLightboxResolutionText(d.width, d.height);
-          populateLightboxResSelect(d);
+          setLightboxResolutionText(designLightboxRes, d.width, d.height);
+          populateLightboxResSelect(designLightboxResSelect, d);
         };
         probeImg.src = d.asset;
       }
@@ -1833,9 +1855,9 @@
       e.preventDefault();
       var percent = parseInt(sel.value, 10);
       if(currentLightboxDesign.assetType === 'video'){
-        downloadScaledVideo(currentLightboxDesign, percent);
+        downloadScaledVideo(currentLightboxDesign, percent, designLightboxDownload);
       } else {
-        downloadScaledImage(currentLightboxDesign, percent);
+        downloadScaledImage(currentLightboxDesign, percent, designLightboxDownload);
       }
     }
   });
@@ -1880,9 +1902,114 @@
     g.innerHTML =
       '<div class="gallery-thumb-wrap">' + thumbHtml + '</div>' +
       '<div class="gallery-card-title">' + escapeHtml(tpl.name) + '</div>';
-    g.addEventListener('click', function(){ openEditorModal(tpl); });
+    g.addEventListener('click', function(){ openTemplateLightbox(tpl); });
     return g;
   }
+
+  var templateLightboxOverlay = document.getElementById('templateLightboxOverlay');
+  var templateLightboxMedia = document.getElementById('templateLightboxMedia');
+  var templateLightboxTitle = document.getElementById('templateLightboxTitle');
+  var templateLightboxRes = document.getElementById('templateLightboxRes');
+  var templateLightboxResSelect = document.getElementById('templateLightboxResSelect');
+  var templateLightboxDownload = document.getElementById('templateLightboxDownload');
+  var templateLightboxEditorBtn = document.getElementById('templateLightboxEditorBtn');
+  var templateLightboxCloseBtn = document.getElementById('templateLightboxCloseBtn');
+  var templateLightboxPrevBtn = document.getElementById('templateLightboxPrevBtn');
+  var templateLightboxNextBtn = document.getElementById('templateLightboxNextBtn');
+  var currentLightboxTemplate = null;
+
+  function openTemplateLightbox(tpl){
+    currentLightboxTemplate = tpl;
+    templateLightboxMedia.innerHTML = tpl.asset
+      ? (tpl.assetType === 'video'
+          ? '<video src="' + tpl.asset + '" controls autoplay muted loop playsinline></video>'
+          : '<img src="' + tpl.asset + '" alt="' + escapeHtml(tpl.name) + '">')
+      : '<div class="stage-text"><div class="pulse-dot"></div><h4>' + escapeHtml(tpl.placeholder || tpl.name) + '</h4><span>Platzhalter-Overlay</span></div>';
+    templateLightboxTitle.textContent = tpl.name;
+
+    setLightboxResolutionText(templateLightboxRes, tpl.width, tpl.height);
+    populateLightboxResSelect(templateLightboxResSelect, tpl);
+
+    // Auflösung ggf. nachträglich ermitteln (analog zur Design-Vorschau).
+    if(tpl.asset && (!tpl.width || !tpl.height)){
+      if(tpl.assetType === 'video'){
+        var videoEl = templateLightboxMedia.querySelector('video');
+        if(videoEl){
+          videoEl.addEventListener('loadedmetadata', function(){
+            if(currentLightboxTemplate !== tpl){ return; }
+            tpl.width = videoEl.videoWidth; tpl.height = videoEl.videoHeight;
+            setLightboxResolutionText(templateLightboxRes, tpl.width, tpl.height);
+            populateLightboxResSelect(templateLightboxResSelect, tpl);
+          }, { once:true });
+        }
+      } else {
+        var probeImg = new Image();
+        probeImg.onload = function(){
+          if(currentLightboxTemplate !== tpl){ return; }
+          tpl.width = probeImg.naturalWidth; tpl.height = probeImg.naturalHeight;
+          setLightboxResolutionText(templateLightboxRes, tpl.width, tpl.height);
+          populateLightboxResSelect(templateLightboxResSelect, tpl);
+        };
+        probeImg.src = tpl.asset;
+      }
+    }
+
+    if(tpl.asset){
+      templateLightboxDownload.href = tpl.asset;
+      templateLightboxDownload.setAttribute('download', designDownloadFilename(tpl));
+      templateLightboxDownload.style.display = '';
+    } else {
+      templateLightboxDownload.removeAttribute('href');
+      templateLightboxDownload.style.display = 'none';
+    }
+    updateTemplateLightboxNav();
+    templateLightboxOverlay.classList.remove('hidden');
+  }
+  function updateTemplateLightboxNav(){
+    var idx = data.templates.indexOf(currentLightboxTemplate);
+    var hasList = idx !== -1 && data.templates.length > 1;
+    templateLightboxPrevBtn.disabled = !hasList;
+    templateLightboxNextBtn.disabled = !hasList;
+  }
+  function showTemplateByOffset(offset){
+    var idx = data.templates.indexOf(currentLightboxTemplate);
+    if(idx === -1 || data.templates.length < 2){ return; }
+    var nextIdx = (idx + offset + data.templates.length) % data.templates.length;
+    openTemplateLightbox(data.templates[nextIdx]);
+  }
+  templateLightboxPrevBtn.addEventListener('click', function(e){ e.stopPropagation(); showTemplateByOffset(-1); });
+  templateLightboxNextBtn.addEventListener('click', function(e){ e.stopPropagation(); showTemplateByOffset(1); });
+  document.addEventListener('keydown', function(e){
+    if(templateLightboxOverlay.classList.contains('hidden')){ return; }
+    if(e.key === 'ArrowLeft'){ showTemplateByOffset(-1); }
+    else if(e.key === 'ArrowRight'){ showTemplateByOffset(1); }
+    else if(e.key === 'Escape'){ closeTemplateLightbox(); }
+  });
+  function closeTemplateLightbox(){
+    templateLightboxOverlay.classList.add('hidden');
+    templateLightboxMedia.innerHTML = ''; // Video stoppen
+    currentLightboxTemplate = null;
+  }
+  templateLightboxDownload.addEventListener('click', function(e){
+    var sel = templateLightboxResSelect;
+    if(currentLightboxTemplate && sel && sel.style.display !== 'none' && sel.value && sel.value !== 'original'){
+      e.preventDefault();
+      var percent = parseInt(sel.value, 10);
+      if(currentLightboxTemplate.assetType === 'video'){
+        downloadScaledVideo(currentLightboxTemplate, percent, templateLightboxDownload);
+      } else {
+        downloadScaledImage(currentLightboxTemplate, percent, templateLightboxDownload);
+      }
+    }
+  });
+  templateLightboxEditorBtn.addEventListener('click', function(){
+    if(!currentLightboxTemplate){ return; }
+    var tpl = currentLightboxTemplate;
+    closeTemplateLightbox();
+    openEditorModal(tpl);
+  });
+  templateLightboxCloseBtn.addEventListener('click', closeTemplateLightbox);
+  templateLightboxOverlay.addEventListener('click', function(e){ if(e.target === templateLightboxOverlay){ closeTemplateLightbox(); } });
 
   function openEditorModal(tpl){
     editorModalBody.innerHTML = '';
@@ -2037,6 +2164,7 @@
             '<option value="native" class="native-res-option" disabled>Original-Auflösung (wird erkannt …)</option>' +
           '</select>' +
           '<select class="export-format-select">' +
+            (tpl.assetType === 'video' ? '<option value="video">Export als Video (WebM)</option>' : '') +
             '<option value="png">Export als PNG (verlustfrei)</option>' +
             '<option value="jpeg">Export als JPG (kleinere Datei)</option>' +
             '<option value="webp">Export als WEBP</option>' +
@@ -2843,6 +2971,79 @@
       ctx.restore();
     }
 
+    /* Echter Video-Export: spielt das Hintergrundvideo einmal komplett ab, zeichnet auf jedem
+       Frame das Hintergrundvideo UND das Overlay (Logo/Text/Form) zusammen auf ein <canvas> und
+       zeichnet den Canvas-Stream per MediaRecorder als neues WebM auf. Analog zum Video-Downscale
+       bei Designs, nur dass hier zusätzlich pro Frame drawOverlay(ctx) mitgerechnet wird. */
+    function exportCompositeVideo(canvas, ctx, onStatus, onDone){
+      if(!(window.MediaRecorder && canvas.captureStream)){
+        onStatus('Dein Browser unterstützt leider keinen Video-Export (MediaRecorder fehlt). Nutze z. B. Chrome/Firefox/Edge am Desktop.', false);
+        onDone();
+        return;
+      }
+      if(!bgVideoEl){ onDone(); return; }
+
+      var wasLoop = bgVideoEl.loop;
+      var wasMuted = bgVideoEl.muted;
+      bgVideoEl.loop = false;
+      bgVideoEl.muted = true;
+      try{ bgVideoEl.currentTime = 0; }catch(e){ /* manche Browser brauchen 'loadedmetadata' zuerst, ignorieren */ }
+
+      var stream = canvas.captureStream(30);
+      var mimeCandidates = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
+      var mime = mimeCandidates.filter(function(m){ return MediaRecorder.isTypeSupported(m); })[0] || 'video/webm';
+      var recorder;
+      try{ recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 6000000 }); }
+      catch(err){
+        onStatus('Video-Export fehlgeschlagen: ' + err.message, false);
+        bgVideoEl.loop = wasLoop; bgVideoEl.muted = wasMuted;
+        onDone();
+        return;
+      }
+
+      var chunks = [];
+      var drawTimer = null;
+      recorder.ondataavailable = function(e){ if(e.data && e.data.size){ chunks.push(e.data); } };
+      recorder.onstop = function(){
+        var blob = new Blob(chunks, { type: mime });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'strudeldesigns-' + slugify(tpl.name) + '.webm';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+        bgVideoEl.loop = wasLoop;
+        bgVideoEl.muted = wasMuted;
+        onStatus('Design (Video) heruntergeladen ✓', true);
+        onDone();
+      };
+
+      function drawFrame(){
+        drawCover(ctx, bgVideoEl, bgVideoEl.videoWidth, bgVideoEl.videoHeight);
+        drawOverlay(ctx);
+        drawTimer = requestAnimationFrame(drawFrame);
+      }
+      function onEnded(){
+        bgVideoEl.removeEventListener('ended', onEnded);
+        if(drawTimer){ cancelAnimationFrame(drawTimer); }
+        if(recorder.state !== 'inactive'){ recorder.stop(); }
+      }
+      bgVideoEl.addEventListener('ended', onEnded);
+
+      onStatus('Video wird erstellt … (dauert ca. so lange wie das Video)', true);
+      bgVideoEl.play().then(function(){
+        recorder.start();
+        drawFrame();
+      }).catch(function(err){
+        bgVideoEl.removeEventListener('ended', onEnded);
+        onStatus('Video-Export fehlgeschlagen: ' + err.message, false);
+        bgVideoEl.loop = wasLoop; bgVideoEl.muted = wasMuted;
+        onDone();
+      });
+    }
+
     downloadBtn.addEventListener('click', function(){
       if(!state.hasContent){ return; }
       setStatus('Erstelle Vorschau …', true);
@@ -2861,13 +3062,23 @@
       var stageRect = { width: stage.offsetWidth };
       state.sizeRatioForExport = stageRect.width ? state.size / stageRect.width : (tpl.defaultSize || 0.22);
 
+      var fmt = formatSelect ? formatSelect.value : 'png';
+
+      if(fmt === 'video' && tpl.assetType === 'video' && bgVideoEl){
+        EXPORT_W -= EXPORT_W % 2; EXPORT_H -= EXPORT_H % 2; // gerade Zahlen sind für Video-Codecs zuverlässiger
+        var videoCanvas = document.createElement('canvas');
+        videoCanvas.width = EXPORT_W; videoCanvas.height = EXPORT_H;
+        var videoCtx = videoCanvas.getContext('2d');
+        exportCompositeVideo(videoCanvas, videoCtx, setStatus, function(){ downloadBtn.disabled = false; });
+        return;
+      }
+
       var canvas = document.createElement('canvas');
       canvas.width = EXPORT_W; canvas.height = EXPORT_H;
       var ctx = canvas.getContext('2d');
 
       function finish(){
         drawOverlay(ctx);
-        var fmt = formatSelect ? formatSelect.value : 'png';
         var mime = fmt === 'jpeg' ? 'image/jpeg' : (fmt === 'webp' ? 'image/webp' : 'image/png');
         var ext = fmt === 'jpeg' ? 'jpg' : (fmt === 'webp' ? 'webp' : 'png');
         var link = document.createElement('a');
