@@ -1151,6 +1151,230 @@
       "categories": [
         "Banner"
       ]
+    },
+    {
+      "id": "d-mrw87w7t-ylwh9",
+      "title": "Logo für da_maxl",
+      "description": "MC Logo für da_maxl",
+      "date": "19. Januar 2026",
+      "asset": "designs/logo-f-r-da-maxl-mrw8prvn.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrw88j5a-dvmv6",
+      "title": "Banner für da_maxl",
+      "description": "MC Banner für da_maxl",
+      "date": "19. Januar 2026",
+      "asset": "designs/banner-f-r-da-maxl-mrw8pubs.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrw89er1-xbwrl",
+      "title": "Stream overlay für da_maxl",
+      "description": "Cleanes Stream overlay für da_maxl",
+      "date": "19. Januar 2026",
+      "asset": "designs/stream-overlay-f-r-da-maxl-mrw8pybv.png",
+      "assetType": "image",
+      "width": 5200,
+      "height": 3400,
+      "categories": [
+        "Overlay",
+        "Stream Overlay"
+      ]
+    },
+    {
+      "id": "d-mrw8a9kq-sk9en",
+      "title": "Logo für Kinglulu",
+      "description": "Cleanes Logo für Kinglulu",
+      "date": "13. Januar 2026",
+      "asset": "designs/logo-f-r-kinglulu-mrw8q1l7.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrw8b3jz-cbcig",
+      "title": "Banner für Kinglulu",
+      "description": "Cleaner Banner für Kinglulu",
+      "date": "13. Januar 2026",
+      "asset": "designs/banner-f-r-kinglulu-mrw8q3ut.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrw8cao6-kbwwt",
+      "title": "Logo für FireMage",
+      "description": "Cleanes Logo für FireMage",
+      "date": "7. Januar 2026",
+      "asset": "designs/logo-f-r-firemage-mrw8q84d.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrw8ef9h-8d6eu",
+      "title": "Logo für Mihay0",
+      "description": "Cleanes Logo für Mihay0",
+      "date": "28. Dezember 2026",
+      "asset": "designs/logo-f-r-mihay0-mrw8qadh.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrw8fqv8-ucojk",
+      "title": "Logo für Letsfreaks",
+      "description": "MC Logo für Letsfreaks",
+      "date": "22. Dezember 2025",
+      "asset": "designs/logo-f-r-letsfreaks-mrw8qciw.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrw8gi4j-l5t7z",
+      "title": "Banner für Letsfreaks",
+      "description": "MC Banner für Letsfreaks",
+      "date": "22. Dezember 2026",
+      "asset": "designs/banner-f-r-letsfreaks-mrw8qep1.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrw8if51-0ua71",
+      "title": "Logo für Urukmaster",
+      "description": "MC Logo für Urukmaster",
+      "date": "18. Dezember 2025",
+      "asset": "designs/logo-f-r-urukmaster-mrw8qhq6.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrw8j4fm-bs6sk",
+      "title": "Banner für Urukmaster",
+      "description": "MC Banner für Urukmaster",
+      "date": "18. Dezember 2025",
+      "asset": "designs/banner-f-r-urukmaster-mrw8qk7o.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrw8kmt6-cynbv",
+      "title": "Logo für MilanHDYT",
+      "description": "MC Logo für MilanHDYT",
+      "date": "14. Dezember 2025",
+      "asset": "designs/logo-f-r-milanhdyt-mrw8qo21.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrw8lcq4-nl4b0",
+      "title": "Banner für MilanHDYT",
+      "description": "MC Banner für MilanHDYT",
+      "date": "14. Dezember 2025",
+      "asset": "designs/banner-f-r-milanhdyt-mrw8qq76.png",
+      "assetType": "image",
+      "width": 6912,
+      "height": 3456,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrw8m2nw-4hoa2",
+      "title": "Logo für Ibo_qtn",
+      "description": "Cleanes Logo für Ibo_qtn",
+      "date": "12. Dezember 2025",
+      "asset": "designs/logo-f-r-ibo-qtn-mrw8qvam.png",
+      "assetType": "image",
+      "width": 500,
+      "height": 500,
+      "categories": [
+        "Logo"
+      ]
+    },
+    {
+      "id": "d-mrw8nnk8-kn6k7",
+      "title": "Banner für Ibo_qtn",
+      "description": "Cleaner Banner für Ibo_qtn",
+      "date": "12. Dezember 2025",
+      "asset": null,
+      "assetType": null,
+      "width": null,
+      "height": null,
+      "categories": [
+        "Banner"
+      ]
+    },
+    {
+      "id": "d-mrw8oeko-o26uf",
+      "title": "Overlay für Ibo_qtn",
+      "description": "Cleanes Overlay für Ibo_qtn",
+      "date": "12. Dezember 2025",
+      "asset": "designs/overlay-f-r-ibo-qtn-mrw8qx6t.png",
+      "assetType": "image",
+      "width": 2000,
+      "height": 1536,
+      "categories": [
+        "Overlay",
+        "Stream Overlay",
+        "Sonstiges"
+      ]
+    },
+    {
+      "id": "d-mrw8pdwv-xfvbe",
+      "title": "Logo für Sigmapfandi",
+      "description": "MC Logo für Sigmapfandi",
+      "date": "15. Dezember 2025",
+      "asset": "designs/logo-f-r-sigmapfandi-mrw8qz9h.png",
+      "assetType": "image",
+      "width": 1000,
+      "height": 1000,
+      "categories": [
+        "Logo"
+      ]
     }
   ],
   "designCategories": [
