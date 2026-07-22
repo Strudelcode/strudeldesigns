@@ -756,6 +756,7 @@
       <div class="designs-toolbar">
         <input type="text" id="designSearchInput" class="designs-search-input" placeholder="Suchen nach Titel, Beschreibung oder Kategorie …">
         <div class="designs-cat-row" id="designsCatRow"></div>
+        <div class="designs-cat-row" id="designsFormatRow"></div>
       </div>
       <div class="designs-grid" id="designsContainer"></div>
     </div>
@@ -1371,6 +1372,48 @@
     });
   }
 
+  function designFileExt(d){
+    var asset = d.asset || '';
+    if(/^data:image\/webp/.test(asset)){ return 'webp'; }
+    if(/^data:image\/jpeg/.test(asset)){ return 'jpg'; }
+    if(/^data:image\/gif/.test(asset)){ return 'gif'; }
+    if(/^data:image\/png/.test(asset)){ return 'png'; }
+    var m = /\.([a-z0-9]+)(?:\?.*)?$/i.exec(asset.split('#')[0]);
+    if(m){ return m[1].toLowerCase(); }
+    return d.assetType === 'video' ? 'mp4' : 'png';
+  }
+
+  var designsFormatRow = document.getElementById('designsFormatRow');
+  var activeDesignFormat = null; // null = alle Formate
+
+  function renderDesignFormatChips(){
+    var formats = [];
+    data.designs.forEach(function(d){
+      var ext = designFileExt(d);
+      if(formats.indexOf(ext) === -1){ formats.push(ext); }
+    });
+    formats.sort();
+    designsFormatRow.innerHTML = '';
+    if(formats.length < 2){ return; } // Filter nur sinnvoll, wenn es überhaupt mehrere Formate gibt
+    var allBtn = document.createElement('button');
+    allBtn.type = 'button';
+    allBtn.className = 'designs-cat-chip' + (activeDesignFormat === null ? ' active' : '');
+    allBtn.textContent = 'Alle Formate';
+    allBtn.addEventListener('click', function(){ activeDesignFormat = null; renderDesigns(); });
+    designsFormatRow.appendChild(allBtn);
+    formats.forEach(function(ext){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'designs-cat-chip' + (activeDesignFormat === ext ? ' active' : '');
+      b.textContent = '.' + ext;
+      b.addEventListener('click', function(){
+        activeDesignFormat = (activeDesignFormat === ext ? null : ext);
+        renderDesigns();
+      });
+      designsFormatRow.appendChild(b);
+    });
+  }
+
   function buildDesignCard(d){
     var g = document.createElement('button');
     g.type = 'button';
@@ -1396,10 +1439,12 @@
   function renderDesigns(){
     data.designs.forEach(normalizeDesign);
     renderDesignCatChips();
+    renderDesignFormatChips();
 
     var query = (designSearchInput.value || '').trim().toLowerCase();
     var filtered = data.designs.filter(function(d){
       if(activeDesignCategory && d.categories.indexOf(activeDesignCategory) === -1){ return false; }
+      if(activeDesignFormat && designFileExt(d) !== activeDesignFormat){ return false; }
       if(!query){ return true; }
       var hay = (d.title + ' ' + d.description + ' ' + d.categories.join(' ')).toLowerCase();
       return hay.indexOf(query) !== -1;
@@ -1443,17 +1488,7 @@
   }
 
   function designDownloadFilename(d){
-    var ext = d.assetType === 'video' ? 'mp4' : 'png';
-    var asset = d.asset || '';
-    if(/^data:image\/webp/.test(asset)){ ext = 'webp'; }
-    else if(/^data:image\/jpeg/.test(asset)){ ext = 'jpg'; }
-    else {
-      /* Echte GitHub-Datei (z. B. "designs/foo-bar.png") oder blob:-Vorschau: Endung aus dem
-         Original-Dateinamen übernehmen, damit der Download im Originalformat erfolgt. */
-      var m = /\.([a-z0-9]+)(?:\?.*)?$/i.exec(asset.split('#')[0]);
-      if(m){ ext = m[1].toLowerCase(); }
-    }
-    return slugify(d.title) + '.' + ext;
+    return slugify(d.title) + '.' + designFileExt(d);
   }
 
   function setLightboxResolutionText(w, h){
