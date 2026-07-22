@@ -1,6 +1,7 @@
 # Infos für mich ;)
 
 ## Noch offen – große Umbauten
-- Wenn man bei "Eigenes Branding" eine Datei bzw. ein Branding öffnet, landet man sofort im Editor. Das soll **nicht** so sein: Erst soll wie bei "Designs" das Vorschau-Fenster kommen (mit Herunterladen etc.), 1:1 wie bei Designs – nur zusätzlich mit einem Button "Editor" o. ä., über den man dann in den Editor kommt.
-- Bei "Eigenes Branding": Wenn man dort ein Video hochlädt, gibt es keine Möglichkeit, das fertige Ergebnis als Videoformat (.mp4, .mkv o. ä.) herunterzuladen – zur Auswahl stehen nur .webp/.jpg/.png. Bräuchte eine echte Video-Kompositing-Lösung (Overlay + Hintergrundvideo zusammen aufnehmen), ähnlich wie der Video-Downscale bei Designs, nur komplexer, weil zusätzlich das Logo/Text/Form-Overlay mit reingerechnet werden muss.
-
+- Beim Tab "Designs" gibt es ja den Filter. Dort kann man Sortieren nach älteste zuerst und so. dieses Dropdownmenu hat einen visuellen fehler. Der kontrast ist ncith gut und es ist so langweilig weis. es soll so wie die einen selection module sein!
+- Bei eigenes branding steht im Editor öffnen und da ist das download icon was kein sinn ergibt und der stift. entferne das download icon und ersetze den stift mit diesem png das hie rliegt: assets/ic_edit_pen.png
+- Bei "eigenes Branding" auch das Filter & Such system wie bei "Designs" Hinzufügen. Branding und Designs soll sogut wie gleich sein nur dass man bei "Branding" es noch ebarbeiten kann!
+- Im Admin menu soll man bei branding auch alles gleich tun können wie bei Design + die extra features von Branding
