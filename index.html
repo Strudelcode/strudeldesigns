@@ -87,6 +87,11 @@
   }
   .discord-bar-text{font-size:14px;font-weight:500;color:#f4e9ff;}
   .discord-bar-text strong{color:#fff;}
+  .discord-bar-text-short{display:none;}
+  @media (max-width:600px){
+    .discord-bar-text-full{display:none;}
+    .discord-bar-text-short{display:inline;font-size:13px;}
+  }
   .btn-discord-sm{
     display:inline-flex;align-items:center;gap:8px;background:#fff;color:#3a1257;
     font-weight:700;font-size:13px;padding:7px 16px;border-radius:999px;white-space:nowrap;
@@ -180,9 +185,14 @@
   }
   .news-date::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--pink);box-shadow:0 0 10px var(--pink);}
   .news-body h4{font-size:17px;margin:4px 0 8px;font-family:var(--font-display);color:var(--text-0);}
+  .news-body h5{font-size:14.5px;margin:10px 0 6px;font-family:var(--font-display);color:var(--text-0);font-weight:700;}
+  .news-body blockquote{
+    border-left:3px solid var(--pink);padding:6px 0 6px 14px;margin:8px 0;color:var(--text-1);
+    font-size:14px;line-height:1.6;font-style:italic;
+  }
   .news-body p{font-size:14px;color:var(--text-1);line-height:1.6;margin-bottom:8px;}
   .news-body p:last-child{margin-bottom:0;}
-  .news-body ul{padding-left:20px;margin-bottom:8px;}
+  .news-body ul{padding-left:20px;margin-bottom:8px;list-style:disc;}
   .news-body li{color:var(--text-1);font-size:14px;line-height:1.6;margin-bottom:4px;}
   .news-body strong{color:var(--text-0);}
   .news-view-all{text-align:center;margin-top:32px;}
@@ -214,7 +224,7 @@
   }
   .gallery-card:hover{transform:translateY(-4px);border-color:var(--pink);}
   .gallery-thumb-wrap{position:relative;aspect-ratio:16/9;overflow:hidden;background:#0c0714;flex:0 0 auto;}
-  .gallery-thumb{width:100%;height:100%;object-fit:cover;display:block;}
+  .gallery-thumb{width:100%;height:100%;object-fit:contain;display:block;}
   .gallery-thumb-placeholder{
     width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;
     padding:10px;background:linear-gradient(135deg,#1a0f2e,#0c0714);color:var(--pink);font-weight:700;font-size:13px;
@@ -254,17 +264,15 @@
     width:34px;height:34px;border-radius:50%;font-size:18px;line-height:1;border:1px solid rgba(255,255,255,0.15);
   }
   .design-lightbox-nav{
-    position:absolute;top:0;bottom:0;display:flex;align-items:center;z-index:2;
-    background:transparent;color:#fff;width:64px;font-size:26px;line-height:1;border:none;
+    position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+    width:36px;height:36px;border-radius:50%;background:rgba(5,3,9,0.6);border:1px solid rgba(255,255,255,0.15);
+    color:#fff;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;
     transition:background .15s ease;
   }
-  .design-lightbox-nav:hover{background:rgba(5,3,9,0.35);}
-  .design-lightbox-nav span{
-    width:36px;height:36px;border-radius:50%;background:rgba(5,3,9,0.6);border:1px solid rgba(255,255,255,0.15);
-    display:flex;align-items:center;justify-content:center;margin:0 auto;
-  }
-  .design-lightbox-nav.prev{left:0;justify-content:flex-start;padding-left:10px;}
-  .design-lightbox-nav.next{right:0;justify-content:flex-end;padding-right:10px;}
+  .design-lightbox-nav:hover{background:rgba(5,3,9,0.85);}
+  .design-lightbox-nav span{display:flex;align-items:center;justify-content:center;}
+  .design-lightbox-nav.prev{left:10px;}
+  .design-lightbox-nav.next{right:10px;}
   .design-lightbox-nav[disabled]{opacity:0;pointer-events:none;}
 
   /* ---------- Editor-Modal (Vollbild-Editor mit fixierter Vorschau) ---------- */
@@ -513,7 +521,9 @@
       transition:transform .22s ease, opacity .22s ease;
     }
     .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto;}
-    .nav-links a{padding:11px 8px;width:100%;}
+    .nav-links a{padding:11px 8px;width:100%;border-left:3px solid transparent;}
+    .nav-links a::after{display:none;}
+    .nav-links a.current{border-left-color:var(--pink);background:rgba(255,63,164,0.08);border-radius:6px;}
     .nav-links .nav-cta{margin-top:6px;}
     .burger{display:flex;}
   }
@@ -619,7 +629,8 @@
 <!-- Discord Banner -->
 <div class="discord-bar">
   <div class="discord-bar-inner">
-    <span class="discord-bar-text">🎮 Du brauchst Hilfe oder willst ein <strong>Ticket für dein eigenes Design</strong> erstellen? Join unserem Discord!</span>
+    <span class="discord-bar-text discord-bar-text-full">🎮 Du brauchst Hilfe oder willst ein <strong>Ticket für dein eigenes Design</strong> erstellen? Join unserem Discord!</span>
+    <span class="discord-bar-text discord-bar-text-short">🎮 Ticket fürs eigene Design? Join unserem Discord!</span>
     <a class="btn-discord-sm" href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener">Discord beitreten →</a>
   </div>
 </div>
@@ -855,7 +866,7 @@
         <div>
           <label for="newNewsContent">Inhalt (Markdown)</label>
           <textarea id="newNewsContent" placeholder="# Überschrift&#10;Normaler Text mit **fett**.&#10;- Listenpunkt 1&#10;- Listenpunkt 2"></textarea>
-          <p class="admin-form-hint"># für Überschrift · **Text** für fett · - Text für Listenpunkte</p>
+          <p class="admin-form-hint"># Überschrift · ## Unterüberschrift · **Text** fett · - Listenpunkt · &gt; Zitat</p>
         </div>
         <button class="admin-add-btn" id="addNewsBtn" type="button">News hinzufügen</button>
       </div>
@@ -921,7 +932,7 @@
           <div class="admin-file-row">
             <label class="admin-mini-upload">
               Datei wählen
-              <input type="file" id="newDesignAsset" accept="image/png,image/jpeg,image/webp,video/mp4,video/webm">
+              <input type="file" id="newDesignAsset" accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm">
             </label>
             <span class="admin-form-hint" id="newDesignAssetName">Keine Datei ausgewählt.</span>
           </div>
@@ -1106,9 +1117,15 @@
     var html = ''; var inList = false;
     lines.forEach(function(rawLine){
       var line = rawLine.trim();
-      if(line.indexOf('# ') === 0){
+      if(line.indexOf('## ') === 0){
+        if(inList){ html += '</ul>'; inList = false; }
+        html += '<h5>' + inlineMarkdown(line.slice(3)) + '</h5>';
+      } else if(line.indexOf('# ') === 0){
         if(inList){ html += '</ul>'; inList = false; }
         html += '<h4>' + inlineMarkdown(line.slice(2)) + '</h4>';
+      } else if(line.indexOf('> ') === 0){
+        if(inList){ html += '</ul>'; inList = false; }
+        html += '<blockquote>' + inlineMarkdown(line.slice(2)) + '</blockquote>';
       } else if(line.indexOf('- ') === 0){
         if(!inList){ html += '<ul>'; inList = true; }
         html += '<li>' + inlineMarkdown(line.slice(2)) + '</li>';
@@ -3177,7 +3194,7 @@
           '<div class="item-main"><div class="item-title">' + escapeHtml(d.title) + '</div>' +
           '<div class="item-meta">' + escapeHtml(metaText) + '</div></div>' +
           '<div class="item-actions">' +
-            '<label class="admin-mini-upload">Datei ändern<input type="file" class="design-asset-input" accept="image/png,image/jpeg,image/webp,video/mp4,video/webm"></label>' +
+            '<label class="admin-mini-upload">Datei ändern<input type="file" class="design-asset-input" accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm"></label>' +
             '<button class="admin-edit-btn">Bearbeiten</button>' +
             '<button class="admin-del-btn">Löschen</button>' +
           '</div>';
