@@ -119,6 +119,7 @@
   .nav-links a.current{color:var(--text-0);}
   .nav-links a.current::after{width:100%;}
 
+  .nav-links a.nav-cta, .nav-links a.nav-cta:hover{color:#fff;}
   .nav-cta{
     display:inline-flex;align-items:center;gap:8px;
     background:linear-gradient(135deg,var(--pink),var(--magenta) 60%,var(--violet));
@@ -833,8 +834,8 @@
             <div class="designs-filter-section">
               <div class="designs-filter-section-title">Sortierung</div>
               <select id="templatesSortSelect" class="designs-filter-sort">
-                <option value="new">Veröffentlichung: neueste zuerst</option>
-                <option value="old">Veröffentlichung: älteste zuerst</option>
+                <option value="new">Neueste zuerst</option>
+                <option value="old">Älteste zuerst</option>
               </select>
             </div>
             <button type="button" class="designs-filter-reset-btn" id="templatesFilterResetBtn">Filter zurücksetzen</button>
@@ -876,8 +877,8 @@
             <div class="designs-filter-section">
               <div class="designs-filter-section-title">Sortierung</div>
               <select id="designsSortSelect" class="designs-filter-sort">
-                <option value="new">Veröffentlichung: neueste zuerst</option>
-                <option value="old">Veröffentlichung: älteste zuerst</option>
+                <option value="new">Neueste zuerst</option>
+                <option value="old">Älteste zuerst</option>
               </select>
             </div>
             <button type="button" class="designs-filter-reset-btn" id="designsFilterResetBtn">Filter zurücksetzen</button>
@@ -2332,8 +2333,9 @@
           '<select class="resolution-select export-format-select">' +
             '<option value="native" class="native-res-option" disabled>Original-Auflösung (wird erkannt …)</option>' +
           '</select>' +
-          '<select class="export-format-select">' +
-            (tpl.assetType === 'video' ? '<option value="video">Export als Video (WebM)</option>' : '') +
+          '<select class="format-select export-format-select">' +
+            (tpl.assetType === 'video' && tpl.asset && window.MediaRecorder && document.createElement('canvas').captureStream
+              ? '<option value="video">Export als Video (WebM, inkl. Overlay)</option>' : '') +
             '<option value="png">Export als PNG (verlustfrei)</option>' +
             '<option value="jpeg">Export als JPG (kleinere Datei)</option>' +
             '<option value="webp">Export als WEBP</option>' +
@@ -2369,7 +2371,7 @@
     var opacityVal = card.querySelector('.opacity-val');
     var textColorInput = card.querySelector('.text-color-input');
     var boldToggleBtn = card.querySelector('.bold-toggle-btn');
-    var formatSelect = card.querySelector('.export-format-select');
+    var formatSelect = card.querySelector('.format-select');
     var brightnessRange = card.querySelector('.brightness-range');
     var brightnessVal = card.querySelector('.brightness-val');
     var contrastRange = card.querySelector('.contrast-range');
@@ -3593,9 +3595,9 @@
                     return '<option value="' + p + '"' + (tpl.watermarkPos === p ? ' selected' : '') + '>' + labels[p] + '</option>';
                   }).join('') +
                 '</select></div>' +
-                '<div><label>Größe (' + tpl.watermarkSize + '%)</label><input type="range" class="edit-tpl-wm-size size-range" min="4" max="40" value="' + tpl.watermarkSize + '"></div>' +
+                '<div><label>Größe (<span class="edit-tpl-wm-size-val">' + tpl.watermarkSize + '</span>%)</label><input type="range" class="edit-tpl-wm-size size-range" min="4" max="40" value="' + tpl.watermarkSize + '"></div>' +
               '</div>' +
-              '<div><label>Deckkraft (' + tpl.watermarkOpacity + '%)</label><input type="range" class="edit-tpl-wm-opacity size-range" min="10" max="100" value="' + tpl.watermarkOpacity + '"></div>' +
+              '<div><label>Deckkraft (<span class="edit-tpl-wm-opacity-val">' + tpl.watermarkOpacity + '</span>%)</label><input type="range" class="edit-tpl-wm-opacity size-range" min="10" max="100" value="' + tpl.watermarkOpacity + '"></div>' +
             '</div>' +
             '<div class="item-actions" style="justify-content:flex-end;">' +
               '<button class="admin-cancel-btn" type="button">Abbrechen</button>' +
@@ -3606,6 +3608,16 @@
           editingTemplateId = null;
           renderAdminLists();
         });
+        var wmSizeRange = row.querySelector('.edit-tpl-wm-size');
+        var wmSizeVal = row.querySelector('.edit-tpl-wm-size-val');
+        if(wmSizeRange && wmSizeVal){
+          wmSizeRange.addEventListener('input', function(){ wmSizeVal.textContent = wmSizeRange.value; });
+        }
+        var wmOpacityRange = row.querySelector('.edit-tpl-wm-opacity');
+        var wmOpacityVal = row.querySelector('.edit-tpl-wm-opacity-val');
+        if(wmOpacityRange && wmOpacityVal){
+          wmOpacityRange.addEventListener('input', function(){ wmOpacityVal.textContent = wmOpacityRange.value; });
+        }
         var wmFileInput = row.querySelector('.edit-tpl-wm-file');
         if(wmFileInput){
           wmFileInput.addEventListener('change', function(e){
@@ -4057,19 +4069,24 @@
     setStatus('Design hinzugefügt – noch nicht gespeichert.');
   });
 
-  /* --- Tag hinzufügen --- */
+  /* --- Tag hinzufügen (gemeinsame Tag-Liste für Designs & Vorlagen) --- */
   var newTagInput = document.getElementById('newTagInput');
-  function addDesignTag(){
-    var name = newTagInput.value.trim();
-    if(!name){ setStatus('Bitte einen Tag-Namen angeben.'); newTagInput.focus(); return; }
+  var newTemplateTagInput = document.getElementById('newTemplateTagInput');
+  function addTagFrom(inputEl){
+    var name = inputEl.value.trim();
+    if(!name){ setStatus('Bitte einen Tag-Namen angeben.'); inputEl.focus(); return; }
     if(data.designCategories.indexOf(name) !== -1){ setStatus('Diesen Tag gibt es schon.'); return; }
     data.designCategories.push(name);
-    newTagInput.value = '';
+    inputEl.value = '';
     renderAdminLists();
     setStatus('Tag hinzugefügt – noch nicht gespeichert.');
   }
-  document.getElementById('addTagBtn').addEventListener('click', addDesignTag);
-  newTagInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); addDesignTag(); } });
+  document.getElementById('addTagBtn').addEventListener('click', function(){ addTagFrom(newTagInput); });
+  newTagInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); addTagFrom(newTagInput); } });
+  if(newTemplateTagInput){
+    document.getElementById('addTemplateTagBtn').addEventListener('click', function(){ addTagFrom(newTemplateTagInput); });
+    newTemplateTagInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); addTagFrom(newTemplateTagInput); } });
+  }
 
   /* --- Speichern: schreibt in localStorage & rendert die Seite live --- */
   document.getElementById('adminSaveBtn').addEventListener('click', function(){
