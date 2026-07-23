@@ -533,6 +533,7 @@
     transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;width:100%;
   }
   .btn-download-mini::before{content:'';display:inline-block;width:16px;height:16px;flex-shrink:0;background:url('assets/ic_download.png') center/contain no-repeat;filter:brightness(0) invert(1);}
+  #templateLightboxEditorBtn::before{content:none;}
   .btn-download-mini:hover{transform:translateY(-2px);}
   .btn-download-mini:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
   .status-msg-mini{font-size:12px;color:var(--text-2);text-align:center;min-height:15px;}
@@ -1138,7 +1139,7 @@
       <h3 id="templateLightboxTitle"></h3>
       <div class="design-lightbox-date" id="templateLightboxRes" style="margin-bottom:10px;"></div>
       <div class="btn-row-mini" style="margin-top:6px;flex-direction:column;gap:10px;">
-        <button type="button" class="btn-download-mini" id="templateLightboxEditorBtn" style="width:100%;text-align:center;background:linear-gradient(135deg,var(--pink),var(--violet));border:none;">✏️ Im Editor öffnen</button>
+        <button type="button" class="btn-download-mini" id="templateLightboxEditorBtn" style="width:100%;text-align:center;background:linear-gradient(135deg,var(--pink),var(--violet));border:none;"><img src="assets/ic_edit_pen.png" alt="" style="width:16px;height:16px;flex-shrink:0;filter:brightness(0) invert(1);"> Im Editor öffnen</button>
         <select class="export-format-select" id="templateLightboxResSelect" style="width:100%;display:none;"></select>
         <a class="btn-download-mini" id="templateLightboxDownload" href="#" download style="width:100%;text-align:center;">Herunterladen</a>
       </div>
