@@ -278,6 +278,12 @@
     padding:9px 11px;color:var(--text-0);font-family:inherit;font-size:13px;cursor:pointer;
   }
   .designs-filter-sort:focus{outline:none;border-color:var(--pink);}
+  .designs-filter-sort option, .designs-filter-sort optgroup{
+    background:#150e24;color:#f4f1fb;
+  }
+  .designs-filter-sort option:checked, .designs-filter-sort option:hover{
+    background:var(--pink);color:#fff;
+  }
   .designs-filter-reset-btn{
     background:none;border:1px solid var(--glass-border);color:var(--text-2);font-size:12.5px;font-weight:600;
     padding:8px;border-radius:9px;transition:all .18s ease;
@@ -808,6 +814,33 @@
         <h2>Eigenes Branding</h2>
         <p>Wähle eine Vorlage, lade dein eigenes Logo hoch und positioniere es frei. Danach kannst du die Vorschau direkt herunterladen.</p>
       </div>
+      <div class="designs-toolbar">
+        <input type="text" id="templateSearchInput" class="designs-search-input" placeholder="Suchen nach Name, Beschreibung oder Kategorie …">
+        <div class="designs-filter-wrap">
+          <button type="button" class="designs-filter-btn" id="templatesFilterBtn">
+            <span>Filter</span><span class="designs-filter-count" id="templatesFilterCount"></span><span class="chev">▾</span>
+          </button>
+          <div class="designs-filter-panel hidden" id="templatesFilterPanel">
+            <div class="designs-filter-section">
+              <div class="designs-filter-section-title">Format</div>
+              <label class="designs-filter-check"><input type="checkbox" class="designs-filter-type" value="image" checked> Bilder</label>
+              <label class="designs-filter-check"><input type="checkbox" class="designs-filter-type" value="video" checked> Videos</label>
+            </div>
+            <div class="designs-filter-section" id="templatesFilterCatsSection">
+              <div class="designs-filter-section-title">Kategorien</div>
+              <div id="templatesFilterCats"></div>
+            </div>
+            <div class="designs-filter-section">
+              <div class="designs-filter-section-title">Sortierung</div>
+              <select id="templatesSortSelect" class="designs-filter-sort">
+                <option value="new">Veröffentlichung: neueste zuerst</option>
+                <option value="old">Veröffentlichung: älteste zuerst</option>
+              </select>
+            </div>
+            <button type="button" class="designs-filter-reset-btn" id="templatesFilterResetBtn">Filter zurücksetzen</button>
+          </div>
+        </div>
+      </div>
       <div class="grid-templates" id="templatesContainer"></div>
     </div>
   </div>
@@ -978,8 +1011,18 @@
             <input type="text" id="newTemplateName" placeholder="z. B. BRB Screen">
           </div>
           <div>
+            <label for="newTemplateDescription">Beschreibung</label>
+            <input type="text" id="newTemplateDescription" placeholder="Kurze Beschreibung">
+          </div>
+        </div>
+        <div class="admin-form-row-2">
+          <div>
             <label for="newTemplatePlaceholder">Platzhalter-Text (ohne Bild)</label>
             <input type="text" id="newTemplatePlaceholder" placeholder="z. B. Gleich geht's weiter">
+          </div>
+          <div>
+            <label for="newTemplateDate">Veröffentlichungsdatum</label>
+            <input type="text" id="newTemplateDate" placeholder="z. B. 20. Juli 2026 – leer lassen für heute">
           </div>
         </div>
         <div>
@@ -992,6 +1035,10 @@
             <span class="admin-form-hint" id="newTemplateAssetName">Keine Datei ausgewählt – Standard-Overlay wird genutzt.</span>
           </div>
         </div>
+        <div>
+          <label>Kategorien / Tags</label>
+          <div class="admin-checkbox-row" id="newTemplateTagsRow"></div>
+        </div>
         <div class="admin-checkbox-row">
           <label><input type="checkbox" id="newTemplateAllowImage" checked> Bild-Logo erlauben</label>
           <label><input type="checkbox" id="newTemplateAllowText"> Text erlauben</label>
@@ -1002,6 +1049,16 @@
         </div>
         <button class="admin-add-btn" id="addTemplateBtn" type="button">Vorlage hinzufügen</button>
         <p class="admin-form-hint">Hinweis: Bilder werden clientseitig komprimiert. Videos werden nicht komprimiert – bitte max. 4&nbsp;MB, sonst wird der lokale Speicher (und die GitHub-Synchronisierung) gesprengt.</p>
+      </div>
+
+      <div class="admin-form">
+        <label>Tags verwalten</label>
+        <div class="admin-list" id="adminTemplateTagsList"></div>
+        <div class="admin-file-row">
+          <input type="text" id="newTemplateTagInput" placeholder="Neuer Tag, z. B. Emotes" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:10px;padding:9px 12px;color:var(--text-0);font-size:13px;">
+          <button class="admin-mini-upload" id="addTemplateTagBtn" type="button" style="cursor:pointer;">+ Tag</button>
+        </div>
+        <p class="admin-form-hint">Dieselben Tags wie bei den Designs – ein Tag hier hinzuzufügen macht ihn auch dort verfügbar. Gelöschte Tags werden automatisch von allen Designs und Vorlagen entfernt, die den Tag verwendet haben.</p>
       </div>
     </div>
 
@@ -1137,8 +1194,11 @@
     </div>
     <div class="design-lightbox-body">
       <h3 id="templateLightboxTitle"></h3>
+      <div class="design-lightbox-date" id="templateLightboxDate" style="margin-bottom:2px;"></div>
       <div class="design-lightbox-date" id="templateLightboxRes" style="margin-bottom:10px;"></div>
-      <div class="btn-row-mini" style="margin-top:6px;flex-direction:column;gap:10px;">
+      <p id="templateLightboxDescription"></p>
+      <div class="design-lightbox-tags" id="templateLightboxTags"></div>
+      <div class="btn-row-mini" style="margin-top:16px;flex-direction:column;gap:10px;">
         <button type="button" class="btn-download-mini" id="templateLightboxEditorBtn" style="width:100%;text-align:center;background:linear-gradient(135deg,var(--pink),var(--violet));border:none;"><img src="assets/ic_edit_pen.png" alt="" style="width:16px;height:16px;flex-shrink:0;filter:brightness(0) invert(1);"> Im Editor öffnen</button>
         <select class="export-format-select" id="templateLightboxResSelect" style="width:100%;display:none;"></select>
         <a class="btn-download-mini" id="templateLightboxDownload" href="#" download style="width:100%;text-align:center;">Herunterladen</a>
@@ -1170,8 +1230,8 @@
       }
     ],
     templates: [
-      { id:'t-starting-soon', name:'Stream Starting Soon', placeholder:'Stream startet gleich', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5, watermarkAsset:null, watermarkPos:'bottom-right', watermarkSize:14, watermarkOpacity:80 },
-      { id:'t-gameplay', name:'Main Gameplay Overlay', placeholder:'Live Gameplay', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5, watermarkAsset:null, watermarkPos:'bottom-right', watermarkSize:14, watermarkOpacity:80 }
+      { id:'t-starting-soon', name:'Stream Starting Soon', placeholder:'Stream startet gleich', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5, watermarkAsset:null, watermarkPos:'bottom-right', watermarkSize:14, watermarkOpacity:80, categories:[], description:'', date:'' },
+      { id:'t-gameplay', name:'Main Gameplay Overlay', placeholder:'Live Gameplay', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5, watermarkAsset:null, watermarkPos:'bottom-right', watermarkSize:14, watermarkOpacity:80, categories:[], description:'', date:'' }
     ],
     designCategories: ['Logo', 'Banner', 'Overlay', 'Sonstiges'],
     designs: []
@@ -1192,6 +1252,11 @@
     if(!tpl.watermarkPos){ tpl.watermarkPos = 'bottom-right'; }
     if(typeof tpl.watermarkSize !== 'number'){ tpl.watermarkSize = 14; }
     if(typeof tpl.watermarkOpacity !== 'number'){ tpl.watermarkOpacity = 80; }
+    if(!Array.isArray(tpl.categories)){ tpl.categories = []; }
+    if(typeof tpl.description !== 'string'){ tpl.description = ''; }
+    if(typeof tpl.date !== 'string'){ tpl.date = ''; }
+    if(typeof tpl.width !== 'number'){ tpl.width = null; }
+    if(typeof tpl.height !== 'number'){ tpl.height = null; }
     return tpl;
   }
 
@@ -1875,17 +1940,112 @@
   var editorModalTitle = document.getElementById('editorModalTitle');
   var editorModalCloseBtn = document.getElementById('editorModalCloseBtn');
 
+  /* ---------- Filter & Suche (identisch zu Designs) ---------- */
+  var templateSearchInput = document.getElementById('templateSearchInput');
+  var templatesFilterBtn = document.getElementById('templatesFilterBtn');
+  var templatesFilterPanel = document.getElementById('templatesFilterPanel');
+  var templatesFilterCount = document.getElementById('templatesFilterCount');
+  var templatesFilterCats = document.getElementById('templatesFilterCats');
+  var templatesFilterCatsSection = document.getElementById('templatesFilterCatsSection');
+  var templatesFilterResetBtn = document.getElementById('templatesFilterResetBtn');
+  var templatesSortSelect = document.getElementById('templatesSortSelect');
+  var activeTemplateCategories = []; // leer = alle Kategorien
+
+  templatesFilterBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var willOpen = templatesFilterPanel.classList.contains('hidden');
+    templatesFilterPanel.classList.toggle('hidden', !willOpen);
+    templatesFilterBtn.classList.toggle('open', willOpen);
+  });
+  document.addEventListener('click', function(e){
+    if(!templatesFilterPanel.contains(e.target) && e.target !== templatesFilterBtn){
+      templatesFilterPanel.classList.add('hidden');
+      templatesFilterBtn.classList.remove('open');
+    }
+  });
+  templatesFilterPanel.querySelectorAll('.designs-filter-type').forEach(function(cb){
+    cb.addEventListener('change', renderTemplates);
+  });
+  templatesSortSelect.addEventListener('change', renderTemplates);
+  templatesFilterResetBtn.addEventListener('click', function(){
+    templatesFilterPanel.querySelectorAll('.designs-filter-type').forEach(function(cb){ cb.checked = true; });
+    activeTemplateCategories = [];
+    templatesSortSelect.value = 'new';
+    templateSearchInput.value = '';
+    renderTemplates();
+  });
+
+  function renderTemplateFilterCats(){
+    templatesFilterCats.innerHTML = '';
+    if(data.designCategories.length === 0){
+      templatesFilterCatsSection.style.display = 'none';
+      return;
+    }
+    templatesFilterCatsSection.style.display = '';
+    data.designCategories.forEach(function(cat){
+      var label = document.createElement('label');
+      label.className = 'designs-filter-check';
+      var checked = activeTemplateCategories.indexOf(cat) !== -1;
+      label.innerHTML = '<input type="checkbox" value="' + escapeHtml(cat) + '"' + (checked ? ' checked' : '') + '> ' + escapeHtml(cat);
+      label.querySelector('input').addEventListener('change', function(e){
+        if(e.target.checked){
+          if(activeTemplateCategories.indexOf(cat) === -1){ activeTemplateCategories.push(cat); }
+        } else {
+          activeTemplateCategories = activeTemplateCategories.filter(function(c){ return c !== cat; });
+        }
+        renderTemplates();
+      });
+      templatesFilterCats.appendChild(label);
+    });
+  }
+
+  function updateTemplatesFilterCount(){
+    var typeChecks = templatesFilterPanel.querySelectorAll('.designs-filter-type:checked').length;
+    var n = activeTemplateCategories.length + (typeChecks < 2 ? 1 : 0) + (templatesSortSelect.value !== 'new' ? 1 : 0);
+    templatesFilterCount.textContent = n;
+    templatesFilterCount.classList.toggle('visible', n > 0);
+  }
+
+  var currentTemplatesFiltered = [];
+
   function renderTemplates(){
+    data.templates.forEach(normalizeTemplate);
+    renderTemplateFilterCats();
+    updateTemplatesFilterCount();
+
+    var showImages = templatesFilterPanel.querySelector('.designs-filter-type[value="image"]').checked;
+    var showVideos = templatesFilterPanel.querySelector('.designs-filter-type[value="video"]').checked;
+    var query = (templateSearchInput.value || '').trim().toLowerCase();
+
+    var filtered = data.templates.filter(function(tpl){
+      var isVideo = tpl.assetType === 'video';
+      if(isVideo && !showVideos){ return false; }
+      if(!isVideo && !showImages){ return false; }
+      if(activeTemplateCategories.length && !activeTemplateCategories.some(function(c){ return tpl.categories.indexOf(c) !== -1; })){ return false; }
+      if(!query){ return true; }
+      var hay = (tpl.name + ' ' + tpl.description + ' ' + tpl.categories.join(' ')).toLowerCase();
+      return hay.indexOf(query) !== -1;
+    });
+
+    var sortDir = templatesSortSelect.value === 'old' ? 1 : -1;
+    filtered = filtered.slice().sort(function(a, b){
+      return sortDir * (parseGermanDate(a.date) - parseGermanDate(b.date));
+    });
+    currentTemplatesFiltered = filtered;
+
     templatesContainer.innerHTML = '';
     if(data.templates.length === 0){
       templatesContainer.innerHTML = '<div class="empty-hint">Noch keine Vorlagen vorhanden.</div>';
       return;
     }
-    data.templates.forEach(function(tpl){
-      normalizeTemplate(tpl);
-      templatesContainer.appendChild(buildGalleryCard(tpl));
-    });
+    if(filtered.length === 0){
+      templatesContainer.innerHTML = '<div class="empty-hint">Keine Treffer für deine Suche.</div>';
+      return;
+    }
+    filtered.forEach(function(tpl){ templatesContainer.appendChild(buildGalleryCard(tpl)); });
   }
+
+  if(templateSearchInput){ templateSearchInput.addEventListener('input', renderTemplates); }
 
   function buildGalleryCard(tpl){
     var g = document.createElement('button');
@@ -1910,6 +2070,9 @@
   var templateLightboxOverlay = document.getElementById('templateLightboxOverlay');
   var templateLightboxMedia = document.getElementById('templateLightboxMedia');
   var templateLightboxTitle = document.getElementById('templateLightboxTitle');
+  var templateLightboxDate = document.getElementById('templateLightboxDate');
+  var templateLightboxDescription = document.getElementById('templateLightboxDescription');
+  var templateLightboxTags = document.getElementById('templateLightboxTags');
   var templateLightboxRes = document.getElementById('templateLightboxRes');
   var templateLightboxResSelect = document.getElementById('templateLightboxResSelect');
   var templateLightboxDownload = document.getElementById('templateLightboxDownload');
@@ -1927,6 +2090,11 @@
           : '<img src="' + tpl.asset + '" alt="' + escapeHtml(tpl.name) + '">')
       : '<div class="stage-text"><div class="pulse-dot"></div><h4>' + escapeHtml(tpl.placeholder || tpl.name) + '</h4><span>Platzhalter-Overlay</span></div>';
     templateLightboxTitle.textContent = tpl.name;
+    templateLightboxDate.textContent = tpl.date ? ('Veröffentlicht: ' + tpl.date) : '';
+    templateLightboxDate.style.display = tpl.date ? '' : 'none';
+    templateLightboxDescription.textContent = tpl.description || '';
+    templateLightboxDescription.style.display = tpl.description ? '' : 'none';
+    templateLightboxTags.innerHTML = tpl.categories.map(function(c){ return '<span>' + escapeHtml(c) + '</span>'; }).join('');
 
     setLightboxResolutionText(templateLightboxRes, tpl.width, tpl.height);
     populateLightboxResSelect(templateLightboxResSelect, tpl);
@@ -1967,16 +2135,16 @@
     templateLightboxOverlay.classList.remove('hidden');
   }
   function updateTemplateLightboxNav(){
-    var idx = data.templates.indexOf(currentLightboxTemplate);
-    var hasList = idx !== -1 && data.templates.length > 1;
+    var idx = currentTemplatesFiltered.indexOf(currentLightboxTemplate);
+    var hasList = idx !== -1 && currentTemplatesFiltered.length > 1;
     templateLightboxPrevBtn.disabled = !hasList;
     templateLightboxNextBtn.disabled = !hasList;
   }
   function showTemplateByOffset(offset){
-    var idx = data.templates.indexOf(currentLightboxTemplate);
-    if(idx === -1 || data.templates.length < 2){ return; }
-    var nextIdx = (idx + offset + data.templates.length) % data.templates.length;
-    openTemplateLightbox(data.templates[nextIdx]);
+    var idx = currentTemplatesFiltered.indexOf(currentLightboxTemplate);
+    if(idx === -1 || currentTemplatesFiltered.length < 2){ return; }
+    var nextIdx = (idx + offset + currentTemplatesFiltered.length) % currentTemplatesFiltered.length;
+    openTemplateLightbox(currentTemplatesFiltered[nextIdx]);
   }
   templateLightboxPrevBtn.addEventListener('click', function(e){ e.stopPropagation(); showTemplateByOffset(-1); });
   templateLightboxNextBtn.addEventListener('click', function(e){ e.stopPropagation(); showTemplateByOffset(1); });
@@ -3240,6 +3408,7 @@
   var adminTemplatesList = document.getElementById('adminTemplatesList');
   var adminDesignsList = document.getElementById('adminDesignsList');
   var adminTagsList = document.getElementById('adminTagsList');
+  var adminTemplateTagsList = document.getElementById('adminTemplateTagsList');
   var newDesignTagsRow = document.getElementById('newDesignTagsRow');
 
   adminFab.addEventListener('click', function(){
@@ -3393,8 +3562,18 @@
           '<div class="admin-edit-form">' +
             '<div class="admin-form-row-2">' +
               '<div><label>Name der Vorlage</label><input type="text" class="edit-tpl-name" value="' + escapeHtml(tpl.name) + '"></div>' +
-              '<div><label>Platzhalter-Text (ohne Bild)</label><input type="text" class="edit-tpl-placeholder" value="' + escapeHtml(tpl.placeholder || '') + '"></div>' +
+              '<div><label>Beschreibung</label><input type="text" class="edit-tpl-description" value="' + escapeHtml(tpl.description || '') + '"></div>' +
             '</div>' +
+            '<div class="admin-form-row-2">' +
+              '<div><label>Platzhalter-Text (ohne Bild)</label><input type="text" class="edit-tpl-placeholder" value="' + escapeHtml(tpl.placeholder || '') + '"></div>' +
+              '<div><label>Veröffentlichungsdatum</label><input type="text" class="edit-tpl-date" value="' + escapeHtml(tpl.date || '') + '"></div>' +
+            '</div>' +
+            '<div><label>Kategorien / Tags</label><div class="admin-checkbox-row edit-tpl-tags">' +
+              data.designCategories.map(function(cat){
+                var checked = tpl.categories.indexOf(cat) !== -1 ? ' checked' : '';
+                return '<label><input type="checkbox" value="' + escapeHtml(cat) + '"' + checked + '> ' + escapeHtml(cat) + '</label>';
+              }).join('') +
+            '</div></div>' +
             '<div class="admin-checkbox-row">' +
               '<label><input type="checkbox" class="edit-tpl-allow-image"' + (tpl.allowImage ? ' checked' : '') + '> Bild-Logo erlauben</label>' +
               '<label><input type="checkbox" class="edit-tpl-allow-text"' + (tpl.allowText ? ' checked' : '') + '> Text erlauben</label>' +
@@ -3456,6 +3635,12 @@
           var name = row.querySelector('.edit-tpl-name').value.trim();
           if(!name){ setStatus('Bitte einen Namen für die Vorlage angeben.'); return; }
           tpl.name = name;
+          tpl.description = row.querySelector('.edit-tpl-description').value.trim();
+          tpl.date = row.querySelector('.edit-tpl-date').value.trim();
+          tpl.categories = Array.prototype.map.call(
+            row.querySelectorAll('.edit-tpl-tags input:checked'),
+            function(cb){ return cb.value; }
+          );
           tpl.placeholder = row.querySelector('.edit-tpl-placeholder').value.trim() || name;
           var allowImage = row.querySelector('.edit-tpl-allow-image').checked;
           var allowText = row.querySelector('.edit-tpl-allow-text').checked;
@@ -3471,7 +3656,9 @@
         });
       } else {
         var metaText = (tpl.asset ? ('Eigener Hintergrund ✓ (' + (tpl.assetType === 'video' ? 'Video' : 'Bild') + (tpl.width && tpl.height ? ' · ' + tpl.width + '×' + tpl.height : '') + ')') : 'Standard-Overlay (kein Hintergrund)') +
-          ' · ' + (tpl.allowImage && tpl.allowText ? 'Bild + Text' : (tpl.allowText ? 'nur Text' : 'nur Bild'));
+          ' · ' + (tpl.allowImage && tpl.allowText ? 'Bild + Text' : (tpl.allowText ? 'nur Text' : 'nur Bild')) +
+          (tpl.date ? ' · ' + tpl.date : '') +
+          (tpl.categories.length ? ' · ' + tpl.categories.join(', ') : '');
         row.className = 'admin-list-item';
         row.innerHTML =
           '<div class="item-main"><div class="item-title">' + escapeHtml(tpl.name) + '</div>' +
@@ -3617,28 +3804,37 @@
       adminDesignsList.appendChild(toggleBtn);
     }
 
-    // ---------- Tags verwalten ----------
-    adminTagsList.innerHTML = data.designCategories.length ? '' : '<div class="admin-form-hint">Noch keine Tags.</div>';
-    data.designCategories.forEach(function(cat){
-      var row = document.createElement('div');
-      row.className = 'admin-list-item';
-      row.innerHTML =
-        '<div class="item-main"><div class="item-title">' + escapeHtml(cat) + '</div></div>' +
-        '<div class="item-actions"><button class="admin-del-btn">Löschen</button></div>';
-      row.querySelector('.admin-del-btn').addEventListener('click', function(){
-        if(!confirm('Tag "' + cat + '" wirklich löschen? Er wird von allen Designs entfernt.')){ return; }
-        data.designCategories = data.designCategories.filter(function(x){ return x !== cat; });
-        data.designs.forEach(function(d){
-          d.categories = (d.categories || []).filter(function(x){ return x !== cat; });
+    // ---------- Tags verwalten (gemeinsame Liste für Designs & Vorlagen) ----------
+    function renderTagsListInto(container){
+      if(!container){ return; }
+      container.innerHTML = data.designCategories.length ? '' : '<div class="admin-form-hint">Noch keine Tags.</div>';
+      data.designCategories.forEach(function(cat){
+        var row = document.createElement('div');
+        row.className = 'admin-list-item';
+        row.innerHTML =
+          '<div class="item-main"><div class="item-title">' + escapeHtml(cat) + '</div></div>' +
+          '<div class="item-actions"><button class="admin-del-btn">Löschen</button></div>';
+        row.querySelector('.admin-del-btn').addEventListener('click', function(){
+          if(!confirm('Tag "' + cat + '" wirklich löschen? Er wird von allen Designs und Vorlagen entfernt.')){ return; }
+          data.designCategories = data.designCategories.filter(function(x){ return x !== cat; });
+          data.designs.forEach(function(d){
+            d.categories = (d.categories || []).filter(function(x){ return x !== cat; });
+          });
+          data.templates.forEach(function(tpl){
+            tpl.categories = (tpl.categories || []).filter(function(x){ return x !== cat; });
+          });
+          renderAdminLists();
+          setStatus('Tag gelöscht – noch nicht gespeichert.');
         });
-        renderAdminLists();
-        setStatus('Tag gelöscht – noch nicht gespeichert.');
+        container.appendChild(row);
       });
-      adminTagsList.appendChild(row);
-    });
+    }
+    renderTagsListInto(adminTagsList);
+    renderTagsListInto(adminTemplateTagsList);
 
-    // Checkbox-Reihe im "Design hinzufügen"-Formular immer mit aktuellen Tags synchron halten
+    // Checkbox-Reihe in den "…hinzufügen"-Formularen immer mit aktuellen Tags synchron halten
     renderNewDesignTagsRow();
+    renderNewTemplateTagsRow();
   }
 
   /* --- Mitglied hinzufügen --- */
@@ -3715,6 +3911,7 @@
   var pendingTemplateWidth = null, pendingTemplateHeight = null;
   var newTemplateAssetInput = document.getElementById('newTemplateAsset');
   var newTemplateAssetName = document.getElementById('newTemplateAssetName');
+  var newTemplateTagsRow = document.getElementById('newTemplateTagsRow');
   newTemplateAssetInput.addEventListener('change', function(e){
     var file = e.target.files && e.target.files[0];
     if(!file){
@@ -3743,27 +3940,36 @@
 
   document.getElementById('addTemplateBtn').addEventListener('click', function(){
     var nameInput = document.getElementById('newTemplateName');
+    var descriptionInput = document.getElementById('newTemplateDescription');
+    var dateInput = document.getElementById('newTemplateDate');
     var placeholderInput = document.getElementById('newTemplatePlaceholder');
     var allowImageInput = document.getElementById('newTemplateAllowImage');
     var allowTextInput = document.getElementById('newTemplateAllowText');
     var sizeInput = document.getElementById('newTemplateSize');
     var name = nameInput.value.trim();
     if(!name){ setStatus('Bitte einen Namen für die Vorlage angeben.'); nameInput.focus(); return; }
+    var description = descriptionInput.value.trim();
+    var date = dateInput.value.trim() || todayGerman();
+    var categories = newTemplateTagsRow ? Array.prototype.map.call(
+      newTemplateTagsRow.querySelectorAll('input:checked'),
+      function(cb){ return cb.value; }
+    ) : [];
     var placeholder = placeholderInput.value.trim() || name;
     var allowImage = allowImageInput.checked;
     var allowText = allowTextInput.checked;
     if(!allowImage && !allowText){ allowImage = true; allowImageInput.checked = true; }
     var newTplId = makeId('t');
     data.templates.push({
-      id:newTplId, name:name, placeholder:placeholder,
+      id:newTplId, name:name, description:description, date:date, placeholder:placeholder,
       asset:pendingTemplateAsset, assetType:pendingTemplateAssetType,
       width: pendingTemplateWidth, height: pendingTemplateHeight,
       allowImage:allowImage, allowText:allowText,
       defaultSize: (parseInt(sizeInput.value,10) || 22) / 100,
-      defaultX:0.5, defaultY:0.5
+      defaultX:0.5, defaultY:0.5,
+      categories: categories
     });
     registerPendingAssetUpload('template', newTplId, pendingTemplateAssetUpload, name);
-    nameInput.value = ''; placeholderInput.value = ''; newTemplateAssetInput.value = '';
+    nameInput.value = ''; descriptionInput.value = ''; dateInput.value = ''; placeholderInput.value = ''; newTemplateAssetInput.value = '';
     allowImageInput.checked = true; allowTextInput.checked = false; sizeInput.value = 22;
     pendingTemplateAsset = null; pendingTemplateAssetType = null; pendingTemplateAssetUpload = null;
     pendingTemplateWidth = null; pendingTemplateHeight = null;
@@ -3808,6 +4014,15 @@
   function renderNewDesignTagsRow(){
     if(!newDesignTagsRow){ return; }
     newDesignTagsRow.innerHTML = data.designCategories.length
+      ? data.designCategories.map(function(cat){
+          return '<label><input type="checkbox" value="' + escapeHtml(cat) + '"> ' + escapeHtml(cat) + '</label>';
+        }).join('')
+      : '<span class="admin-form-hint">Noch keine Tags – lege unten welche an.</span>';
+  }
+
+  function renderNewTemplateTagsRow(){
+    if(!newTemplateTagsRow){ return; }
+    newTemplateTagsRow.innerHTML = data.designCategories.length
       ? data.designCategories.map(function(cat){
           return '<label><input type="checkbox" value="' + escapeHtml(cat) + '"> ' + escapeHtml(cat) + '</label>';
         }).join('')
