@@ -47,6 +47,10 @@
         {
           "label": "YouTube",
           "url": "https://www.youtube.com/@da_maxl"
+        },
+        {
+          "label": "Twitch",
+          "url": "https://www.twitch.tv/maxl_live"
         }
       ]
     }
@@ -1785,5 +1789,11 @@
     "y": 92,
     "size": 14,
     "opacity": 80
-  }
+  },
+  "templateCategories": [
+    "Logo",
+    "Banner",
+    "Overlay",
+    "Sonstiges"
+  ]
 }
