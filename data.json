@@ -5,21 +5,27 @@
       "name": "Strudelgame",
       "role": "Designer & Gründer",
       "initials": "SG",
-      "bio": "Strudelgame schaut das alle Technischen Sachen Funktionieren wie die Webseite, Discord bot/Tickets..."
+      "bio": "Strudelgame schaut das alle Technischen Sachen Funktionieren wie die Webseite, Discord bot/Tickets...",
+      "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/73969952-657b-4351-8f73-30dffdd9e22d-profile_image-70x70.png",
+      "links": []
     },
     {
       "id": "m-blattbyte",
       "name": "Bloodbyte",
       "role": "Intro/Outro Designer",
       "initials": "BB",
-      "bio": "Bloodbyte ist bekannt für seine eigene Art mit Menschen umzugehen und seine Professionellen Intros/Outros"
+      "bio": "Bloodbyte ist bekannt für seine eigene Art mit Menschen umzugehen und seine Professionellen Intros/Outros",
+      "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/5cfbb81f-f150-441f-9c71-7d9f4f7d1bd2-profile_image-70x70.png",
+      "links": []
     },
     {
       "id": "m-mrqmtoef-6in4z",
       "name": "DaMaxl",
       "role": "Media",
       "initials": "DM",
-      "bio": "Kümmert sich um die Soziale Präsens!"
+      "bio": "Kümmert sich um die Soziale Präsens!",
+      "avatar": "",
+      "links": []
     }
   ],
   "news": [
@@ -44,12 +50,13 @@
       "defaultX": 0.5,
       "defaultY": 0.5,
       "watermarkAsset": null,
-      "watermarkPos": "bottom-right",
       "watermarkSize": 14,
       "watermarkOpacity": 80,
       "categories": [],
       "description": "",
-      "date": ""
+      "date": "",
+      "watermarkX": 0.88,
+      "watermarkY": 0.88
     },
     {
       "id": "t-mruuwtv0-ba9co",
@@ -65,12 +72,13 @@
       "defaultX": 0.5,
       "defaultY": 0.5,
       "watermarkAsset": null,
-      "watermarkPos": "bottom-right",
       "watermarkSize": 14,
       "watermarkOpacity": 80,
       "categories": [],
       "description": "",
-      "date": ""
+      "date": "",
+      "watermarkX": 0.88,
+      "watermarkY": 0.88
     },
     {
       "id": "t-mruv89a3-nqq0b",
@@ -86,12 +94,13 @@
       "defaultX": 0.5,
       "defaultY": 0.5,
       "watermarkAsset": null,
-      "watermarkPos": "bottom-right",
       "watermarkSize": 14,
       "watermarkOpacity": 80,
       "categories": [],
       "description": "",
-      "date": ""
+      "date": "",
+      "watermarkX": 0.88,
+      "watermarkY": 0.88
     },
     {
       "id": "t-mruw59h9-48frg",
@@ -107,12 +116,13 @@
       "defaultX": 0.5,
       "defaultY": 0.5,
       "watermarkAsset": null,
-      "watermarkPos": "bottom-right",
       "watermarkSize": 14,
       "watermarkOpacity": 80,
       "categories": [],
       "description": "",
-      "date": ""
+      "date": "",
+      "watermarkX": 0.88,
+      "watermarkY": 0.88
     },
     {
       "id": "t-mrxaqg0r-l184w",
@@ -134,9 +144,10 @@
         "Stream Overlay"
       ],
       "watermarkAsset": "data:image/webp;base64,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",
-      "watermarkPos": "bottom-left",
       "watermarkSize": 22,
-      "watermarkOpacity": 55
+      "watermarkOpacity": 55,
+      "watermarkX": 0.12,
+      "watermarkY": 0.88
     }
   ],
   "designs": [
@@ -149,7 +160,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrupxg5l-cqndj",
@@ -160,7 +172,8 @@
       "assetType": "image",
       "width": 1563,
       "height": 1563,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruq1uad-i0mcn",
@@ -171,7 +184,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruq7dv0-2tm8y",
@@ -182,7 +196,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruqeze7-i6q0k",
@@ -193,7 +208,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruquuza-bq85v",
@@ -204,7 +220,8 @@
       "assetType": "image",
       "width": 750,
       "height": 750,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruqwgsc-gt082",
@@ -215,7 +232,8 @@
       "assetType": "image",
       "width": 625,
       "height": 625,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruqypdt-spaez",
@@ -226,7 +244,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruqzwhg-oxzld",
@@ -237,7 +256,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrur0vq3-ztewd",
@@ -248,7 +268,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrur27mw-gt5t3",
@@ -259,7 +280,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrur35nc-ghijy",
@@ -270,7 +292,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrur45y7-cv7dh",
@@ -281,7 +304,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrur4y9c-xya4p",
@@ -292,7 +316,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrur5oti-oduzu",
@@ -303,7 +328,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrur6vkd-97fjl",
@@ -314,7 +340,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrur84ra-9mvhe",
@@ -325,7 +352,8 @@
       "assetType": "image",
       "width": 1120,
       "height": 630,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrur9e1f-qvsem",
@@ -336,7 +364,8 @@
       "assetType": "image",
       "width": 1120,
       "height": 630,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrura5ee-616sz",
@@ -347,7 +376,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruratn7-h35ik",
@@ -358,7 +388,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrurbzw1-ftt71",
@@ -369,7 +400,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrurcv78-xbhye",
@@ -380,7 +412,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrurdwji-n6qq3",
@@ -391,7 +424,8 @@
       "assetType": "image",
       "width": 880,
       "height": 494,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrurelfj-z3zn8",
@@ -402,7 +436,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrurfi0v-jumbn",
@@ -413,7 +448,8 @@
       "assetType": "image",
       "width": 880,
       "height": 494,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrurgbiq-7pgq5",
@@ -424,7 +460,8 @@
       "assetType": "image",
       "width": 880,
       "height": 494,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrurmsjk-t3oks",
@@ -435,7 +472,8 @@
       "assetType": "image",
       "width": 880,
       "height": 494,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruro1on-xgycl",
@@ -446,7 +484,8 @@
       "assetType": "image",
       "width": 880,
       "height": 494,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrurqr3r-6vl13",
@@ -457,7 +496,8 @@
       "assetType": "video",
       "width": 1080,
       "height": 1080,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrursgf8-dm99s",
@@ -468,7 +508,8 @@
       "assetType": "video",
       "width": 1920,
       "height": 1920,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruru1kr-iekj6",
@@ -479,7 +520,8 @@
       "assetType": "image",
       "width": 880,
       "height": 494,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrurvbdq-bezvx",
@@ -490,7 +532,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrus8315-njufc",
@@ -501,7 +544,8 @@
       "assetType": "image",
       "width": 880,
       "height": 494,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrus8vmy-68ej8",
@@ -512,7 +556,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrusa4jl-zln2m",
@@ -523,7 +568,8 @@
       "assetType": "image",
       "width": 880,
       "height": 494,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrusbn1p-nn5eb",
@@ -534,7 +580,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrusd3bw-8wzjr",
@@ -545,7 +592,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrusdzvg-q8xak",
@@ -556,7 +604,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrusevto-mrz4d",
@@ -567,7 +616,8 @@
       "assetType": "image",
       "width": 1286,
       "height": 723,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruyyc4u-lpq6a",
@@ -578,7 +628,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruz9bai-4rlk1",
@@ -589,7 +640,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruzcsim-7r4gp",
@@ -600,7 +652,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruzez5g-kns9q",
@@ -611,7 +664,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruzgttr-rq9we",
@@ -622,7 +676,8 @@
       "assetType": "image",
       "width": 882,
       "height": 806,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruzibu3-kft06",
@@ -633,7 +688,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruzjxe0-wdaww",
@@ -644,7 +700,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruzl7pt-uzmzc",
@@ -655,7 +712,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruzmzd5-6zcfx",
@@ -666,7 +724,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruznvz5-zvanw",
@@ -677,7 +736,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruzput9-7ch6m",
@@ -688,7 +748,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruzsk7k-dcn5s",
@@ -699,7 +760,8 @@
       "assetType": "image",
       "width": 2560,
       "height": 1440,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruzxaxb-gcpl2",
@@ -710,7 +772,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mruzyb24-60w3d",
@@ -721,7 +784,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv001e1-cvjbs",
@@ -732,7 +796,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv042qv-y9btj",
@@ -743,7 +808,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv05fqy-i069s",
@@ -754,7 +820,8 @@
       "assetType": "image",
       "width": 2560,
       "height": 1440,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv064c5-u5tmg",
@@ -765,7 +832,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv0b9i4-15x99",
@@ -776,7 +844,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv0cgo7-ukx35",
@@ -787,7 +856,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv0e7kt-phx3i",
@@ -798,7 +868,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv0mrsy-xx3h0",
@@ -809,7 +880,8 @@
       "assetType": "image",
       "width": 2560,
       "height": 1440,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv0nhn4-lbb88",
@@ -820,7 +892,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv0r7yb-4mtgu",
@@ -831,7 +904,8 @@
       "assetType": "video",
       "width": 1920,
       "height": 1080,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv0t43u-txl57",
@@ -842,7 +916,8 @@
       "assetType": "video",
       "width": 1920,
       "height": 1080,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv0ue1s-q90uq",
@@ -853,7 +928,8 @@
       "assetType": "video",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv0vb64-yiaw5",
@@ -864,7 +940,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv0x4g7-ejtwq",
@@ -875,7 +952,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv0yus7-ipds8",
@@ -886,7 +964,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv0zp63-wgyvu",
@@ -897,7 +976,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv12i0e-zbbee",
@@ -908,7 +988,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv151u8-ekc1y",
@@ -919,7 +1000,8 @@
       "assetType": "image",
       "width": 1080,
       "height": 1920,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv1604y-q1yec",
@@ -930,7 +1012,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv17tba-84b52",
@@ -941,7 +1024,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv19rik-bkp2z",
@@ -952,7 +1036,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv1cplr-23rlj",
@@ -963,7 +1048,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv1e4wx-7jx4w",
@@ -974,7 +1060,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv1mb1t-9p60n",
@@ -985,7 +1072,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv1n9pd-4chb5",
@@ -996,7 +1084,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv1obrb-92njm",
@@ -1007,7 +1096,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrv1voae-2pe1e",
@@ -1018,7 +1108,8 @@
       "assetType": "image",
       "width": 1280,
       "height": 720,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw87w7t-ylwh9",
@@ -1029,7 +1120,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw88j5a-dvmv6",
@@ -1040,7 +1132,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw89er1-xbwrl",
@@ -1051,7 +1144,8 @@
       "assetType": "image",
       "width": 5200,
       "height": 3400,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8a9kq-sk9en",
@@ -1062,7 +1156,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8b3jz-cbcig",
@@ -1073,7 +1168,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8cao6-kbwwt",
@@ -1084,7 +1180,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8ef9h-8d6eu",
@@ -1095,7 +1192,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8fqv8-ucojk",
@@ -1106,7 +1204,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8gi4j-l5t7z",
@@ -1117,7 +1216,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8if51-0ua71",
@@ -1128,7 +1228,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8j4fm-bs6sk",
@@ -1139,7 +1240,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8kmt6-cynbv",
@@ -1150,7 +1252,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8lcq4-nl4b0",
@@ -1161,7 +1264,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8m2nw-4hoa2",
@@ -1172,7 +1276,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8nnk8-kn6k7",
@@ -1183,7 +1288,8 @@
       "assetType": null,
       "width": null,
       "height": null,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8oeko-o26uf",
@@ -1194,7 +1300,8 @@
       "assetType": "image",
       "width": 2000,
       "height": 1536,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw8pdwv-xfvbe",
@@ -1205,7 +1312,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw92q8a-3ggt4",
@@ -1216,7 +1324,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw94q76-rfmx9",
@@ -1227,7 +1336,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw95qfu-q4sj4",
@@ -1238,7 +1348,8 @@
       "assetType": "image",
       "width": 688,
       "height": 688,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw96yw5-zq88y",
@@ -1249,7 +1360,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw97yxh-izuuh",
@@ -1260,7 +1372,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw98n44-cn3av",
@@ -1271,7 +1384,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw99i6w-59ilu",
@@ -1282,7 +1396,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw9aa6p-p1jbz",
@@ -1293,7 +1408,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw9bhzp-mdc49",
@@ -1304,7 +1420,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw9co0j-yptyh",
@@ -1315,7 +1432,8 @@
       "assetType": "image",
       "width": 1024,
       "height": 1024,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw9gk0x-1jr41",
@@ -1326,7 +1444,8 @@
       "assetType": "image",
       "width": 1024,
       "height": 1024,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw9meug-5yheu",
@@ -1337,7 +1456,8 @@
       "assetType": "image",
       "width": 1500,
       "height": 1500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw9n9oj-dpkys",
@@ -1348,7 +1468,8 @@
       "assetType": "image",
       "width": 1500,
       "height": 1500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw9pd4l-0vyxd",
@@ -1359,7 +1480,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw9qccw-1fxys",
@@ -1370,7 +1492,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw9rivf-t2vs6",
@@ -1381,7 +1504,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw9sngv-wgb6h",
@@ -1392,7 +1516,8 @@
       "assetType": "image",
       "width": 13824,
       "height": 6912,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrw9t48e-ptrks",
@@ -1403,7 +1528,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwe572j-7cn74",
@@ -1414,7 +1540,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwe601c-n95b6",
@@ -1425,7 +1552,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwel8kp-u1xva",
@@ -1436,7 +1564,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwem0ky-o0ixv",
@@ -1447,7 +1576,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrweprt9-yuslf",
@@ -1458,7 +1588,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwf1nxe-celrt",
@@ -1469,7 +1600,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwf3s5w-p4orh",
@@ -1480,7 +1612,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwf42bg-d8plq",
@@ -1491,7 +1624,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwf88h4-kfimb",
@@ -1502,7 +1636,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwfageh-kup8i",
@@ -1513,7 +1648,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwffmhc-172oz",
@@ -1524,7 +1660,8 @@
       "assetType": "image",
       "width": 500,
       "height": 500,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwfg7er-k184z",
@@ -1535,7 +1672,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwfh7f0-gwrli",
@@ -1546,7 +1684,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwfiit0-7uuro",
@@ -1557,7 +1696,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwfjgvq-4kgw6",
@@ -1568,7 +1708,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwfmez0-8ij7j",
@@ -1579,7 +1720,8 @@
       "assetType": "image",
       "width": 2400,
       "height": 1350,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwfnacc-s8zxl",
@@ -1590,7 +1732,8 @@
       "assetType": "image",
       "width": 1000,
       "height": 1000,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     },
     {
       "id": "d-mrwfo5ja-ni6dv",
@@ -1601,7 +1744,8 @@
       "assetType": "image",
       "width": 6912,
       "height": 3456,
-      "categories": []
+      "categories": [],
+      "thumb": ""
     }
   ],
   "designCategories": [
@@ -1611,5 +1755,12 @@
     "Be Right Back / Gleich wieder da",
     "Stream Endet",
     "Stream Overlay"
-  ]
+  ],
+  "branding": {
+    "asset": null,
+    "x": 92,
+    "y": 92,
+    "size": 14,
+    "opacity": 80
+  }
 }
