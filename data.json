@@ -5,9 +5,22 @@
       "name": "Strudelgame",
       "role": "Designer & Gründer",
       "initials": "SG",
-      "bio": "Strudelgame schaut das alle Technischen Sachen Funktionieren wie die Webseite, Discord bot/Tickets...",
+      "bio": "Strudelgame ist der Gründer und MAIN Designer!",
       "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/73969952-657b-4351-8f73-30dffdd9e22d-profile_image-70x70.png",
-      "links": []
+      "links": [
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/@Strudel-game"
+        },
+        {
+          "label": "Twitch",
+          "url": "https://www.twitch.tv/strudelgame"
+        },
+        {
+          "label": "LinkTree",
+          "url": "https://linktr.ee/Strudelgame"
+        }
+      ]
     },
     {
       "id": "m-blattbyte",
@@ -16,7 +29,12 @@
       "initials": "BB",
       "bio": "Bloodbyte ist bekannt für seine eigene Art mit Menschen umzugehen und seine Professionellen Intros/Outros",
       "avatar": "https://static-cdn.jtvnw.net/jtv_user_pictures/5cfbb81f-f150-441f-9c71-7d9f4f7d1bd2-profile_image-70x70.png",
-      "links": []
+      "links": [
+        {
+          "label": "Twitch",
+          "url": "https://www.twitch.tv/bloodbyte28"
+        }
+      ]
     },
     {
       "id": "m-mrqmtoef-6in4z",
@@ -24,8 +42,13 @@
       "role": "Media",
       "initials": "DM",
       "bio": "Kümmert sich um die Soziale Präsens!",
-      "avatar": "",
-      "links": []
+      "avatar": "https://yt3.googleusercontent.com/Q9NEpa2Tf1qerZPRuW9ijIqmYHwYklr04CEayECwL-wWHa4Dde5yXhclCygfISllcyjaWxOQqQ=s160-c-k-c0x00ffffff-no-rj",
+      "links": [
+        {
+          "label": "YouTube",
+          "url": "https://www.youtube.com/@da_maxl"
+        }
+      ]
     }
   ],
   "news": [
