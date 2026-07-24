@@ -201,8 +201,12 @@
 
   /* ---------- Team ---------- */
   .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;}
-  .team-card{padding:32px 26px;text-align:center;transition:transform .22s ease, border-color .22s ease;}
+  .team-card{
+    appearance:none;-webkit-appearance:none;font:inherit;color:inherit;padding:32px 26px;margin:0;
+    text-align:center;transition:transform .22s ease, border-color .22s ease;width:100%;
+  }
   .team-card:hover{transform:translateY(-6px);border-color:var(--glass-border-hi);}
+  .avatar-img{object-fit:cover;}
   .avatar{
     width:88px;height:88px;border-radius:50%;margin:0 auto 18px;
     display:flex;align-items:center;justify-content:center;font-family:var(--font-display);
@@ -319,6 +323,23 @@
   .design-lightbox-nav.next{right:10px;}
   .design-lightbox-nav[disabled]{opacity:0;pointer-events:none;}
 
+  /* ---------- Mitglied-Lightbox (Linktree-Stil) ---------- */
+  .member-lightbox{
+    width:100%;max-width:380px;max-height:88vh;overflow-y:auto;position:relative;
+    padding:40px 28px 30px;text-align:center;
+  }
+  .member-lightbox .avatar{width:96px;height:96px;font-size:32px;margin:0 auto 16px;}
+  .member-lightbox .avatar-img{object-fit:cover;}
+  .member-lightbox h3{font-size:21px;margin-bottom:4px;}
+  .member-lightbox-bio{color:var(--text-1);font-size:14px;line-height:1.6;margin:14px 0 4px;}
+  .member-lightbox-links{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
+  .member-lightbox-link{
+    display:block;width:100%;padding:13px 18px;border-radius:12px;font-weight:700;font-size:14px;
+    background:var(--glass-bg);border:1px solid var(--glass-border);color:#fff;text-decoration:none;
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .member-lightbox-link:hover{border-color:var(--pink);transform:translateY(-2px);}
+
   /* ---------- Editor-Modal (Vollbild-Editor mit fixierter Vorschau) ---------- */
   .editor-modal{position:fixed;inset:0;z-index:300;display:none;}
   .editor-modal.open{display:block;}
@@ -392,16 +413,24 @@
   .watermark-layer{
     position:absolute;pointer-events:none;user-select:none;z-index:5;object-fit:contain;
   }
-  .watermark-layer.wm-top-left{top:4%;left:4%;}
-  .watermark-layer.wm-top-center{top:4%;left:50%;transform:translateX(-50%);}
-  .watermark-layer.wm-top-right{top:4%;right:4%;}
-  .watermark-layer.wm-center-left{top:50%;left:4%;transform:translateY(-50%);}
-  .watermark-layer.wm-center{top:50%;left:50%;transform:translate(-50%,-50%);}
-  .watermark-layer.wm-center-right{top:50%;right:4%;transform:translateY(-50%);}
-  .watermark-layer.wm-bottom-left{bottom:4%;left:4%;}
-  .watermark-layer.wm-bottom-center{bottom:4%;left:50%;transform:translateX(-50%);}
-  .watermark-layer.wm-bottom-right{bottom:4%;right:4%;}
   .stage-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+
+  .wm-editor-stage{
+    position:relative;width:100%;max-width:360px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;
+    background:#0c0714;border:1px solid var(--glass-border);margin-bottom:10px;touch-action:none;
+  }
+  .wm-editor-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .wm-editor-bg-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-2);font-size:11px;text-align:center;padding:10px;}
+  .wm-drag-handle{
+    position:absolute;transform:translate(-50%,-50%);cursor:grab;touch-action:none;
+    border:1px dashed rgba(255,255,255,0.4);border-radius:4px;
+  }
+  .wm-drag-handle.grabbing{cursor:grabbing;}
+  .wm-drag-handle img{display:block;width:100%;height:auto;pointer-events:none;}
+  .wm-resize-handle{
+    position:absolute;right:-7px;bottom:-7px;width:14px;height:14px;border-radius:50%;
+    background:var(--pink);border:2px solid #fff;cursor:nwse-resize;touch-action:none;
+  }
   video.stage-bg{background:#000;}
   .drop-zone .overlay-text{
     max-width:100%;max-height:100%;overflow:hidden;pointer-events:none;
@@ -617,6 +646,20 @@
   .admin-tabs{display:flex;gap:10px;padding:18px 26px 0;flex-wrap:wrap;}
   .admin-tab-btn{background:var(--glass-bg);border:1px solid var(--glass-border);color:var(--text-1);padding:8px 16px;border-radius:10px;font-size:13px;font-weight:600;}
   .admin-tab-btn.active{background:var(--pink);color:#fff;border-color:var(--pink);}
+  .branding-preview-bg{
+    position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;
+    background:linear-gradient(135deg, rgba(255,63,164,0.35), rgba(139,92,246,0.35)), #150c22;
+    border:1px solid var(--glass-border);user-select:none;
+  }
+  .branding-preview-empty{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--text-2);font-size:13px;text-align:center;padding:20px;
+  }
+  .branding-preview-logo{
+    position:absolute;cursor:grab;transform:translate(-50%,-50%);touch-action:none;
+  }
+  .branding-preview-logo:active{cursor:grabbing;}
+  .branding-preview-logo img{display:block;width:100%;height:auto;pointer-events:none;filter:drop-shadow(0 2px 10px rgba(0,0,0,0.5));}
 
   .admin-panel{padding:20px 26px 6px;display:none;}
   .admin-panel.active{display:block;}
@@ -683,6 +726,10 @@
   #ghPublishBtn::before{content:'';display:inline-block;width:14px;height:14px;flex-shrink:0;background:url('assets/ic_upload.png') center/contain no-repeat;filter:brightness(0) invert(1);}
   .admin-add-btn:hover{border-color:var(--glass-border-hi);}
   .admin-file-row{display:flex;align-items:center;gap:10px;}
+  .member-link-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .member-link-row .member-link-label{flex:0 0 34%;}
+  .member-link-row .member-link-url{flex:1;}
+  .member-link-row .member-link-remove{flex:0 0 auto;padding:8px 12px;}
   .admin-file-row label.admin-mini-upload{flex-shrink:0;}
 
   .admin-footer{display:flex;align-items:center;gap:10px;justify-content:flex-end;padding:16px 26px 22px;border-top:1px solid var(--glass-border);flex-wrap:wrap;}
@@ -956,6 +1003,7 @@
       <button class="admin-tab-btn" data-tab="news">News</button>
       <button class="admin-tab-btn" data-tab="templates">Vorlagen</button>
       <button class="admin-tab-btn" data-tab="designs">Designs</button>
+      <button class="admin-tab-btn" data-tab="branding">Branding</button>
       <button class="admin-tab-btn" data-tab="github">GitHub</button>
     </div>
 
@@ -980,6 +1028,22 @@
         <div>
           <label for="newMemberBio">Beschreibung (optional)</label>
           <textarea id="newMemberBio" placeholder="Kurzer Info-Text, der auf der Team-Karte angezeigt wird" style="min-height:64px;"></textarea>
+        </div>
+        <div>
+          <label>Profilbild (optional)</label>
+          <div class="admin-file-row">
+            <input type="text" id="newMemberAvatarUrl" placeholder="Bild-URL einfügen, z. B. https://.../twitch-logo.png" style="flex:1;">
+            <label class="admin-mini-upload">
+              Datei wählen
+              <input type="file" id="newMemberAvatarFile" accept="image/png,image/jpeg,image/webp,image/gif">
+            </label>
+          </div>
+          <span class="admin-form-hint" id="newMemberAvatarName">Kein Bild ausgewählt – URL oder Datei angeben.</span>
+        </div>
+        <div>
+          <label>Links (erscheinen als Buttons, wenn man auf das Mitglied klickt)</label>
+          <div id="newMemberLinksRows"></div>
+          <button class="admin-cancel-btn" id="addMemberLinkRowBtn" type="button" style="margin-top:8px;">+ Link hinzufügen</button>
         </div>
         <button class="admin-add-btn" id="addMemberBtn" type="button">Mitglied hinzufügen</button>
       </div>
@@ -1110,6 +1174,32 @@
       </div>
     </div>
 
+    <!-- Eigenes Branding: globales Wasserzeichen für alle Downloads -->
+    <div class="admin-panel" id="adminPanelBranding">
+      <p class="admin-form-hint" style="margin-bottom:14px;">
+        Dieses Logo wird automatisch als Wasserzeichen auf alle Downloads gelegt – im Vorlagen-Customizer
+        <strong>und</strong> bei Bild-Downloads aus der Design-Galerie. Zieh das Logo in der Vorschau einfach
+        an die gewünschte Stelle.
+      </p>
+      <div class="admin-file-row" style="margin-bottom:16px;">
+        <label class="admin-mini-upload">Logo wählen<input type="file" id="brandingAssetInput" accept="image/png,image/webp,image/gif,image/jpeg"></label>
+        <span class="admin-form-hint" id="brandingAssetName">Kein Logo gesetzt.</span>
+        <button class="admin-cancel-btn" id="brandingRemoveBtn" type="button" style="display:none;">Entfernen</button>
+      </div>
+      <div class="branding-preview-bg" id="brandingPreviewBg">
+        <div class="branding-preview-empty" id="brandingPreviewEmpty">Noch kein Logo – lade eins hoch, um die Vorschau zu sehen.</div>
+        <div class="branding-preview-logo" id="brandingPreviewLogo" style="display:none;"></div>
+      </div>
+      <div style="margin-top:16px;">
+        <label>Größe (<span id="brandingSizeVal">14</span>%)</label>
+        <input type="range" id="brandingSizeRange" min="4" max="40" value="14" class="size-range">
+      </div>
+      <div style="margin-top:10px;">
+        <label>Deckkraft (<span id="brandingOpacityVal">80</span>%)</label>
+        <input type="range" id="brandingOpacityRange" min="10" max="100" value="80" class="size-range">
+      </div>
+    </div>
+
     <!-- GitHub-Verbindung -->
     <div class="admin-panel" id="adminPanelGithub">
       <p class="admin-form-hint" style="margin-bottom:14px;">
@@ -1204,7 +1294,18 @@
         <select class="export-format-select" id="templateLightboxResSelect" style="width:100%;display:none;"></select>
         <a class="btn-download-mini" id="templateLightboxDownload" href="#" download style="width:100%;text-align:center;">Herunterladen</a>
       </div>
-    </div>
+  </div>
+</div>
+
+<!-- ================= Mitglied-Detailansicht (Linktree-Stil) ================= -->
+<div class="modal-overlay hidden" id="memberLightboxOverlay">
+  <div class="glass member-lightbox">
+    <button class="design-lightbox-close" id="memberLightboxCloseBtn" aria-label="Schließen">×</button>
+    <div id="memberLightboxAvatarWrap"></div>
+    <h3 id="memberLightboxName"></h3>
+    <div class="team-role" id="memberLightboxRole"></div>
+    <p class="member-lightbox-bio" id="memberLightboxBio"></p>
+    <div class="member-lightbox-links" id="memberLightboxLinks"></div>
   </div>
 </div>
 
@@ -1219,9 +1320,9 @@
 
   var DEFAULT_DATA = {
     members: [
-      { id:'m-strudelgames', name:'Strudelgames', role:'Streamer & Gründer', initials:'SG', bio:'' },
-      { id:'m-strudeldesigns', name:'Strudel Designs', role:'Design-Team', initials:'SD', bio:'' },
-      { id:'m-blattbyte', name:'Blattbyte', role:'Mitglied', initials:'BB', bio:'' }
+      { id:'m-strudelgames', name:'Strudelgames', role:'Streamer & Gründer', initials:'SG', bio:'', avatar:'', links:[] },
+      { id:'m-strudeldesigns', name:'Strudel Designs', role:'Design-Team', initials:'SD', bio:'', avatar:'', links:[] },
+      { id:'m-blattbyte', name:'Blattbyte', role:'Mitglied', initials:'BB', bio:'', avatar:'', links:[] }
     ],
     news: [
       {
@@ -1231,11 +1332,12 @@
       }
     ],
     templates: [
-      { id:'t-starting-soon', name:'Stream Starting Soon', placeholder:'Stream startet gleich', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5, watermarkAsset:null, watermarkPos:'bottom-right', watermarkSize:14, watermarkOpacity:80, categories:[], description:'', date:'' },
-      { id:'t-gameplay', name:'Main Gameplay Overlay', placeholder:'Live Gameplay', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5, watermarkAsset:null, watermarkPos:'bottom-right', watermarkSize:14, watermarkOpacity:80, categories:[], description:'', date:'' }
+      { id:'t-starting-soon', name:'Stream Starting Soon', placeholder:'Stream startet gleich', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5, watermarkAsset:null, watermarkX:0.9, watermarkY:0.88, watermarkSize:14, watermarkOpacity:80, categories:[], description:'', date:'' },
+      { id:'t-gameplay', name:'Main Gameplay Overlay', placeholder:'Live Gameplay', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5, watermarkAsset:null, watermarkX:0.9, watermarkY:0.88, watermarkSize:14, watermarkOpacity:80, categories:[], description:'', date:'' }
     ],
     designCategories: ['Logo', 'Banner', 'Overlay', 'Sonstiges'],
-    designs: []
+    designs: [],
+    branding: { asset:null, x:92, y:92, size:14, opacity:80 }
   };
 
   function cloneData(d){ return JSON.parse(JSON.stringify(d)); }
@@ -1250,7 +1352,18 @@
     if(typeof tpl.defaultX !== 'number'){ tpl.defaultX = 0.5; }
     if(typeof tpl.defaultY !== 'number'){ tpl.defaultY = 0.5; }
     if(tpl.watermarkAsset === undefined){ tpl.watermarkAsset = null; }
-    if(!tpl.watermarkPos){ tpl.watermarkPos = 'bottom-right'; }
+    if(typeof tpl.watermarkX !== 'number' || typeof tpl.watermarkY !== 'number'){
+      // Migration von der alten Preset-Position (9 feste Positionen) zu freien x/y-Koordinaten
+      var presetCoords = {
+        'top-left':[0.12,0.12], 'top-center':[0.5,0.12], 'top-right':[0.88,0.12],
+        'center-left':[0.12,0.5], 'center':[0.5,0.5], 'center-right':[0.88,0.5],
+        'bottom-left':[0.12,0.88], 'bottom-center':[0.5,0.88], 'bottom-right':[0.88,0.88]
+      };
+      var coords = presetCoords[tpl.watermarkPos] || [0.9, 0.88];
+      tpl.watermarkX = coords[0];
+      tpl.watermarkY = coords[1];
+    }
+    delete tpl.watermarkPos;
     if(typeof tpl.watermarkSize !== 'number'){ tpl.watermarkSize = 14; }
     if(typeof tpl.watermarkOpacity !== 'number'){ tpl.watermarkOpacity = 80; }
     if(!Array.isArray(tpl.categories)){ tpl.categories = []; }
@@ -1261,10 +1374,26 @@
     return tpl;
   }
 
+  /* Mitglieder: Avatar (Bild-URL oder hochgeladenes Bild) und Linktree-Links ergänzen */
+  function normalizeMember(m){
+    if(typeof m.avatar !== 'string'){ m.avatar = ''; }
+    if(!Array.isArray(m.links)){ m.links = []; }
+    m.links.forEach(function(l){
+      if(typeof l.label !== 'string'){ l.label = ''; }
+      if(typeof l.url !== 'string'){ l.url = ''; }
+    });
+    if(typeof m.bio !== 'string'){ m.bio = ''; }
+    return m;
+  }
+
   /* Sorgt dafür, dass ältere data.json/localStorage-Stände auch ohne designs-Feld funktionieren */
   function normalizeRootData(d){
     if(!Array.isArray(d.designs)){ d.designs = []; }
     if(!Array.isArray(d.designCategories)){ d.designCategories = ['Logo', 'Banner', 'Overlay', 'Sonstiges']; }
+    if(Array.isArray(d.members)){ d.members.forEach(normalizeMember); }
+    if(!d.branding || typeof d.branding !== 'object'){
+      d.branding = { asset:null, x:92, y:92, size:14, opacity:80 };
+    }
     return d;
   }
 
@@ -1404,6 +1533,50 @@
   /* Lädt eine Hintergrund-Datei (Bild ODER Video) und liefert (previewUrl, assetType, err, pendingUpload) zurück.
      pendingUpload enthält immer {base64, ext, assetType} – die Datei wird unverändert (Originalauflösung
      und -format) beim Veröffentlichen echt auf GitHub hochgeladen (siehe uploadPendingAssets). */
+  /* Erzeugt aus einem bereits geladenen <img>- oder <video>-Element ein kleines JPEG-Thumbnail
+     (max. 480px breit) für die Galerie-Kacheln – deutlich schneller als die Originaldatei zu laden. */
+  function captureThumbFromMediaEl(mediaEl, assetType, cb){
+    var w = assetType === 'video' ? mediaEl.videoWidth : mediaEl.naturalWidth;
+    var h = assetType === 'video' ? mediaEl.videoHeight : mediaEl.naturalHeight;
+    if(!w || !h){ cb(null); return; }
+    var maxW = 480;
+    var scale = Math.min(1, maxW / w);
+    var tw = Math.max(1, Math.round(w * scale));
+    var th = Math.max(1, Math.round(h * scale));
+    var canvas = document.createElement('canvas');
+    canvas.width = tw; canvas.height = th;
+    var ctx = canvas.getContext('2d');
+    try{
+      ctx.drawImage(mediaEl, 0, 0, tw, th);
+      cb(canvas.toDataURL('image/jpeg', 0.72));
+    }catch(e){ cb(null); } // z. B. CORS-Einschränkung bei extern gehosteten Dateien
+  }
+
+  /* Gleiches Prinzip, aber ausgehend von einer Datei-URL (für den Upload-Moment im Admin-Panel) */
+  function makeThumbFromPreviewUrl(previewUrl, assetType, cb){
+    if(assetType === 'video'){
+      var v = document.createElement('video');
+      v.muted = true; v.playsInline = true; v.preload = 'auto'; v.crossOrigin = 'anonymous';
+      var done = false;
+      v.addEventListener('loadedmetadata', function(){
+        try{ v.currentTime = Math.min(0.2, (v.duration || 1) / 2); }
+        catch(e){ if(!done){ done = true; captureThumbFromMediaEl(v, 'video', cb); } }
+      });
+      v.addEventListener('seeked', function(){
+        if(done){ return; } done = true;
+        captureThumbFromMediaEl(v, 'video', cb);
+      });
+      v.addEventListener('error', function(){ if(!done){ done = true; cb(null); } });
+      v.src = previewUrl;
+    } else {
+      var img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function(){ captureThumbFromMediaEl(img, 'image', cb); };
+      img.onerror = function(){ cb(null); };
+      img.src = previewUrl;
+    }
+  }
+
   function loadTemplateAsset(file, cb){
     if(!file){ cb(null, null, null, null); return; }
     if(/^video\//.test(file.type)){
@@ -1465,19 +1638,24 @@
   var allNewsContainer = document.getElementById('allNewsContainer');
 
   function renderMembers(){
+    data.members.forEach(normalizeMember);
     membersContainer.innerHTML = '';
     if(data.members.length === 0){
       membersContainer.innerHTML = '<div class="empty-hint">Noch keine Mitglieder eingetragen.</div>';
       return;
     }
     data.members.forEach(function(m){
-      var card = document.createElement('div');
+      var card = document.createElement('button');
+      card.type = 'button';
       card.className = 'team-card glass';
       card.innerHTML =
-        '<div class="avatar">' + escapeHtml(m.initials || '?') + '</div>' +
+        (m.avatar
+          ? '<img class="avatar avatar-img" src="' + escapeHtml(m.avatar) + '" alt="">'
+          : '<div class="avatar">' + escapeHtml(m.initials || '?') + '</div>') +
         '<h3>' + escapeHtml(m.name) + '</h3>' +
         '<div class="team-role">' + escapeHtml(m.role || 'Mitglied') + '</div>' +
         (m.bio ? '<p class="desc">' + escapeHtml(m.bio) + '</p>' : '');
+      card.addEventListener('click', function(){ openMemberLightbox(m); });
       membersContainer.appendChild(card);
     });
   }
@@ -1525,6 +1703,7 @@
     if(typeof d.date !== 'string'){ d.date = ''; }
     if(typeof d.width !== 'number'){ d.width = null; }
     if(typeof d.height !== 'number'){ d.height = null; }
+    if(typeof d.thumb !== 'string'){ d.thumb = ''; }
     return d;
   }
 
@@ -1611,18 +1790,52 @@
     var g = document.createElement('button');
     g.type = 'button';
     g.className = 'gallery-card glass';
+    var isRemote = /^https?:/i.test(d.asset || '');
     var thumbHtml;
-    if(d.asset && d.assetType === 'video'){
-      thumbHtml = '<video class="gallery-thumb" src="' + d.asset + '" autoplay muted loop playsinline></video>' +
+    if(d.thumb){
+      // Kleines, schnell ladendes Vorschaubild – für Bilder UND Videos (Standbild + Play-Badge).
+      thumbHtml = '<img class="gallery-thumb" src="' + d.thumb + '" alt="" loading="lazy">' +
+        (d.assetType === 'video' ? '<span class="gallery-video-badge">▶ Video</span>' : '');
+    } else if(d.asset && d.assetType === 'video'){
+      // Kein Thumbnail vorhanden: Video ohne Autoplay/volle Ladung einbinden (nur Metadaten),
+      // damit nicht alle sichtbaren Videos gleichzeitig komplett geladen & abgespielt werden.
+      thumbHtml = '<video class="gallery-thumb" src="' + d.asset + '" muted playsinline preload="metadata"' +
+                  (isRemote ? ' crossorigin="anonymous"' : '') + '></video>' +
                   '<span class="gallery-video-badge">▶ Video</span>';
     } else if(d.asset){
-      thumbHtml = '<img class="gallery-thumb" src="' + d.asset + '" alt="" loading="lazy">';
+      thumbHtml = '<img class="gallery-thumb" src="' + d.asset + '" alt="" loading="lazy"' +
+                  (isRemote ? ' crossorigin="anonymous"' : '') + '>';
     } else {
       thumbHtml = '<div class="gallery-thumb gallery-thumb-placeholder"><span>' + escapeHtml(d.title) + '</span></div>';
     }
     g.innerHTML =
       '<div class="gallery-thumb-wrap">' + thumbHtml + '</div>' +
       '<div class="gallery-card-title">' + escapeHtml(d.title) + '</div>';
+
+    // Ältere Designs ohne gespeichertes Thumbnail: einmal im Hintergrund erzeugen und am Design-Objekt
+    // zwischenspeichern, damit die Galerie beim nächsten Rendern (Filter, Suche, erneuter Besuch
+    // derselben Sitzung) sofort das kleine Vorschaubild statt der vollen Datei lädt.
+    if(!d.thumb && d.asset){
+      var mediaEl = g.querySelector(d.assetType === 'video' ? 'video' : 'img');
+      if(mediaEl){
+        if(d.assetType === 'video'){
+          var captured = false;
+          mediaEl.addEventListener('loadedmetadata', function(){
+            try{ mediaEl.currentTime = Math.min(0.2, (mediaEl.duration || 1) / 2); }
+            catch(e){ if(!captured){ captured = true; captureThumbFromMediaEl(mediaEl, 'video', function(t){ if(t){ d.thumb = t; } }); } }
+          });
+          mediaEl.addEventListener('seeked', function(){
+            if(captured){ return; } captured = true;
+            captureThumbFromMediaEl(mediaEl, 'video', function(t){ if(t){ d.thumb = t; } });
+          });
+        } else {
+          mediaEl.addEventListener('load', function(){
+            captureThumbFromMediaEl(mediaEl, 'image', function(t){ if(t){ d.thumb = t; } });
+          }, { once:true });
+        }
+      }
+    }
+
     g.addEventListener('click', function(){ openDesignLightbox(d); });
     return g;
   }
@@ -1930,6 +2143,35 @@
   });
   designLightboxCloseBtn.addEventListener('click', closeDesignLightbox);
   designLightboxOverlay.addEventListener('click', function(e){ if(e.target === designLightboxOverlay){ closeDesignLightbox(); } });
+
+  /* ---------- Mitglied-Lightbox (Linktree-Stil) ---------- */
+  var memberLightboxOverlay = document.getElementById('memberLightboxOverlay');
+  var memberLightboxAvatarWrap = document.getElementById('memberLightboxAvatarWrap');
+  var memberLightboxName = document.getElementById('memberLightboxName');
+  var memberLightboxRole = document.getElementById('memberLightboxRole');
+  var memberLightboxBio = document.getElementById('memberLightboxBio');
+  var memberLightboxLinks = document.getElementById('memberLightboxLinks');
+  var memberLightboxCloseBtn = document.getElementById('memberLightboxCloseBtn');
+
+  function openMemberLightbox(m){
+    memberLightboxAvatarWrap.innerHTML = m.avatar
+      ? '<img class="avatar avatar-img" src="' + escapeHtml(m.avatar) + '" alt="">'
+      : '<div class="avatar">' + escapeHtml(m.initials || '?') + '</div>';
+    memberLightboxName.textContent = m.name;
+    memberLightboxRole.textContent = m.role || 'Mitglied';
+    memberLightboxBio.textContent = m.bio || '';
+    memberLightboxBio.style.display = m.bio ? '' : 'none';
+    memberLightboxLinks.innerHTML = (m.links || []).filter(function(l){ return l.url; }).map(function(l){
+      return '<a class="member-lightbox-link" href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(l.label || l.url) + '</a>';
+    }).join('');
+    memberLightboxOverlay.classList.remove('hidden');
+  }
+  function closeMemberLightbox(){ memberLightboxOverlay.classList.add('hidden'); }
+  memberLightboxCloseBtn.addEventListener('click', closeMemberLightbox);
+  memberLightboxOverlay.addEventListener('click', function(e){ if(e.target === memberLightboxOverlay){ closeMemberLightbox(); } });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && !memberLightboxOverlay.classList.contains('hidden')){ closeMemberLightbox(); }
+  });
 
   /* ============================================================
      5) CUSTOMIZER-FABRIK: jede Vorlage bekommt ihre eigene Instanz
@@ -2303,8 +2545,8 @@
             '<div class="resize-handle"></div>' +
           '</div>' +
           (tpl.watermarkAsset
-            ? '<img class="watermark-layer wm-' + tpl.watermarkPos + '" src="' + tpl.watermarkAsset + '" alt="" ' +
-              'style="width:' + tpl.watermarkSize + '%;opacity:' + (tpl.watermarkOpacity/100) + ';">'
+            ? '<img class="watermark-layer" src="' + tpl.watermarkAsset + '" alt="" ' +
+              'style="left:' + (tpl.watermarkX*100) + '%;top:' + (tpl.watermarkY*100) + '%;width:' + tpl.watermarkSize + '%;opacity:' + (tpl.watermarkOpacity/100) + ';transform:translate(-50%,-50%);">'
             : '') +
         '</div>' +
         '</div>' +
@@ -3403,6 +3645,7 @@
     news: document.getElementById('adminPanelNews'),
     templates: document.getElementById('adminPanelTemplates'),
     designs: document.getElementById('adminPanelDesigns'),
+    branding: document.getElementById('adminPanelBranding'),
     github: document.getElementById('adminPanelGithub')
   };
   var adminMembersList = document.getElementById('adminMembersList');
@@ -3446,6 +3689,7 @@
 
   function renderAdminLists(){
     renderPublic(); // Startseite/News/Team immer sofort mit aktualisieren, nicht erst nach "Speichern"
+    renderBrandingAdmin();
 
     // ---------- Mitglieder ----------
     adminMembersList.innerHTML = data.members.length ? '' : '<div class="admin-form-hint">Noch keine Mitglieder.</div>';
@@ -3462,12 +3706,29 @@
               '<div><label>Kürzel</label><input type="text" class="edit-initials" maxlength="2" value="' + escapeHtml(m.initials || '') + '"></div>' +
             '</div>' +
             '<div><label>Beschreibung (optional)</label><textarea class="edit-bio" style="min-height:64px;">' + escapeHtml(m.bio || '') + '</textarea></div>' +
+            '<div>' +
+              '<label>Profilbild (optional)</label>' +
+              '<div class="admin-file-row">' +
+                '<input type="text" class="edit-avatar-url" placeholder="Bild-URL" value="' + escapeHtml(m.avatar || '') + '" style="flex:1;">' +
+                '<label class="admin-mini-upload">Datei wählen<input type="file" class="edit-avatar-file" accept="image/png,image/jpeg,image/webp,image/gif"></label>' +
+              '</div>' +
+            '</div>' +
+            '<div>' +
+              '<label>Links</label>' +
+              '<div class="edit-member-links-rows"></div>' +
+              '<button class="admin-cancel-btn edit-add-link-row" type="button" style="margin-top:8px;">+ Link hinzufügen</button>' +
+            '</div>' +
             '<div class="item-actions" style="justify-content:flex-end;">' +
               '<button class="admin-cancel-btn" type="button">Abbrechen</button>' +
               '<button class="admin-save-inline-btn" type="button">Übernehmen</button>' +
             '</div>' +
           '</div>';
-        row.querySelector('.admin-cancel-btn').addEventListener('click', function(){
+        var linkRowsEl = row.querySelector('.edit-member-links-rows');
+        (m.links || []).forEach(function(l){ createMemberLinkRow(linkRowsEl, l.label, l.url); });
+        row.querySelector('.edit-add-link-row').addEventListener('click', function(){
+          createMemberLinkRow(linkRowsEl, '', '');
+        });
+        row.querySelector('.item-actions .admin-cancel-btn').addEventListener('click', function(){
           editingMemberId = null;
           renderAdminLists();
         });
@@ -3478,15 +3739,31 @@
           m.role = row.querySelector('.edit-role').value.trim() || 'Mitglied';
           m.initials = (row.querySelector('.edit-initials').value.trim().toUpperCase() || name.slice(0,2).toUpperCase()).slice(0,2);
           m.bio = row.querySelector('.edit-bio').value.trim();
-          editingMemberId = null;
-          renderAdminLists();
-          setStatus('Mitglied aktualisiert – noch nicht gespeichert.');
+          m.links = collectMemberLinks(linkRowsEl);
+          var avatarFile = row.querySelector('.edit-avatar-file').files[0];
+          var finishSave = function(avatar){
+            if(avatar !== undefined){ m.avatar = avatar; }
+            editingMemberId = null;
+            renderAdminLists();
+            setStatus('Mitglied aktualisiert – noch nicht gespeichert.');
+          };
+          if(avatarFile){
+            setStatus('Profilbild wird verarbeitet …');
+            compressImage(avatarFile, 300, function(dataUrl){
+              if(!dataUrl){ setStatus('Profilbild konnte nicht verarbeitet werden.'); return; }
+              finishSave(dataUrl);
+            });
+          } else {
+            finishSave(row.querySelector('.edit-avatar-url').value.trim());
+          }
         });
       } else {
         row.className = 'admin-list-item';
         row.innerHTML =
           '<div class="item-main"><div class="item-title">' + escapeHtml(m.name) + '</div>' +
-          '<div class="item-meta">' + escapeHtml(m.role || '') + ' · Kürzel: ' + escapeHtml(m.initials || '') + (m.bio ? ' · hat Beschreibung' : '') + '</div></div>' +
+          '<div class="item-meta">' + escapeHtml(m.role || '') + ' · Kürzel: ' + escapeHtml(m.initials || '') +
+            (m.avatar ? ' · Bild ✓' : '') + (m.links && m.links.length ? ' · ' + m.links.length + ' Link(s)' : '') +
+            (m.bio ? ' · hat Beschreibung' : '') + '</div></div>' +
           '<div class="item-actions"><button class="admin-edit-btn">Bearbeiten</button><button class="admin-del-btn">Löschen</button></div>';
         row.querySelector('.admin-edit-btn').addEventListener('click', function(){
           editingMemberId = m.id;
@@ -3588,15 +3865,20 @@
                 '<span class="admin-form-hint edit-tpl-wm-filename">' + (tpl.watermarkAsset ? 'Wasserzeichen gesetzt ✓' : 'Kein Wasserzeichen') + '</span>' +
                 (tpl.watermarkAsset ? '<button type="button" class="admin-cancel-btn edit-tpl-wm-remove">Entfernen</button>' : '') +
               '</div>' +
-              '<div class="admin-form-row-2">' +
-                '<div><label>Position</label><select class="edit-tpl-wm-pos export-format-select">' +
-                  ['top-left','top-center','top-right','center-left','center','center-right','bottom-left','bottom-center','bottom-right'].map(function(p){
-                    var labels = {'top-left':'Oben links','top-center':'Oben Mitte','top-right':'Oben rechts','center-left':'Mitte links','center':'Zentriert','center-right':'Mitte rechts','bottom-left':'Unten links','bottom-center':'Unten Mitte','bottom-right':'Unten rechts'};
-                    return '<option value="' + p + '"' + (tpl.watermarkPos === p ? ' selected' : '') + '>' + labels[p] + '</option>';
-                  }).join('') +
-                '</select></div>' +
-                '<div><label>Größe (<span class="edit-tpl-wm-size-val">' + tpl.watermarkSize + '</span>%)</label><input type="range" class="edit-tpl-wm-size size-range" min="4" max="40" value="' + tpl.watermarkSize + '"></div>' +
-              '</div>' +
+              (tpl.watermarkAsset ?
+                '<div class="wm-editor-stage">' +
+                  (tpl.asset
+                    ? (tpl.assetType === 'video'
+                        ? '<video class="wm-editor-bg" src="' + tpl.asset + '" muted playsinline preload="metadata"></video>'
+                        : '<img class="wm-editor-bg" src="' + tpl.asset + '" alt="">')
+                    : '<div class="wm-editor-bg-empty">(kein Hintergrund)</div>') +
+                  '<div class="wm-drag-handle" style="left:' + (tpl.watermarkX*100) + '%;top:' + (tpl.watermarkY*100) + '%;width:' + tpl.watermarkSize + '%;">' +
+                    '<img src="' + tpl.watermarkAsset + '" alt="" style="opacity:' + (tpl.watermarkOpacity/100) + ';">' +
+                    '<div class="wm-resize-handle"></div>' +
+                  '</div>' +
+                '</div>' +
+                '<p class="admin-form-hint" style="margin:-4px 0 10px;">Wasserzeichen im Vorschaubild ziehen · am rosa Punkt unten rechts die Größe ändern.</p>'
+                : '') +
               '<div><label>Deckkraft (<span class="edit-tpl-wm-opacity-val">' + tpl.watermarkOpacity + '</span>%)</label><input type="range" class="edit-tpl-wm-opacity size-range" min="10" max="100" value="' + tpl.watermarkOpacity + '"></div>' +
             '</div>' +
             '<div class="item-actions" style="justify-content:flex-end;">' +
@@ -3608,15 +3890,72 @@
           editingTemplateId = null;
           renderAdminLists();
         });
-        var wmSizeRange = row.querySelector('.edit-tpl-wm-size');
-        var wmSizeVal = row.querySelector('.edit-tpl-wm-size-val');
-        if(wmSizeRange && wmSizeVal){
-          wmSizeRange.addEventListener('input', function(){ wmSizeVal.textContent = wmSizeRange.value; });
-        }
         var wmOpacityRange = row.querySelector('.edit-tpl-wm-opacity');
         var wmOpacityVal = row.querySelector('.edit-tpl-wm-opacity-val');
         if(wmOpacityRange && wmOpacityVal){
-          wmOpacityRange.addEventListener('input', function(){ wmOpacityVal.textContent = wmOpacityRange.value; });
+          wmOpacityRange.addEventListener('input', function(){
+            wmOpacityVal.textContent = wmOpacityRange.value;
+            var img = row.querySelector('.wm-drag-handle img');
+            if(img){ img.style.opacity = wmOpacityRange.value / 100; }
+          });
+        }
+        // Merkt sich Position/Größe während des Ziehens; erst "Übernehmen" schreibt es in tpl.
+        var wmDraft = { x: tpl.watermarkX, y: tpl.watermarkY, size: tpl.watermarkSize };
+        var wmStage = row.querySelector('.wm-editor-stage');
+        var wmHandle = row.querySelector('.wm-drag-handle');
+        var wmResizeHandle = row.querySelector('.wm-resize-handle');
+        if(wmStage && wmHandle){
+          var wmDragging = false, wmResizing = false;
+          wmHandle.addEventListener('pointerdown', function(e){
+            if(e.target === wmResizeHandle){ return; }
+            wmDragging = true;
+            wmHandle.setPointerCapture(e.pointerId);
+            wmHandle.classList.add('grabbing');
+          });
+          wmHandle.addEventListener('pointermove', function(e){
+            if(!wmDragging){ return; }
+            var rect = wmStage.getBoundingClientRect();
+            var x = (e.clientX - rect.left) / rect.width;
+            var y = (e.clientY - rect.top) / rect.height;
+            x = Math.min(1, Math.max(0, x));
+            y = Math.min(1, Math.max(0, y));
+            wmDraft.x = x; wmDraft.y = y;
+            wmHandle.style.left = (x*100) + '%';
+            wmHandle.style.top = (y*100) + '%';
+          });
+          function endWmDrag(e){
+            if(!wmDragging){ return; }
+            wmDragging = false;
+            wmHandle.classList.remove('grabbing');
+            try{ wmHandle.releasePointerCapture(e.pointerId); }catch(err){}
+          }
+          wmHandle.addEventListener('pointerup', endWmDrag);
+          wmHandle.addEventListener('pointercancel', endWmDrag);
+
+          if(wmResizeHandle){
+            wmResizeHandle.addEventListener('pointerdown', function(e){
+              e.stopPropagation();
+              wmResizing = true;
+              wmResizeHandle.setPointerCapture(e.pointerId);
+            });
+            wmResizeHandle.addEventListener('pointermove', function(e){
+              if(!wmResizing){ return; }
+              var rect = wmStage.getBoundingClientRect();
+              var handleRect = wmHandle.getBoundingClientRect();
+              var newWidthPx = e.clientX - handleRect.left;
+              var pct = (newWidthPx / rect.width) * 100;
+              pct = Math.min(60, Math.max(4, pct));
+              wmDraft.size = pct;
+              wmHandle.style.width = pct + '%';
+            });
+            function endWmResize(e){
+              if(!wmResizing){ return; }
+              wmResizing = false;
+              try{ wmResizeHandle.releasePointerCapture(e.pointerId); }catch(err){}
+            }
+            wmResizeHandle.addEventListener('pointerup', endWmResize);
+            wmResizeHandle.addEventListener('pointercancel', endWmResize);
+          }
         }
         var wmFileInput = row.querySelector('.edit-tpl-wm-file');
         if(wmFileInput){
@@ -3659,8 +3998,9 @@
           tpl.allowImage = allowImage || !allowText;
           tpl.allowText = allowText;
           tpl.defaultSize = (parseInt(row.querySelector('.edit-tpl-size').value,10) || 22) / 100;
-          tpl.watermarkPos = row.querySelector('.edit-tpl-wm-pos').value;
-          tpl.watermarkSize = parseInt(row.querySelector('.edit-tpl-wm-size').value, 10) || 14;
+          tpl.watermarkX = wmDraft.x;
+          tpl.watermarkY = wmDraft.y;
+          tpl.watermarkSize = wmDraft.size;
           tpl.watermarkOpacity = parseInt(row.querySelector('.edit-tpl-wm-opacity').value, 10) || 80;
           editingTemplateId = null;
           renderAdminLists();
@@ -3781,6 +4121,8 @@
             d.asset = dataUrl;
             d.assetType = assetType;
             d.width = width; d.height = height;
+            d.thumb = '';
+            makeThumbFromPreviewUrl(dataUrl, assetType, function(thumb){ if(thumb){ d.thumb = thumb; renderAdminLists(); } });
             registerPendingAssetUpload('design', d.id, pendingUpload, d.title);
             setStatus((assetType === 'video' ? 'Video' : 'Bild') + ' ausgewählt – wird beim Veröffentlichen auf GitHub hochgeladen.');
             renderAdminLists();
@@ -3850,20 +4192,65 @@
   }
 
   /* --- Mitglied hinzufügen --- */
+  /* Wiederverwendbare Link-Zeilen für Mitglieder (Add-Formular + Inline-Bearbeiten) */
+  function createMemberLinkRow(container, label, url){
+    var row = document.createElement('div');
+    row.className = 'member-link-row';
+    row.innerHTML =
+      '<input type="text" class="member-link-label" placeholder="Name, z. B. Twitch" value="' + escapeHtml(label || '') + '">' +
+      '<input type="text" class="member-link-url" placeholder="https://..." value="' + escapeHtml(url || '') + '">' +
+      '<button type="button" class="admin-del-btn member-link-remove">×</button>';
+    row.querySelector('.member-link-remove').addEventListener('click', function(){ row.remove(); });
+    container.appendChild(row);
+    return row;
+  }
+  function collectMemberLinks(container){
+    return Array.prototype.map.call(container.querySelectorAll('.member-link-row'), function(row){
+      return {
+        label: row.querySelector('.member-link-label').value.trim(),
+        url: row.querySelector('.member-link-url').value.trim()
+      };
+    }).filter(function(l){ return l.url; });
+  }
+
+  document.getElementById('addMemberLinkRowBtn').addEventListener('click', function(){
+    createMemberLinkRow(document.getElementById('newMemberLinksRows'), '', '');
+  });
+
   document.getElementById('addMemberBtn').addEventListener('click', function(){
     var nameInput = document.getElementById('newMemberName');
     var roleInput = document.getElementById('newMemberRole');
     var initInput = document.getElementById('newMemberInitials');
     var bioInput = document.getElementById('newMemberBio');
+    var avatarUrlInput = document.getElementById('newMemberAvatarUrl');
+    var avatarFileInput = document.getElementById('newMemberAvatarFile');
     var name = nameInput.value.trim();
     if(!name){ setStatus('Bitte einen Namen angeben.'); nameInput.focus(); return; }
     var role = roleInput.value.trim() || 'Mitglied';
     var initials = (initInput.value.trim().toUpperCase() || name.slice(0,2).toUpperCase()).slice(0,2);
     var bio = bioInput.value.trim();
-    data.members.push({ id:makeId('m'), name:name, role:role, initials:initials, bio:bio });
-    nameInput.value = ''; roleInput.value = ''; initInput.value = ''; bioInput.value = '';
-    renderAdminLists();
-    setStatus('Mitglied hinzugefügt – noch nicht gespeichert.');
+    var links = collectMemberLinks(document.getElementById('newMemberLinksRows'));
+
+    function finish(avatar){
+      data.members.push({ id:makeId('m'), name:name, role:role, initials:initials, bio:bio, avatar:avatar || '', links:links });
+      nameInput.value = ''; roleInput.value = ''; initInput.value = ''; bioInput.value = '';
+      avatarUrlInput.value = ''; avatarFileInput.value = '';
+      document.getElementById('newMemberAvatarName').textContent = 'Kein Bild ausgewählt – URL oder Datei angeben.';
+      document.getElementById('newMemberLinksRows').innerHTML = '';
+      renderAdminLists();
+      setStatus('Mitglied hinzugefügt – noch nicht gespeichert.');
+    }
+
+    var file = avatarFileInput.files && avatarFileInput.files[0];
+    if(file){
+      setStatus('Profilbild wird verarbeitet …');
+      compressImage(file, 300, function(dataUrl){
+        if(!dataUrl){ setStatus('Profilbild konnte nicht verarbeitet werden.'); return; }
+        finish(dataUrl);
+      });
+    } else {
+      finish(avatarUrlInput.value.trim());
+    }
   });
 
   /* --- News hinzufügen --- */
@@ -3995,13 +4382,14 @@
   var pendingDesignAssetType = null;
   var pendingDesignAssetUpload = null; // {base64, ext} bei Video, sonst null
   var pendingDesignWidth = null, pendingDesignHeight = null;
+  var pendingDesignThumb = null;
   var newDesignAssetInput = document.getElementById('newDesignAsset');
   var newDesignAssetName = document.getElementById('newDesignAssetName');
   newDesignAssetInput.addEventListener('change', function(e){
     var file = e.target.files && e.target.files[0];
     if(!file){
       pendingDesignAsset = null; pendingDesignAssetType = null; pendingDesignAssetUpload = null;
-      pendingDesignWidth = null; pendingDesignHeight = null;
+      pendingDesignWidth = null; pendingDesignHeight = null; pendingDesignThumb = null;
       newDesignAssetName.textContent = 'Keine Datei ausgewählt.';
       return;
     }
@@ -4009,7 +4397,7 @@
     loadTemplateAsset(file, function(dataUrl, assetType, err, pendingUpload, width, height){
       if(err){
         pendingDesignAsset = null; pendingDesignAssetType = null; pendingDesignAssetUpload = null;
-        pendingDesignWidth = null; pendingDesignHeight = null;
+        pendingDesignWidth = null; pendingDesignHeight = null; pendingDesignThumb = null;
         newDesignAssetName.textContent = err;
         return;
       }
@@ -4017,6 +4405,8 @@
       pendingDesignAssetType = assetType;
       pendingDesignAssetUpload = pendingUpload;
       pendingDesignWidth = width; pendingDesignHeight = height;
+      pendingDesignThumb = null;
+      makeThumbFromPreviewUrl(dataUrl, assetType, function(thumb){ pendingDesignThumb = thumb; });
       newDesignAssetName.textContent = 'Ausgewählt: ' + file.name +
         (width && height ? ' (' + width + '×' + height + ')' : '') +
         ' (wird beim Veröffentlichen im Original auf GitHub hochgeladen)';
@@ -4057,13 +4447,13 @@
     data.designs.push({
       id: newDesignId, title: title, description: description, date: date,
       asset: pendingDesignAsset, assetType: pendingDesignAssetType,
-      width: pendingDesignWidth, height: pendingDesignHeight,
+      width: pendingDesignWidth, height: pendingDesignHeight, thumb: pendingDesignThumb,
       categories: categories
     });
     registerPendingAssetUpload('design', newDesignId, pendingDesignAssetUpload, title);
     titleInput.value = ''; descriptionInput.value = ''; dateInput.value = ''; newDesignAssetInput.value = '';
     pendingDesignAsset = null; pendingDesignAssetType = null; pendingDesignAssetUpload = null;
-    pendingDesignWidth = null; pendingDesignHeight = null;
+    pendingDesignWidth = null; pendingDesignHeight = null; pendingDesignThumb = null;
     newDesignAssetName.textContent = 'Keine Datei ausgewählt.';
     renderAdminLists();
     setStatus('Design hinzugefügt – noch nicht gespeichert.');
@@ -4087,6 +4477,125 @@
     document.getElementById('addTemplateTagBtn').addEventListener('click', function(){ addTagFrom(newTemplateTagInput); });
     newTemplateTagInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); addTagFrom(newTemplateTagInput); } });
   }
+
+  /* --- Eigenes Branding: globales Wasserzeichen (Upload, Drag-Vorschau, Größe/Deckkraft) --- */
+  var brandingAssetInput = document.getElementById('brandingAssetInput');
+  var brandingAssetName = document.getElementById('brandingAssetName');
+  var brandingRemoveBtn = document.getElementById('brandingRemoveBtn');
+  var brandingPreviewBg = document.getElementById('brandingPreviewBg');
+  var brandingPreviewEmpty = document.getElementById('brandingPreviewEmpty');
+  var brandingPreviewLogo = document.getElementById('brandingPreviewLogo');
+  var brandingSizeRange = document.getElementById('brandingSizeRange');
+  var brandingSizeVal = document.getElementById('brandingSizeVal');
+  var brandingOpacityRange = document.getElementById('brandingOpacityRange');
+  var brandingOpacityVal = document.getElementById('brandingOpacityVal');
+
+  function positionBrandingPreviewLogo(){
+    var b = data.branding;
+    brandingPreviewLogo.style.left = b.x + '%';
+    brandingPreviewLogo.style.top = b.y + '%';
+    brandingPreviewLogo.style.width = b.size + '%';
+    brandingPreviewLogo.style.opacity = b.opacity / 100;
+  }
+
+  function renderBrandingAdmin(){
+    var b = data.branding;
+    if(b.asset){
+      brandingPreviewEmpty.style.display = 'none';
+      brandingPreviewLogo.style.display = '';
+      brandingPreviewLogo.innerHTML = '<img src="' + b.asset + '" alt="">';
+      brandingAssetName.textContent = 'Logo gesetzt ✓';
+      brandingRemoveBtn.style.display = '';
+    } else {
+      brandingPreviewEmpty.style.display = '';
+      brandingPreviewLogo.style.display = 'none';
+      brandingAssetName.textContent = 'Kein Logo gesetzt.';
+      brandingRemoveBtn.style.display = 'none';
+    }
+    positionBrandingPreviewLogo();
+    brandingSizeRange.value = b.size;
+    brandingSizeVal.textContent = b.size;
+    brandingOpacityRange.value = b.opacity;
+    brandingOpacityVal.textContent = b.opacity;
+  }
+
+  /* Logos bleiben als PNG erhalten (kein WebP/JPEG), damit die Transparenz nicht verloren geht */
+  function compressLogoPNG(file, maxWidth, cb){
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = new Image();
+      img.onload = function(){
+        var scale = Math.min(1, maxWidth / img.width);
+        var w = Math.max(1, Math.round(img.width * scale));
+        var h = Math.max(1, Math.round(img.height * scale));
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        try{ cb(canvas.toDataURL('image/png')); }
+        catch(err){ cb(null); }
+      };
+      img.onerror = function(){ cb(null); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function(){ cb(null); };
+    reader.readAsDataURL(file);
+  }
+
+  brandingAssetInput.addEventListener('change', function(e){
+    var file = e.target.files && e.target.files[0];
+    if(!file){ return; }
+    setStatus('Logo wird verarbeitet …');
+    compressLogoPNG(file, 500, function(dataUrl){
+      brandingAssetInput.value = '';
+      if(!dataUrl){ setStatus('Logo konnte nicht verarbeitet werden.'); return; }
+      data.branding.asset = dataUrl;
+      renderBrandingAdmin();
+      setStatus('Logo hochgeladen – noch nicht gespeichert.');
+    });
+  });
+  brandingRemoveBtn.addEventListener('click', function(){
+    data.branding.asset = null;
+    renderBrandingAdmin();
+    setStatus('Wasserzeichen entfernt – noch nicht gespeichert.');
+  });
+  brandingSizeRange.addEventListener('input', function(){
+    data.branding.size = parseInt(brandingSizeRange.value, 10) || 14;
+    brandingSizeVal.textContent = data.branding.size;
+    positionBrandingPreviewLogo();
+  });
+  brandingSizeRange.addEventListener('change', function(){ setStatus('Größe geändert – noch nicht gespeichert.'); });
+  brandingOpacityRange.addEventListener('input', function(){
+    data.branding.opacity = parseInt(brandingOpacityRange.value, 10) || 80;
+    brandingOpacityVal.textContent = data.branding.opacity;
+    positionBrandingPreviewLogo();
+  });
+  brandingOpacityRange.addEventListener('change', function(){ setStatus('Deckkraft geändert – noch nicht gespeichert.'); });
+
+  // Logo per Ziehen frei positionieren (Maus & Touch über Pointer Events)
+  var brandingDragging = false;
+  brandingPreviewLogo.addEventListener('pointerdown', function(e){
+    if(!data.branding.asset){ return; }
+    brandingDragging = true;
+    try{ brandingPreviewLogo.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  brandingPreviewLogo.addEventListener('pointermove', function(e){
+    if(!brandingDragging){ return; }
+    var rect = brandingPreviewBg.getBoundingClientRect();
+    var x = ((e.clientX - rect.left) / rect.width) * 100;
+    var y = ((e.clientY - rect.top) / rect.height) * 100;
+    data.branding.x = Math.max(0, Math.min(100, x));
+    data.branding.y = Math.max(0, Math.min(100, y));
+    positionBrandingPreviewLogo();
+  });
+  function endBrandingDrag(e){
+    if(!brandingDragging){ return; }
+    brandingDragging = false;
+    try{ brandingPreviewLogo.releasePointerCapture(e.pointerId); }catch(err){}
+    setStatus('Wasserzeichen-Position geändert – noch nicht gespeichert.');
+  }
+  brandingPreviewLogo.addEventListener('pointerup', endBrandingDrag);
+  brandingPreviewLogo.addEventListener('pointercancel', endBrandingDrag);
 
   /* --- Speichern: schreibt in localStorage & rendert die Seite live --- */
   document.getElementById('adminSaveBtn').addEventListener('click', function(){
