@@ -871,8 +871,8 @@
           <div class="designs-filter-panel hidden" id="templatesFilterPanel">
             <div class="designs-filter-section">
               <div class="designs-filter-section-title">Format</div>
-              <label class="designs-filter-check"><input type="checkbox" class="templates-filter-type" value="image" checked> Bilder</label>
-              <label class="designs-filter-check"><input type="checkbox" class="templates-filter-type" value="video" checked> Videos</label>
+              <label class="designs-filter-check"><input type="checkbox" class="designs-filter-type" value="image" checked> Bilder</label>
+              <label class="designs-filter-check"><input type="checkbox" class="designs-filter-type" value="video" checked> Videos</label>
             </div>
             <div class="designs-filter-section" id="templatesFilterCatsSection">
               <div class="designs-filter-section-title">Kategorien</div>
@@ -2209,12 +2209,12 @@
       templatesFilterBtn.classList.remove('open');
     }
   });
-  templatesFilterPanel.querySelectorAll('.templates-filter-type').forEach(function(cb){
+  templatesFilterPanel.querySelectorAll('.designs-filter-type').forEach(function(cb){
     cb.addEventListener('change', renderTemplates);
   });
   templatesSortSelect.addEventListener('change', renderTemplates);
   templatesFilterResetBtn.addEventListener('click', function(){
-    templatesFilterPanel.querySelectorAll('.templates-filter-type').forEach(function(cb){ cb.checked = true; });
+    templatesFilterPanel.querySelectorAll('.designs-filter-type').forEach(function(cb){ cb.checked = true; });
     activeTemplateCategories = [];
     templatesSortSelect.value = 'new';
     templateSearchInput.value = '';
@@ -2246,7 +2246,7 @@
   }
 
   function updateTemplatesFilterCount(){
-    var typeChecks = templatesFilterPanel.querySelectorAll('.templates-filter-type:checked').length;
+    var typeChecks = templatesFilterPanel.querySelectorAll('.designs-filter-type:checked').length;
     var n = activeTemplateCategories.length + (typeChecks < 2 ? 1 : 0) + (templatesSortSelect.value !== 'new' ? 1 : 0);
     templatesFilterCount.textContent = n;
     templatesFilterCount.classList.toggle('visible', n > 0);
@@ -2259,8 +2259,8 @@
     renderTemplateFilterCats();
     updateTemplatesFilterCount();
 
-    var showImages = templatesFilterPanel.querySelector('.templates-filter-type[value="image"]').checked;
-    var showVideos = templatesFilterPanel.querySelector('.templates-filter-type[value="video"]').checked;
+    var showImages = templatesFilterPanel.querySelector('.designs-filter-type[value="image"]').checked;
+    var showVideos = templatesFilterPanel.querySelector('.designs-filter-type[value="video"]').checked;
     var query = (templateSearchInput.value || '').trim().toLowerCase();
 
     var filtered = data.templates.filter(function(tpl){
