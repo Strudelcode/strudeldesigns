@@ -871,8 +871,8 @@
           <div class="designs-filter-panel hidden" id="templatesFilterPanel">
             <div class="designs-filter-section">
               <div class="designs-filter-section-title">Format</div>
-              <label class="designs-filter-check"><input type="checkbox" class="templates-filter-type" value="image" checked> Bilder</label>
-              <label class="designs-filter-check"><input type="checkbox" class="templates-filter-type" value="video" checked> Videos</label>
+              <label class="designs-filter-check"><input type="checkbox" class="designs-filter-type" value="image" checked> Bilder</label>
+              <label class="designs-filter-check"><input type="checkbox" class="designs-filter-type" value="video" checked> Videos</label>
             </div>
             <div class="designs-filter-section" id="templatesFilterCatsSection">
               <div class="designs-filter-section-title">Kategorien</div>
@@ -1296,7 +1296,6 @@
       </div>
   </div>
 </div>
-</div>
 
 <!-- ================= Mitglied-Detailansicht (Linktree-Stil) ================= -->
 <div class="modal-overlay hidden" id="memberLightboxOverlay">
@@ -1337,7 +1336,6 @@
       { id:'t-gameplay', name:'Main Gameplay Overlay', placeholder:'Live Gameplay', asset:null, assetType:null, allowImage:true, allowText:false, defaultSize:0.22, defaultX:0.5, defaultY:0.5, watermarkAsset:null, watermarkX:0.9, watermarkY:0.88, watermarkSize:14, watermarkOpacity:80, categories:[], description:'', date:'' }
     ],
     designCategories: ['Logo', 'Banner', 'Overlay', 'Sonstiges'],
-    templateCategories: ['Logo', 'Banner', 'Overlay', 'Sonstiges'],
     designs: [],
     branding: { asset:null, x:92, y:92, size:14, opacity:80 }
   };
@@ -1392,7 +1390,6 @@
   function normalizeRootData(d){
     if(!Array.isArray(d.designs)){ d.designs = []; }
     if(!Array.isArray(d.designCategories)){ d.designCategories = ['Logo', 'Banner', 'Overlay', 'Sonstiges']; }
-    if(!Array.isArray(d.templateCategories)){ d.templateCategories = ['Logo', 'Banner', 'Overlay', 'Sonstiges']; }
     if(Array.isArray(d.members)){ d.members.forEach(normalizeMember); }
     if(!d.branding || typeof d.branding !== 'object'){
       d.branding = { asset:null, x:92, y:92, size:14, opacity:80 };
@@ -2209,12 +2206,12 @@
       templatesFilterBtn.classList.remove('open');
     }
   });
-  templatesFilterPanel.querySelectorAll('.templates-filter-type').forEach(function(cb){
+  templatesFilterPanel.querySelectorAll('.designs-filter-type').forEach(function(cb){
     cb.addEventListener('change', renderTemplates);
   });
   templatesSortSelect.addEventListener('change', renderTemplates);
   templatesFilterResetBtn.addEventListener('click', function(){
-    templatesFilterPanel.querySelectorAll('.templates-filter-type').forEach(function(cb){ cb.checked = true; });
+    templatesFilterPanel.querySelectorAll('.designs-filter-type').forEach(function(cb){ cb.checked = true; });
     activeTemplateCategories = [];
     templatesSortSelect.value = 'new';
     templateSearchInput.value = '';
@@ -2223,12 +2220,12 @@
 
   function renderTemplateFilterCats(){
     templatesFilterCats.innerHTML = '';
-    if(data.templateCategories.length === 0){
+    if(data.designCategories.length === 0){
       templatesFilterCatsSection.style.display = 'none';
       return;
     }
     templatesFilterCatsSection.style.display = '';
-    data.templateCategories.forEach(function(cat){
+    data.designCategories.forEach(function(cat){
       var label = document.createElement('label');
       label.className = 'designs-filter-check';
       var checked = activeTemplateCategories.indexOf(cat) !== -1;
@@ -2246,7 +2243,7 @@
   }
 
   function updateTemplatesFilterCount(){
-    var typeChecks = templatesFilterPanel.querySelectorAll('.templates-filter-type:checked').length;
+    var typeChecks = templatesFilterPanel.querySelectorAll('.designs-filter-type:checked').length;
     var n = activeTemplateCategories.length + (typeChecks < 2 ? 1 : 0) + (templatesSortSelect.value !== 'new' ? 1 : 0);
     templatesFilterCount.textContent = n;
     templatesFilterCount.classList.toggle('visible', n > 0);
@@ -2259,8 +2256,8 @@
     renderTemplateFilterCats();
     updateTemplatesFilterCount();
 
-    var showImages = templatesFilterPanel.querySelector('.templates-filter-type[value="image"]').checked;
-    var showVideos = templatesFilterPanel.querySelector('.templates-filter-type[value="video"]').checked;
+    var showImages = templatesFilterPanel.querySelector('.designs-filter-type[value="image"]').checked;
+    var showVideos = templatesFilterPanel.querySelector('.designs-filter-type[value="video"]').checked;
     var query = (templateSearchInput.value || '').trim().toLowerCase();
 
     var filtered = data.templates.filter(function(tpl){
@@ -3851,7 +3848,7 @@
               '<div><label>Veröffentlichungsdatum</label><input type="text" class="edit-tpl-date" value="' + escapeHtml(tpl.date || '') + '"></div>' +
             '</div>' +
             '<div><label>Kategorien / Tags</label><div class="admin-checkbox-row edit-tpl-tags">' +
-              data.templateCategories.map(function(cat){
+              data.designCategories.map(function(cat){
                 var checked = tpl.categories.indexOf(cat) !== -1 ? ' checked' : '';
                 return '<label><input type="checkbox" value="' + escapeHtml(cat) + '"' + checked + '> ' + escapeHtml(cat) + '</label>';
               }).join('') +
@@ -4161,37 +4158,33 @@
       adminDesignsList.appendChild(toggleBtn);
     }
 
-    // ---------- Tags verwalten (Designs und Vorlagen haben jeweils eigene Tag-Listen) ----------
-    function renderTagsListInto(container, categoryKey, cleanupFn){
+    // ---------- Tags verwalten (gemeinsame Liste für Designs & Vorlagen) ----------
+    function renderTagsListInto(container){
       if(!container){ return; }
-      var cats = data[categoryKey];
-      container.innerHTML = cats.length ? '' : '<div class="admin-form-hint">Noch keine Tags.</div>';
-      cats.forEach(function(cat){
+      container.innerHTML = data.designCategories.length ? '' : '<div class="admin-form-hint">Noch keine Tags.</div>';
+      data.designCategories.forEach(function(cat){
         var row = document.createElement('div');
         row.className = 'admin-list-item';
         row.innerHTML =
           '<div class="item-main"><div class="item-title">' + escapeHtml(cat) + '</div></div>' +
           '<div class="item-actions"><button class="admin-del-btn">Löschen</button></div>';
         row.querySelector('.admin-del-btn').addEventListener('click', function(){
-          if(!confirm('Tag "' + cat + '" wirklich löschen?')){ return; }
-          data[categoryKey] = data[categoryKey].filter(function(x){ return x !== cat; });
-          cleanupFn(cat);
+          if(!confirm('Tag "' + cat + '" wirklich löschen? Er wird von allen Designs und Vorlagen entfernt.')){ return; }
+          data.designCategories = data.designCategories.filter(function(x){ return x !== cat; });
+          data.designs.forEach(function(d){
+            d.categories = (d.categories || []).filter(function(x){ return x !== cat; });
+          });
+          data.templates.forEach(function(tpl){
+            tpl.categories = (tpl.categories || []).filter(function(x){ return x !== cat; });
+          });
           renderAdminLists();
           setStatus('Tag gelöscht – noch nicht gespeichert.');
         });
         container.appendChild(row);
       });
     }
-    renderTagsListInto(adminTagsList, 'designCategories', function(cat){
-      data.designs.forEach(function(d){
-        d.categories = (d.categories || []).filter(function(x){ return x !== cat; });
-      });
-    });
-    renderTagsListInto(adminTemplateTagsList, 'templateCategories', function(cat){
-      data.templates.forEach(function(tpl){
-        tpl.categories = (tpl.categories || []).filter(function(x){ return x !== cat; });
-      });
-    });
+    renderTagsListInto(adminTagsList);
+    renderTagsListInto(adminTemplateTagsList);
 
     // Checkbox-Reihe in den "…hinzufügen"-Formularen immer mit aktuellen Tags synchron halten
     renderNewDesignTagsRow();
@@ -4431,8 +4424,8 @@
 
   function renderNewTemplateTagsRow(){
     if(!newTemplateTagsRow){ return; }
-    newTemplateTagsRow.innerHTML = data.templateCategories.length
-      ? data.templateCategories.map(function(cat){
+    newTemplateTagsRow.innerHTML = data.designCategories.length
+      ? data.designCategories.map(function(cat){
           return '<label><input type="checkbox" value="' + escapeHtml(cat) + '"> ' + escapeHtml(cat) + '</label>';
         }).join('')
       : '<span class="admin-form-hint">Noch keine Tags – lege unten welche an.</span>';
@@ -4466,23 +4459,23 @@
     setStatus('Design hinzugefügt – noch nicht gespeichert.');
   });
 
-  /* --- Tag hinzufügen (Designs und Vorlagen haben jeweils eigene Tag-Liste) --- */
+  /* --- Tag hinzufügen (gemeinsame Tag-Liste für Designs & Vorlagen) --- */
   var newTagInput = document.getElementById('newTagInput');
   var newTemplateTagInput = document.getElementById('newTemplateTagInput');
-  function addTagFrom(inputEl, categoryKey){
+  function addTagFrom(inputEl){
     var name = inputEl.value.trim();
     if(!name){ setStatus('Bitte einen Tag-Namen angeben.'); inputEl.focus(); return; }
-    if(data[categoryKey].indexOf(name) !== -1){ setStatus('Diesen Tag gibt es schon.'); return; }
-    data[categoryKey].push(name);
+    if(data.designCategories.indexOf(name) !== -1){ setStatus('Diesen Tag gibt es schon.'); return; }
+    data.designCategories.push(name);
     inputEl.value = '';
     renderAdminLists();
     setStatus('Tag hinzugefügt – noch nicht gespeichert.');
   }
-  document.getElementById('addTagBtn').addEventListener('click', function(){ addTagFrom(newTagInput, 'designCategories'); });
-  newTagInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); addTagFrom(newTagInput, 'designCategories'); } });
+  document.getElementById('addTagBtn').addEventListener('click', function(){ addTagFrom(newTagInput); });
+  newTagInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); addTagFrom(newTagInput); } });
   if(newTemplateTagInput){
-    document.getElementById('addTemplateTagBtn').addEventListener('click', function(){ addTagFrom(newTemplateTagInput, 'templateCategories'); });
-    newTemplateTagInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); addTagFrom(newTemplateTagInput, 'templateCategories'); } });
+    document.getElementById('addTemplateTagBtn').addEventListener('click', function(){ addTagFrom(newTemplateTagInput); });
+    newTemplateTagInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); addTagFrom(newTemplateTagInput); } });
   }
 
   /* --- Eigenes Branding: globales Wasserzeichen (Upload, Drag-Vorschau, Größe/Deckkraft) --- */
