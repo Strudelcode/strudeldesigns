@@ -1388,11 +1388,31 @@
     return m;
   }
 
+  function collectUsedCategories(items){
+    var set = [];
+    (items || []).forEach(function(item){
+      (item.categories || []).forEach(function(cat){
+        if(cat && set.indexOf(cat) === -1){ set.push(cat); }
+      });
+    });
+    return set;
+  }
+
   /* Sorgt dafür, dass ältere data.json/localStorage-Stände auch ohne designs-Feld funktionieren */
   function normalizeRootData(d){
     if(!Array.isArray(d.designs)){ d.designs = []; }
-    if(!Array.isArray(d.designCategories)){ d.designCategories = ['Logo', 'Banner', 'Overlay', 'Sonstiges']; }
-    if(!Array.isArray(d.templateCategories)){ d.templateCategories = ['Logo', 'Banner', 'Overlay', 'Sonstiges']; }
+    var DEFAULT_CATS = ['Logo', 'Banner', 'Overlay', 'Sonstiges'];
+    if(!Array.isArray(d.designCategories)){ d.designCategories = DEFAULT_CATS.slice(); }
+    if(!Array.isArray(d.templateCategories)){ d.templateCategories = DEFAULT_CATS.slice(); }
+    // Tags, die tatsächlich an bestehenden Designs/Vorlagen hängen, aber (z. B. durch die
+    // frühere gemeinsame Kategorien-Liste) nicht mehr in der jeweiligen Master-Liste stehen,
+    // automatisch nachtragen statt sie unsichtbar werden zu lassen.
+    collectUsedCategories(d.designs).forEach(function(c){
+      if(d.designCategories.indexOf(c) === -1){ d.designCategories.push(c); }
+    });
+    collectUsedCategories(d.templates).forEach(function(c){
+      if(d.templateCategories.indexOf(c) === -1){ d.templateCategories.push(c); }
+    });
     if(Array.isArray(d.members)){ d.members.forEach(normalizeMember); }
     if(!d.branding || typeof d.branding !== 'object'){
       d.branding = { asset:null, x:92, y:92, size:14, opacity:80 };
