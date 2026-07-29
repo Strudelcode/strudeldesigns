@@ -334,11 +334,24 @@
   .member-lightbox-bio{color:var(--text-1);font-size:14px;line-height:1.6;margin:14px 0 4px;}
   .member-lightbox-links{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
   .member-lightbox-link{
-    display:block;width:100%;padding:13px 18px;border-radius:12px;font-weight:700;font-size:14px;
+    display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;border-radius:12px;
+    font-weight:700;font-size:14px;
     background:var(--glass-bg);border:1px solid var(--glass-border);color:#fff;text-decoration:none;
-    transition:border-color .15s ease, transform .15s ease;
+    transition:border-color .15s ease, transform .15s ease, background .15s ease;
   }
-  .member-lightbox-link:hover{border-color:var(--pink);transform:translateY(-2px);}
+  .member-lightbox-link:hover{border-color:var(--pink);transform:translateY(-2px);background:rgba(255,63,164,0.08);}
+  .member-link-platform-icon{
+    flex:0 0 30px;width:30px;height:30px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border-radius:9px;background:rgba(255,255,255,0.08);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .member-link-platform-icon img,
+  .member-link-platform-icon svg{display:block;width:18px;height:18px;fill:#fff;color:#fff;}
+  .member-link-platform-icon img{object-fit:contain;}
+  .member-link-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+  .member-link-arrow{opacity:0.45;font-size:14px;transition:transform .2s ease, opacity .2s ease;}
+  .member-lightbox-link:hover .member-link-arrow{transform:translate(2px,-2px);opacity:0.95;}
 
   /* ---------- Editor-Modal (Vollbild-Editor mit fixierter Vorschau) ---------- */
   .editor-modal{position:fixed;inset:0;z-index:300;display:none;}
@@ -2343,6 +2356,122 @@
   var memberLightboxLinks = document.getElementById('memberLightboxLinks');
   var memberLightboxCloseBtn = document.getElementById('memberLightboxCloseBtn');
 
+  /* ---------- Auto-Erkennung Plattform-Icon für Mitglieder-Links ----------
+     Reihenfolge: zuerst nach Hostname (präzise), dann Label (Fallback).
+     Wer in assets/ic_<platform>.png ein eigenes Icon hochlädt, überschreibt das SVG. */
+  var MEMBER_PLATFORM_ICONS = {
+    youtube:   { match: ['youtube.com', 'youtu.be', 'youtube'], label: 'YouTube',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M23.5 7.1s-.2-1.6-.9-2.3c-.8-.9-1.7-1-2.1-1C17.4 3.5 12 3.5 12 3.5s-5.4 0-8.5.3c-.4.1-1.3.1-2.1 1-.7.7-.9 2.3-.9 2.3S.3 8.9.3 10.7v2c0 1.8.2 3.6.2 3.6s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 7.2.3 9.2.3 0 0 5.4 0 8.5-.3.4-.1 1.3-.1 2.1-1 .7-.7.9-2.3.9-2.3s.2-1.8.2-3.6v-2c0-1.8-.2-3.6-.2-3.6zM9.5 16V8.7l6.6 3.7L9.5 16z"/></svg>' },
+    twitch:    { match: ['twitch.tv', 'twitch'], label: 'Twitch',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M2.5 4.4L4.6.5h17.3v13l-5.2 5.2h-4.2l-3.3 3.3H6.1v-3.3H2.5V4.4zm15.1 8.8V3H6.3v12h3.1v3l3-3h2.7l2.5-1.8zm-3.1-7.1h2.1V11h-2.1V6.1zm-5.2 0h2.1V11H9.3V6.1z"/></svg>' },
+    twitter:   { match: ['twitter.com', 'x.com', 'twitter', 'x.com/'], label: 'X / Twitter',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' },
+    instagram: { match: ['instagram.com', 'instagr.am', 'instagram'], label: 'Instagram',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 2 .3 2.6.6.7.3 1.4.7 2 1.3.6.6 1 1.3 1.3 2 .3.6.5 1.4.6 2.6.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.3 2-.6 2.6-.3.7-.7 1.4-1.3 2-.6.6-1.3 1-2 1.3-.6.3-1.4.5-2.6.6-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-2-.3-2.6-.6-.7-.3-1.4-.7-2-1.3-.6-.6-1-1.3-1.3-2-.3-.6-.5-1.4-.6-2.6-.1-1.2-.1-1.6-.1-4.8s0-3.6.1-4.8c.1-1.2.3-2 .6-2.6.3-.7.7-1.4 1.3-2 .6-.6 1.3-1 2-1.3.6-.3 1.4-.5 2.6-.6C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1.2.1-1.8.3-2.2.4-.6.2-1 .5-1.4.9-.4.4-.7.8-.9 1.4-.2.4-.3 1-.4 2.2-.1 1.2-.1 1.6-.1 4.7s0 3.5.1 4.7c.1 1.2.3 1.8.4 2.2.2.6.5 1 .9 1.4.4.4.8.7 1.4.9.4.2 1 .3 2.2.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.2-.1 1.8-.3 2.2-.4.6-.2 1-.5 1.4-.9.4-.4.7-.8.9-1.4.2-.4.3-1 .4-2.2.1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c-.1-1.2-.3-1.8-.4-2.2-.2-.6-.5-1-.9-1.4-.4-.4-.8-.7-1.4-.9-.4-.2-1-.3-2.2-.4-1.2-.1-1.6-.1-4.7-.1zm0 3a4.9 4.9 0 110 9.8 4.9 4.9 0 010-9.8zm0 1.8a3.1 3.1 0 100 6.2 3.1 3.1 0 000-6.2zm5-2.4a1.1 1.1 0 110 2.2 1.1 1.1 0 010-2.2z"/></svg>' },
+    tiktok:    { match: ['tiktok.com', 'tiktok'], label: 'TikTok',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M19.6 6.6a4.7 4.7 0 01-3.5-4.1V1.5h-3v13.1a2.8 2.8 0 11-1.8-2.6V9.1a6 6 0 105.6 6V8.4a7.7 7.7 0 003.7 1V6.9a4.8 4.8 0 01-1-.3z"/></svg>' },
+    discord:   { match: ['discord.gg', 'discord.com', 'discord'], label: 'Discord',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.79 19.79 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028 14.09 14.09 0 001.226-1.994.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128c.124-.094.246-.192.372-.291a.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.126.099.248.197.372.291a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.095 2.157 2.42 0 1.333-.947 2.418-2.157 2.418z"/></svg>' },
+    github:    { match: ['github.com', 'github.io', 'github'], label: 'GitHub',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>' },
+    linkedin:  { match: ['linkedin.com', 'linkedin'], label: 'LinkedIn',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>' },
+    facebook:  { match: ['facebook.com', 'fb.com', 'facebook'], label: 'Facebook',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M9.101 23.563v-7.741H6.104v-3.011h2.997V9.86c0-2.967 1.819-4.587 4.46-4.587 1.265 0 2.353.094 2.67.136v3.114l-1.832.001c-1.435 0-1.713.682-1.713 1.683v2.176h3.422l-.446 3.011h-2.976v7.741C16.844 23.371 21 19.844 21 14.5 21 8.61 16.39 4 10.5 4S0 8.61 0 14.5c0 5.344 4.156 8.871 9.101 9.063z"/></svg>' },
+    kick:      { match: ['kick.com', 'kick'], label: 'Kick',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M1.6 0H0v21.5h5V24h4v-2.5h3.6L18.4 16V9.5h4.4V0h-6.4v9.5H14l-2 1.9V12h-7V8.5H7V4.6L5 2H3v3.4H1.6V0z"/></svg>' },
+    spotify:   { match: ['spotify.com', 'open.spotify', 'spotify'], label: 'Spotify',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.47-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.398.18-.779.54-.898 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.018zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.981-8.159-2.58-11.939-1.42-.479.12-1.02-.12-1.141-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>' },
+    linktree:  { match: ['linktr.ee', 'linktree'], label: 'LinkTree',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M13.514 4.063v3.69l3.91-3.69h2.91l-4.43 4.18 4.43 4.18h-2.91l-3.91-3.69v3.69h-3.06V4.063h3.06zM6.146 7.864H3.35v6.97H6.146v-1.16h.954v1.16h2.797v-6.97H6.146v1.16H5.192v-1.16H3.35v6.97H2.3V7.864h3.846zm12.998 9.706a2.43 2.43 0 110 4.86 2.43 2.43 0 010-4.86zm-7.84-1.95h2.85v-2.85h-2.85v2.85zm-3.06 1.95h2.85v-2.85h-2.85v2.85zm0-3.96h2.85v-2.85h-2.85v2.85zm3.06 0h2.85v-2.85h-2.85v2.85zm-3.06 0h2.85v-2.85h-2.85v2.85z"/></svg>' },
+    website:   { match: [], label: 'Website',
+                 svg: '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>' }
+  };
+  function detectMemberPlatform(label, url){
+    var urlLower = (url || '').toLowerCase();
+    var labelLower = (label || '').toLowerCase();
+    // Hostname-Treffer zuerst (präzise, egal welche Sprache der User eingibt)
+    var keys = Object.keys(MEMBER_PLATFORM_ICONS);
+    for(var i = 0; i < keys.length; i++){
+      var p = MEMBER_PLATFORM_ICONS[keys[i]];
+      if(!p || !p.match || !p.match.length){ continue; }
+      for(var j = 0; j < p.match.length; j++){
+        var needle = p.match[j];
+        // Hostname-Heuristik: wenn needle einen Punkt enthält → URL enthält needle
+        if(needle.indexOf('.') !== -1 && urlLower.indexOf(needle) !== -1){ return keys[i]; }
+      }
+    }
+    // Dann Label-Treffer (auch kurze Wörter wie "yt" oder "kick")
+    for(var i2 = 0; i2 < keys.length; i2++){
+      var p2 = MEMBER_PLATFORM_ICONS[keys[i2]];
+      if(!p2 || !p2.match || !p2.match.length){ continue; }
+      for(var j2 = 0; j2 < p2.match.length; j2++){
+        var n2 = p2.match[j2];
+        if(n2.indexOf('.') === -1 && (labelLower.indexOf(n2) !== -1 || urlLower.indexOf(n2) !== -1)){ return keys[i2]; }
+      }
+    }
+    return 'website';
+  }
+  function memberIconHtml(platformKey){
+    var p = MEMBER_PLATFORM_ICONS[platformKey];
+    if(!p){ return ''; }
+    var filename = PLATFORM_IMG_OVERRIDES[platformKey];
+    var useOverride = filename && PLATFORM_ASSET_CACHE[platformKey] === 'available';
+    var inner = useOverride
+      ? '<img src="assets/' + encodeURIComponent(filename) + '" alt="" aria-hidden="true">'
+      : p.svg;
+    return '<span class="member-link-platform-icon" data-platform="' + escapeHtml(platformKey) + '">' + inner + '</span>';
+  }
+
+  /* ---------- Asset-Override: PNG aus assets/ bevorzugt vor Inline-SVG ---------- */
+  // Welche Plattformen haben ein eigenes PNG in assets/? Diese werden bevorzugt,
+  // sobald das Bild verfügbar ist. Fehlt das PNG, fällt es leise auf das Inline-SVG zurück.
+  var PLATFORM_IMG_OVERRIDES = {
+    youtube:   'ic_youtube.png',
+    twitch:    'ic_twitch.png',
+    twitter:   'ic_x_twitter.png',
+    instagram: 'ic_instagram.png',
+    tiktok:    'ic_tiktok.png',
+    discord:   'ic_discord.png',
+    github:    'ic_github.png',
+    linktree:  'ic_linktree.png',
+    website:   'ic_browser_web.png'
+    // facebook, linkedin, kick, spotify: kein Override → bleiben beim inline SVG
+  };
+  var PLATFORM_ASSET_CACHE = {}; // 'probing' | 'available' | 'missing'
+  function probePlatformAsset(platformKey){
+    var filename = PLATFORM_IMG_OVERRIDES[platformKey];
+    if(!filename){ PLATFORM_ASSET_CACHE[platformKey] = 'missing'; return false; }
+    if(PLATFORM_ASSET_CACHE[platformKey] === 'available' || PLATFORM_ASSET_CACHE[platformKey] === 'probing'){ return false; }
+    PLATFORM_ASSET_CACHE[platformKey] = 'probing';
+    var img = new Image();
+    img.onload = function(){
+      PLATFORM_ASSET_CACHE[platformKey] = 'available';
+      upgradeOpenLightboxIcon(platformKey);
+    };
+    img.onerror = function(){
+      PLATFORM_ASSET_CACHE[platformKey] = 'missing';
+    };
+    img.src = 'assets/' + encodeURIComponent(filename);
+    return false;
+  }
+  // Tauscht nachträglich SVG gegen das geladene PNG aus (ohne Neu-Render des gesamten Lightbox).
+  function upgradeOpenLightboxIcon(platformKey){
+    if(!memberLightboxLinks){ return; }
+    var filename = PLATFORM_IMG_OVERRIDES[platformKey];
+    if(!filename){ return; }
+    var spans = memberLightboxLinks.querySelectorAll('[data-platform="' + cssEscape(platformKey) + '"]');
+    for(var i = 0; i < spans.length; i++){
+      if(spans[i].querySelector('img')){ continue; } // schon upgegraded
+      spans[i].innerHTML = '<img src="assets/' + encodeURIComponent(filename) + '" alt="" aria-hidden="true">';
+    }
+  }
+  function cssEscape(s){
+    if(typeof CSS !== 'undefined' && CSS && typeof CSS.escape === 'function'){ return CSS.escape(s); }
+    return String(s).replace(/(["'\\\.#:>+~*\[\]()])/g, '\\$1');
+  }function bootstrapPlatformAssets(){ Object.keys(PLATFORM_IMG_OVERRIDES).forEach(function(key){ probePlatformAsset(key); }); }
+
+
   function openMemberLightbox(m){
     memberLightboxAvatarWrap.innerHTML = m.avatar
       ? '<img class="avatar avatar-img" src="' + escapeHtml(m.avatar) + '" alt="">'
@@ -2352,7 +2481,12 @@
     memberLightboxBio.textContent = m.bio || '';
     memberLightboxBio.style.display = m.bio ? '' : 'none';
     memberLightboxLinks.innerHTML = (m.links || []).filter(function(l){ return l.url; }).map(function(l){
-      return '<a class="member-lightbox-link" href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(l.label || l.url) + '</a>';
+      var platform = detectMemberPlatform(l.label, l.url);
+      return '<a class="member-lightbox-link" data-platform="' + escapeHtml(platform) + '" href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener noreferrer">' +
+        memberIconHtml(platform) +
+        '<span class="member-link-label">' + escapeHtml(l.label || l.url) + '</span>' +
+        '<span class="member-link-arrow" aria-hidden="true">↗</span>' +
+      '</a>';
     }).join('');
     memberLightboxOverlay.classList.remove('hidden');
   }
@@ -5262,6 +5396,9 @@
     })
     .catch(function(){ /* z. B. lokal ohne Server geöffnet oder data.json existiert noch nicht -> Fallback bleibt aktiv */ });
 
+  // PNG-Override für Mitglieder-Plattform-Icons im Hintergrund aufwärmen
+  // (nach 'available' gecachte Bilder ersetzen das SVG im Member-Lightbox automatisch via upgradeOpenLightboxIcon)
+  if(typeof bootstrapPlatformAssets === 'function'){ bootstrapPlatformAssets(); }
 })();
 </script>
 </body>
