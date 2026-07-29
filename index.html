@@ -460,6 +460,8 @@
   .stage-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;pointer-events:none;}
   .stage-text .pulse-dot{width:9px;height:9px;border-radius:50%;background:var(--pink);box-shadow:0 0 0 0 rgba(255,63,164,0.6);animation:pulseDot 1.6s infinite;margin-bottom:4px;}
   @keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(255,63,164,0.55);}70%{box-shadow:0 0 0 14px rgba(255,63,164,0);}100%{box-shadow:0 0 0 0 rgba(255,63,164,0);}}
+  @keyframes flashAutoCheck{0%{background:rgba(255,63,164,0.38);box-shadow:0 0 0 3px rgba(255,63,164,0.30);}100%{background:transparent;box-shadow:0 0 0 0 rgba(255,63,164,0);}}
+  .admin-checkbox-row label.flash-auto-check{animation:flashAutoCheck .75s ease-out;border-radius:6px;padding:2px 6px;margin:-2px -6px;}
   .stage-text h4{font-family:var(--font-display);font-size:clamp(17px,3.4vw,26px);letter-spacing:0.06em;text-transform:uppercase;background:linear-gradient(90deg,#fff,var(--pink) 60%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;}
   .stage-text span{font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-2);}
 
@@ -3843,6 +3845,11 @@
   var adminTagsList = document.getElementById('adminTagsList');
   var adminTemplateTagsList = document.getElementById('adminTemplateTagsList');
   var newDesignTagsRow = document.getElementById('newDesignTagsRow');
+  var newDesignTitleInput = document.getElementById('newDesignTitle');
+  var newDesignDescriptionInput = document.getElementById('newDesignDescription');
+  var newDesignCategoryAutoToggled = {}; // merkt sich pro Form-Session welche Tags per Auto-Check aktiviert wurden
+  var newDesignCategoryUserTouched = {}; // vom User manuell geändert → vom Auto-Detect in Ruhe lassen
+  var newDesignAutoDetectTimer = null;
 
   adminFab.addEventListener('click', function(){
     setStatus('');
@@ -4623,6 +4630,99 @@
       : '<span class="admin-form-hint">Noch keine Tags – lege unten welche an.</span>';
   }
 
+  /* ---------- Auto-Erkennung: passt Kategorien anhand des Titels/Beschreibung an ---------- */
+  // Beim Tippen in Titel/Beschreibung werden automatisch passende Tag-Checkboxen markiert.
+  // Manuelle Änderungen des Users werden respektiert (keine Re-Auto-Check-Konflikte).
+  function normalizeForMatch(s){
+    return (s == null ? '' : String(s)).toLowerCase()
+      .replace(/[\.,\/#!$%\^&\*;:{}=\-_`~()\[\]"''?!]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+  function regexEscape(s){
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+  function categoryMatchesInText(normalizedCategory, normalizedHaystack){
+    if(!normalizedCategory || !normalizedHaystack){ return false; }
+    if(normalizedCategory.length < 3){ return false; } // zu kurze Wörter → zu viele Fehltreffer (z. B. "ad", "ob")
+    var padded = ' ' + normalizedHaystack + ' ';
+    var re = new RegExp('(^|[^a-z0-9äöüß])' + regexEscape(normalizedCategory) + 's?($|[^a-z0-9äöüß])', 'i');
+    if(re.test(padded)){ return true; }
+    // Compound-Match: der Tag steht am Anfang eines längeren Wortes ("logo" in "logodesign")
+    var words = normalizedHaystack.split(/\s+/);
+    for(var i = 0; i < words.length; i++){
+      var w = words[i];
+      if(w.length > normalizedCategory.length && w.indexOf(normalizedCategory) === 0){ return true; }
+    }
+    return false;
+  }
+  function findCheckboxForCategory(cat){
+    if(!newDesignTagsRow){ return null; }
+    var inputs = newDesignTagsRow.querySelectorAll('input[type="checkbox"]');
+    for(var i = 0; i < inputs.length; i++){
+      if(inputs[i].value === cat){ return inputs[i]; }
+    }
+    return null;
+  }
+  function flashCheckboxLabel(checkbox){
+    var label = checkbox && checkbox.closest && checkbox.closest('label');
+    if(!label){ return; }
+    label.classList.remove('flash-auto-check');
+    void label.offsetWidth;
+    label.classList.add('flash-auto-check');
+    setTimeout(function(){ label.classList.remove('flash-auto-check'); }, 700);
+  }
+  function autoDetectDesignCategories(){
+    if(!newDesignTagsRow || !newDesignTitleInput || !newDesignDescriptionInput){ return; }
+    if(!data || !Array.isArray(data.designCategories)){ return; }
+    var rawTitle = newDesignTitleInput.value || '';
+    var rawDesc = newDesignDescriptionInput.value || '';
+    var haystack = normalizeForMatch(rawTitle + ' ' + rawDesc);
+    var hasAnyText = ((rawTitle + rawDesc).trim().length > 0);
+    data.designCategories.forEach(function(cat){
+      if(!cat){ return; }
+      // Vom User manuell geänderte Boxen bleiben unangetastet.
+      if(newDesignCategoryUserTouched[cat]){ return; }
+      var checkbox = findCheckboxForCategory(cat);
+      if(!checkbox){ return; }
+      var needle = normalizeForMatch(cat);
+      var shouldBeChecked = hasAnyText && categoryMatchesInText(needle, haystack);
+      var wasAutoChecked = !!newDesignCategoryAutoToggled[cat];
+      if(shouldBeChecked && !checkbox.checked){
+        checkbox.checked = true;
+        newDesignCategoryAutoToggled[cat] = true;
+        flashCheckboxLabel(checkbox);
+      } else if(!shouldBeChecked && wasAutoChecked && checkbox.checked){
+        checkbox.checked = false;
+        newDesignCategoryAutoToggled[cat] = false;
+      }
+    });
+  }
+  function scheduleAutoDetect(){
+    if(newDesignAutoDetectTimer){ clearTimeout(newDesignAutoDetectTimer); }
+    newDesignAutoDetectTimer = setTimeout(autoDetectDesignCategories, 280);
+  }
+  function resetAutoDetectState(){
+    newDesignCategoryUserTouched = {};
+    newDesignCategoryAutoToggled = {};
+    if(newDesignAutoDetectTimer){ clearTimeout(newDesignAutoDetectTimer); newDesignAutoDetectTimer = null; }
+  }
+  // Manuell vom User geklickte Boxen markieren, damit der Auto-Detect sie in Ruhe lässt.
+  if(newDesignTagsRow){
+    newDesignTagsRow.addEventListener('change', function(e){
+      var t = e.target;
+      if(!t || t.tagName !== 'INPUT' || t.type !== 'checkbox'){ return; }
+      var cat = t.value;
+      if(!cat){ return; }
+      newDesignCategoryUserTouched[cat] = true;
+      // Eine manuell angehakte Box nicht mehr als "auto-tagged" markieren,
+      // damit der nächste Tippen sie nicht wieder versehentlich abhakt.
+      if(t.checked){ newDesignCategoryAutoToggled[cat] = false; }
+    });
+  }
+  if(newDesignTitleInput){ newDesignTitleInput.addEventListener('input', scheduleAutoDetect); }
+  if(newDesignDescriptionInput){ newDesignDescriptionInput.addEventListener('input', scheduleAutoDetect); }
+
   document.getElementById('addDesignBtn').addEventListener('click', function(){
     var titleInput = document.getElementById('newDesignTitle');
     var descriptionInput = document.getElementById('newDesignDescription');
@@ -4647,6 +4747,7 @@
     pendingDesignAsset = null; pendingDesignAssetType = null; pendingDesignAssetUpload = null;
     pendingDesignWidth = null; pendingDesignHeight = null; pendingDesignThumb = null;
     newDesignAssetName.textContent = 'Keine Datei ausgewählt.';
+    resetAutoDetectState(); // Auto-Detect-Session beenden, damit das nächste Design frisch startet
     renderAdminLists();
     setStatus('Design hinzugefügt – noch nicht gespeichert.');
   });
