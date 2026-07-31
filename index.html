@@ -603,6 +603,46 @@
   .discord-cta-card p{color:var(--text-1);max-width:520px;margin:0 auto 28px;font-size:15px;line-height:1.6;}
 
   /* ---------- Footer ---------- */
+  /* ---------- About / Lizenz page ---------- */
+  .page-title{font-family:var(--font-display);font-size:clamp(34px,5.4vw,50px);line-height:1.08;font-weight:600;margin-bottom:14px;letter-spacing:-0.01em;}
+  .page-title .grad{background:linear-gradient(90deg,var(--pink),var(--magenta) 45%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .page-sub{color:var(--text-1);font-size:16px;line-height:1.65;max-width:620px;margin:0 auto;}
+  .about-shell{display:grid;grid-template-columns:240px 1fr;gap:48px;align-items:start;padding:24px 0 80px;}
+  .about-toc{position:sticky;top:96px;padding:22px 22px 26px;border-radius:18px;background:var(--glass-bg);border:1px solid var(--glass-border);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+  .about-toc h3{font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-2);margin-bottom:14px;}
+  .about-toc ol{list-style:none;padding:0;margin:0;counter-reset:about;}
+  .about-toc li{counter-increment:about;margin:2px 0;}
+  .about-toc a{display:flex;align-items:baseline;gap:10px;padding:9px 10px;border-radius:10px;font-size:14.5px;color:var(--text-1);line-height:1.45;transition:background .18s ease,color .18s ease;}
+  .about-toc a::before{content:counter(about);font-family:var(--font-display);font-size:11px;font-weight:600;color:var(--text-2);min-width:22px;text-align:center;padding:2px 4px;border-radius:6px;background:rgba(255,255,255,0.05);transition:background .18s ease,color .18s ease;}
+  .about-toc a:hover,.about-toc a.is-active{background:rgba(255,63,164,0.08);color:var(--text-0);}
+  .about-toc a:hover::before,.about-toc a.is-active::before{background:linear-gradient(135deg,var(--pink),var(--violet));color:#fff;}
+  .about-content{min-width:0;}
+  .about-section{padding:30px 0 8px;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .about-section:last-child{border-bottom:none;}
+  .about-section h2{font-family:var(--font-display);font-size:clamp(22px,3vw,28px);font-weight:600;line-height:1.2;margin-bottom:16px;color:var(--text-0);display:flex;align-items:baseline;gap:14px;}
+  .about-section h2 .num{font-size:13px;font-weight:600;color:var(--text-2);background:rgba(255,255,255,0.05);padding:4px 9px;border-radius:8px;font-family:var(--font-display);letter-spacing:0.04em;}
+  .about-section h2 .tag{font-size:11.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--pink),var(--violet));padding:5px 10px;border-radius:999px;margin-left:auto;}
+  .about-section p{color:var(--text-1);font-size:15.5px;line-height:1.75;margin:0 0 14px;}
+  .about-section p strong{color:var(--text-0);font-weight:600;}
+  .about-section .info-chip{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;letter-spacing:0.04em;color:var(--text-1);padding:7px 12px;border-radius:999px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);margin-bottom:18px;}
+  .about-section .info-chip .dot{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--violet));box-shadow:0 0 10px rgba(255,63,164,0.5);}
+  .about-section .callout{margin-top:18px;padding:18px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(255,63,164,0.10),rgba(139,92,246,0.10));border:1px solid rgba(255,63,164,0.18);}
+  .about-section .callout p{margin:0;font-size:15px;color:var(--text-0);}
+  .about-section .donate-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:8px;}
+  .about-section .donate-link{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;background:linear-gradient(135deg,var(--pink),var(--violet));color:#fff;font-weight:600;font-size:14px;text-decoration:none;transition:transform .15s ease,box-shadow .2s ease;box-shadow:0 6px 18px rgba(255,63,164,0.25);}
+  .about-section .donate-link:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(255,63,164,0.35);}
+  .about-section .donate-link img{display:block;width:18px;height:18px;flex:none;border-radius:4px;}
+  .about-toc a:focus-visible{outline:2px solid var(--pink);outline-offset:2px;border-radius:10px;}
+  @media (max-width:980px){
+    .about-shell{grid-template-columns:1fr;gap:24px;}
+    .about-toc{position:static;}
+  }
+  .about-pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:18px;}
+  .about-pillar{padding:18px 18px 16px;border-radius:14px;background:var(--glass-bg);border:1px solid var(--glass-border);transition:transform .15s ease,border-color .15s ease;}
+  .about-pillar:hover{transform:translateY(-2px);border-color:var(--glass-border-hi);}
+  .about-pillar .pico{font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--pink);margin-bottom:8px;}
+  .about-pillar h4{font-family:var(--font-display);font-size:17px;font-weight:600;color:var(--text-0);margin:0 0 6px;}
+  .about-pillar p{font-size:14px;color:var(--text-1);margin:0;line-height:1.55;}
   footer{border-top:1px solid rgba(255,255,255,0.07);padding:44px 0 34px;}
   .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;}
   .footer-brand{display:flex;align-items:center;gap:10px;}
@@ -963,6 +1003,115 @@
   </div>
 
   <!-- ================= DESIGNS-GALERIE ================= -->
+  <div class="page" id="page-about" hidden>
+    <div class="wrap page-header">
+      <div class="section-head">
+        <div class="eyebrow">LIZENZ &amp; INFOS</div>
+        <h1 class="page-title">Über <span class="grad">StrudelDesigns</span></h1>
+        <p class="page-sub">Wer hinter den Designs steckt, wie unsere Lizenzen funktionieren und was du beim Nutzen unserer Vorlagen beachten musst – kompakt auf einer Seite.</p>
+      </div>
+    </div>
+    <div class="wrap about-shell">
+      <aside class="about-toc" aria-label="Inhaltsverzeichnis">
+        <h3>Auf dieser Seite</h3>
+        <ol>
+          <li><a href="#about-founder">Wer wir sind</a></li>
+          <li><a href="#about-license">Lizenz CC&nbsp;BY-ND</a></li>
+          <li><a href="#about-watermark">Wasserzeichen &amp; Spende</a></li>
+          <li><a href="#about-commercial">Freiwillige Spende</a></li>
+          <li><a href="#about-copyright">Urheberrecht</a></li>
+        </ol>
+      </aside>
+      <article class="about-content">
+        <section id="about-founder" class="about-section" tabindex="-1">
+          <span class="info-chip"><span class="dot"></span>Gegründet im September&nbsp;2025</span>
+          <h2><span class="num">01</span>Wer wir sind</h2>
+          <p>StrudelDesigns wurde im <strong>September 2025</strong> gegründet – von <strong>Yuri</strong>, vielen besser bekannt als <strong>Strudelgame</strong>. <strong>Strudel</strong> leitet das Team und kümmert sich darum, dass alles läuft.</p>
+          <p>Unsere Mission ist einfach: Streamer:innen, Creator:innen und Marken moderne, sauber produzierte Designs an die Hand geben, die ohne viel Aufwand direkt auf Social Media wie Twitch, YouTube oder einer eigenen Webseite einsetzbar sind.</p>
+          <div class="about-pillars">
+            <div class="about-pillar">
+              <div class="pico">Geschwindigkeit</div>
+              <h4>Schnelle Lieferung</h4>
+              <p>Vorlagen sind sofort downloadbar – ohne Wartezeit.</p>
+            </div>
+            <div class="about-pillar">
+              <div class="pico">Community</div>
+              <h4>Discord-first</h4>
+              <p>Support, Wünsche und Aufträge laufen direkt auf Discord.</p>
+            </div>
+            <div class="about-pillar">
+              <div class="pico">Ehrlichkeit</div>
+              <h4>Faire Lizenzen</h4>
+              <p>Klare Regeln statt Kleingedrucktem – auch in Comic-Sans lesbar.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="about-license" class="about-section" tabindex="-1">
+          <h2><span class="num">02</span>Lizenz CC&nbsp;BY-ND</h2>
+          <p>Alle Vorlagen auf StrudelDesigns stehen standardmäßig unter der <strong>Creative-Commons-Lizenz CC BY-ND</strong>: Du darfst sie also nutzen, weitergeben und für nicht-kommerzielle Zwecke einsetzen – solange <strong>StrudelDesigns als Urheber erkennbar bleibt</strong> und das Design <strong>nicht bearbeitet</strong> wird.</p>
+          <p>Kurz zusammengefasst:</p>
+          <ul style="color:var(--text-1);font-size:15.5px;line-height:1.75;padding-left:20px;margin:0 0 14px;">
+            <li><strong>BY</strong> – Du nennst StrudelDesigns als Quelle. Bei uns passiert das automatisch im Design, weil das StrudelDesigns-Wasserzeichen standardmäßig direkt eingebaut ist – du musst nichts extra setzen.</li>
+            <li><strong>ND</strong> – Du veränderst das Design nicht, sondern nutzt es wie geliefert.</li>
+            <li><strong>Kommerziell?</strong> – Mit einer freiwilligen Spende (siehe unten).</li>
+          </ul>
+        </section>
+
+        <section id="about-watermark" class="about-section" tabindex="-1">
+          <h2><span class="num">03</span>Wasserzeichen</h2>
+          <p>Damit die CC-BY-ND-Regeln auf jedem Bild sichtbar bleiben, trägt jede kostenlose Vorlage ein kleines <strong>StrudelDesigns-Wasserzeichen</strong>. Wir haben es bewusst so platziert, dass es möglichst unauffällig ist – aber eben nicht unsichtbar. Das Wasserzeichen ist unser Credit, dass das Design von uns stammt.</p>
+          <p>Wenn du das Wasserzeichen entfernt haben möchtest – zum Beispiel weil du das Design ohne fremdes Logo nutzen oder es für etwas Professionelles einsetzen willst – findest du alle Details im nächsten Abschnitt <strong>„Freiwillige Spende“</strong>.</p>
+        </section>
+
+        <section id="about-commercial" class="about-section" tabindex="-1">
+          <h2><span class="num">04</span>Freiwillige Spende <span class="tag">Kein Festpreis</span></h2>
+          <p>Bei StrudelDesigns gibt es keine festen Preise – nur <strong>freiwillige Spenden</strong>. Du entscheidest selbst, was dir ein Design wert ist: 5 €, 15 €, 50 € oder mehr. Egal welchen Betrag du gibst, du bekommst immer dasselbe Paket:</p>
+          <ul style="color:var(--text-1);font-size:15.5px;line-height:1.75;padding-left:20px;margin:0 0 14px;">
+            <li>Die <strong>saubere Datei ohne Wasserzeichen</strong>.</li>
+            <li>Das Recht zur <strong>kommerziellen Nutzung</strong> – für dein Business, deine Webseite oder deine Produkte.</li>
+            <li>Persönliche Lieferung über Discord.</li>
+          </ul>
+          <p><strong>Kauf und Spende sind bei uns dasselbe</strong> – es gibt weder einen separaten „Commercial License"-Schalter noch einen Mindestbetrag. Du unterstützt unsere Arbeit, wir liefern dir die professionelle Version. So einfach ist das.</p>
+          <p>Wie es läuft: Öffne ein <strong>Ticket auf Discord</strong>, sag uns welches Design du brauchst und welchen Betrag du geben möchtest. Wir entfernen das Wasserzeichen und schicken dir die saubere Datei.</p>
+          <div class="donate-row">
+            <a class="donate-link" href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener">
+              <img src="assets/ic_discord.png" alt="Discord">
+              Ticket auf Discord öffnen
+            </a>
+            <span style="font-size:13.5px;color:var(--text-2);">Betrag bestimmst du selbst – Spende ist freiwillig.</span>
+          </div>
+          <div class="about-pillars">
+            <div class="about-pillar">
+              <div class="pico">Inklusive</div>
+              <h4>Wasserzeichen weg</h4>
+              <p>Saubere Datei sofort nach deiner Spende – keine Nacharbeit nötig.</p>
+            </div>
+            <div class="about-pillar">
+              <div class="pico">Nutzung</div>
+              <h4>Business &amp; Produkte</h4>
+              <p>Einsetzbar auf deiner Marke, deiner Webseite oder im Stream.</p>
+            </div>
+            <div class="about-pillar">
+              <div class="pico">Faire Abwicklung</div>
+              <h4>Kein Mindestbetrag</h4>
+              <p>Jeder Beitrag zählt – du wählst, was das Design dir wert ist.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="about-copyright" class="about-section" tabindex="-1">
+          <h2><span class="num">05</span>Urheberrecht</h2>
+          <p>Das <strong>Urheberrecht bleibt immer bei StrudelDesigns</strong> – auch nach einem Kauf. Das heißt konkret: Wir <strong>behalten uns vor, dasselbe Design morgen an eine andere Person zu verkaufen</strong>. Bei Vorlagen, die per Definition von vielen genutzt werden, ist das kein Zufall, sondern das Modell hinter CC BY-ND.</p>
+          <p>Worauf du dich verlassen kannst: Das Design, das du nutzt, ist <strong>kein Unikat</strong> – dafür bekommst du einen <strong>fairen Preis</strong>, eine <strong>klare Nutzungserlaubnis</strong> für dein Vorhaben und eine <strong>saubere Datei ohne Wasserzeichen</strong>. Für ein wirklich exklusives Design, das nur einmal existiert, schreib uns einfach über Discord – dann reden wir über eine <strong>Auftragsarbeit</strong>.</p>
+          <div class="callout">
+            <p><strong>Kurzfassung:</strong> Credits sichtbar lassen · Wasserzeichen nur gegen Spende oder Kauf weg · kommerzielle Nutzung nur mit Commercial Use License · Urheberrecht bleibt bei StrudelDesigns.</p>
+          </div>
+        </section>
+      </article>
+    </div>
+  </div>
+
   <div class="page" id="page-designs" hidden>
     <div class="wrap page-header">
       <a href="#home" class="back-link">
@@ -1032,6 +1181,7 @@
         <li><a href="#news">News</a></li>
         <li><a href="#designs">Designs</a></li>
         <li><a href="#branding">Eigenes Branding</a></li>
+        <li><a href="#about" data-nav="about">Über uns</a></li>
         <li><a href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener">Discord</a></li>
       </ul>
     </div>
@@ -1691,7 +1841,8 @@
     home: document.getElementById('page-home'),
     news: document.getElementById('page-news'),
     designs: document.getElementById('page-designs'),
-    branding: document.getElementById('page-branding')
+    branding: document.getElementById('page-branding'),
+    about: document.getElementById('page-about')
   };
   var navLinkEls = document.querySelectorAll('.nav-links a[data-nav]');
 
@@ -1715,7 +1866,7 @@
       var params = new URLSearchParams(qs);
       deepLinkDesignId = params.get('d');
     }
-    if(h === 'news' || h === 'branding' || h === 'designs'){
+    if(h === 'news' || h === 'branding' || h === 'designs' || h === 'about'){
       showPage(h);
       window.scrollTo({ top:0, behavior:'auto' });
       if(h === 'designs' && deepLinkDesignId){
@@ -5379,6 +5530,7 @@
   // Sofort mit lokalem/Standard-Stand rendern, damit die Seite nie leer ist …
   renderPublic();
   routeFromHash();
+  window.addEventListener('hashchange', routeFromHash);
 
   // … und danach versuchen, die aktuelle data.json zu laden (z. B. von GitHub Pages).
   // Das ist die Datei, die im Admin-Panel über "Auf GitHub veröffentlichen" aktualisiert wird
@@ -5400,6 +5552,69 @@
   // (nach 'available' gecachte Bilder ersetzen das SVG im Member-Lightbox automatisch via upgradeOpenLightboxIcon)
   if(typeof bootstrapPlatformAssets === 'function'){ bootstrapPlatformAssets(); }
 })();
+  // --- Make footer links with [data-nav] switch pages too (top nav already handles its own links) ---
+  // showPage/routeFromHash live in the main init block above — they are NOT global.
+  // So we don't try to call them directly. Instead we let the browser change the URL
+  // hash, which fires the hashchange listener registered in init → routeFromHash → showPage.
+  (function(){
+    document.querySelectorAll('[data-nav]').forEach(function(a){
+      if(a.closest('#navLinks')) return; // top nav relies on built-in behavior
+      a.addEventListener('click', function(e){
+        var name = a.getAttribute('data-nav');
+        if(!name) return;
+        // Don't preventDefault: let the browser actually update the URL hash,
+        // which triggers our hashchange listener and routes to page-about correctly.
+        if(location.hash !== '#' + name){ location.hash = name; }
+      });
+    });
+  })();
+
+  // --- Smooth-scroll + scrollspy for the About page TOC ---
+  (function(){
+    var toc = document.querySelector('#page-about .about-toc');
+    if(!toc) return;
+    var links = toc.querySelectorAll('a[href^="#about-"]');
+    function scrollToSection(id){
+      var el = document.getElementById(id);
+      if(!el) return;
+      var headerOffset = 90;
+      var top = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+      var smooth = 'scrollBehavior' in document.documentElement.style;
+      if(smooth){ window.scrollTo({top: top, behavior: 'smooth'}); }
+      else { window.scrollTo(0, top); }
+      history.replaceState(null, '', '#' + id);
+    }
+    function setActive(activeLink){
+      links.forEach(function(l){
+        var isOn = l === activeLink;
+        l.classList.toggle('is-active', isOn);
+        if(isOn){ l.setAttribute('aria-current', 'location'); }
+        else { l.removeAttribute('aria-current'); }
+      });
+    }
+    links.forEach(function(a){
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        var id = a.getAttribute('href').slice(1);
+        scrollToSection(id);
+        setActive(a);
+      });
+    });
+    var sections = Array.prototype.map.call(links, function(a){ return document.getElementById(a.getAttribute('href').slice(1)); }).filter(Boolean);
+    if(sections.length && 'IntersectionObserver' in window){
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            var id = entry.target.id;
+            var match = null;
+            links.forEach(function(l){ if(l.getAttribute('href') === '#' + id){ match = l; } });
+            if(match) setActive(match);
+          }
+        });
+      }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+      sections.forEach(function(s){ io.observe(s); });
+    }
+  })();
 </script>
 </body>
 </html>
