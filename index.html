@@ -207,7 +207,7 @@
   .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;}
   .team-card{
     appearance:none;-webkit-appearance:none;font:inherit;color:inherit;padding:32px 26px;margin:0;
-    text-align:center;transition:transform .22s ease, border-color .22s ease;width:100%;
+    text-align:center;transition:transform .22s ease, border-color .22s ease;width:100%;cursor:pointer;
   }
   .team-card:hover{transform:translateY(-6px);border-color:var(--glass-border-hi);}
   .avatar-img{object-fit:cover;}
@@ -220,7 +220,21 @@
   }
   .team-card h3{font-size:19px;margin-bottom:4px;}
   .team-role{font-size:12.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--pink);margin-bottom:12px;}
-  .team-card p.desc{font-size:13.5px;color:var(--text-1);line-height:1.6;}
+  .team-card .team-bio{width:100%;margin-top:2px;}
+  .team-card p.desc{font-size:13.5px;color:var(--text-1);line-height:1.6;
+    display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;
+    white-space:pre-line;word-wrap:break-word;}
+  .team-card p.desc.desc-clamped{
+    -webkit-line-clamp:3;line-clamp:3;
+  }
+  .team-card .desc-expand-btn{
+    display:inline-block;margin-top:10px;background:none;border:none;padding:0;cursor:pointer;
+    font:inherit;font-size:12px;font-weight:600;color:var(--pink);
+    transition:color .15s ease;letter-spacing:0.02em;text-decoration:none;
+  }
+  .team-card .desc-expand-btn:hover{color:var(--magenta);text-decoration:underline;}
+  .team-card .desc-expand-btn:focus-visible{outline:2px solid var(--pink);outline-offset:3px;border-radius:2px;}
+  .team-card .desc-expand-btn[hidden]{display:none;}
 
   /* ---------- Branding-Seite: Vorlagen-Grid mit funktionierendem Customizer ---------- */
   .grid-templates{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;}
@@ -335,7 +349,7 @@
   .member-lightbox .avatar{width:96px;height:96px;font-size:32px;margin:0 auto 16px;}
   .member-lightbox .avatar-img{object-fit:cover;}
   .member-lightbox h3{font-size:21px;margin-bottom:4px;}
-  .member-lightbox-bio{color:var(--text-1);font-size:14px;line-height:1.6;margin:14px 0 4px;}
+  .member-lightbox-bio{color:var(--text-1);font-size:14px;line-height:1.6;margin:14px 0 4px;white-space:pre-line;}
   .member-lightbox-links{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
   .member-lightbox-link{
     display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;border-radius:12px;
@@ -2071,18 +2085,53 @@
       return;
     }
     data.members.forEach(function(m){
-      var card = document.createElement('button');
-      card.type = 'button';
+      var card = document.createElement('div');
       card.className = 'team-card glass';
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', (m.name || 'Mitglied') + ' – Details öffnen');
       card.innerHTML =
         (m.avatar
           ? '<img class="avatar avatar-img" src="' + escapeHtml(m.avatar) + '" alt="">'
           : '<div class="avatar">' + escapeHtml(m.initials || '?') + '</div>') +
         '<h3>' + escapeHtml(m.name) + '</h3>' +
-        '<div class="team-role">' + escapeHtml(m.role || 'Mitglied') + '</div>' +
-        (m.bio ? '<p class="desc">' + escapeHtml(m.bio) + '</p>' : '');
-      card.addEventListener('click', function(){ openMemberLightbox(m); });
-      membersContainer.appendChild(card);
+        '<div class="team-role">' + escapeHtml(m.role || 'Mitglied') + '</div>' +          (m.bio
+            ? '<div class="team-bio">' +
+                '<p class="desc desc-clamped">' + escapeHtml(m.bio) + '</p>' +
+                '<button type="button" class="desc-expand-btn" hidden aria-expanded="false">Klicke hier um weiterzulesen …</button>' +
+              '</div>'
+            : '');
+        var openLightbox = function(){ openMemberLightbox(m); };
+        card.addEventListener('click', function(e){
+          // Klick auf den "weiterlesen"-Button darf nicht auch die Lightbox öffnen
+          if(e.target && e.target.classList && e.target.classList.contains('desc-expand-btn')){ return; }
+          openLightbox();
+        });
+        card.addEventListener('keydown', function(e){
+          if(e.target !== card){ return; }
+          if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openLightbox(); }
+        });
+        membersContainer.appendChild(card);
+
+        // Clamping ausmessen: nur wenn der Bio-Inhalt wirklich über 3 Zeilen hinausgeht,
+        // wird der "weiterlesen"-Button sichtbar geschaltet. Kurze Bios verstecken ihn.
+        // 2 px Toleranz, um Sub-Pixel-Rundung zu schlucken.
+        var desc = card.querySelector('.desc');
+        var expandBtn = card.querySelector('.desc-expand-btn');
+        if(desc && expandBtn){
+          if(desc.scrollHeight - desc.clientHeight > 3){
+            expandBtn.hidden = false;
+            expandBtn.addEventListener('click', function(e){
+              e.stopPropagation();
+              var nowClamped = desc.classList.toggle('desc-clamped');
+              expandBtn.setAttribute('aria-expanded', nowClamped ? 'false' : 'true');
+              expandBtn.textContent = nowClamped ? 'Klicke hier um weiterzulesen …' : 'Weniger anzeigen';
+            });
+          } else {
+            expandBtn.remove();
+            desc.classList.remove('desc-clamped');
+          }
+        }
     });
   }
 
