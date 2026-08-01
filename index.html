@@ -103,6 +103,31 @@
   }
   .btn-discord-sm:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,0.25);}
 
+  /* ---------- Discord-Mitgliederzahl (.dm-stat) ---------- */
+  .dm-stat{display:inline-flex;align-items:center;gap:7px;font-family:inherit;white-space:nowrap;line-height:1;}
+  .dm-stat--inline{font-size:12.5px;font-weight:600;color:var(--text-1);letter-spacing:.01em;}
+  .dm-stat--inline.is-light{color:rgba(255,255,255,0.78);}
+  .dm-stat--card{font-size:14px;font-weight:600;color:var(--text-0);justify-content:center;margin:8px auto 22px;width:fit-content;padding:8px 16px;border-radius:999px;background:linear-gradient(135deg,rgba(35,165,89,0.12),rgba(255,63,164,0.10));border:1px solid rgba(35,165,89,0.30);box-shadow:0 6px 18px -8px rgba(35,165,89,0.35);}
+  .dm-stat__dot{position:relative;width:7px;height:7px;border-radius:50%;background:#23a559;flex:none;animation:dmPulse 2.4s ease-out infinite;}
+  .dm-stat--card .dm-stat__dot{width:8px;height:8px;}
+  .dm-stat-num{font-variant-numeric:tabular-nums;}
+  .dm-stat--inbtn{display:inline-flex;align-items:center;gap:5px;font-weight:600;color:inherit;padding:2px 9px;border-radius:999px;background:rgba(255,255,255,0.18);vertical-align:middle;letter-spacing:0.01em;white-space:nowrap;font-size:12.5px;line-height:1;}
+  .dm-stat--inbtn .dm-stat__dot{width:6px;height:6px;background:#34d97a;}
+  .btn-ghost .dm-stat--inbtn{background:rgba(255,255,255,0.12);}
+  .btn-discord-sm .dm-stat--inbtn{background:rgba(58,18,87,0.10);color:#3a1257;}
+  .btn-ghost--list{flex-direction:column;align-items:center;gap:6px;padding:13px 28px;}
+  .dm-stat--under{display:flex;align-items:center;gap:7px;justify-content:center;margin:14px auto 0;padding:8px 16px;border-radius:999px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);font-size:13px;color:var(--text-1);font-weight:600;letter-spacing:.01em;width:fit-content;}
+  .dm-stat--under .dm-stat__dot{width:7px;height:7px;background:#34d97a;}
+  .discord-nav-li{display:inline-flex;align-items:center;gap:9px;flex-wrap:nowrap;}
+  @keyframes dmPulse{
+    0%  {box-shadow:0 0 0 0 rgba(35,165,89,0.55);}
+    70% {box-shadow:0 0 0 9px rgba(35,165,89,0);}
+    100%{box-shadow:0 0 0 0 rgba(35,165,89,0);}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .dm-stat__dot{animation:none;}
+  }
+
   /* ---------- Header / Nav ---------- */
   header.site{
     position:sticky;top:37px;z-index:90;
@@ -923,7 +948,7 @@
       <li><a href="#news" data-nav="news">News</a></li>
       <li><a href="#designs" data-nav="designs">Designs</a></li>
       <li><a href="#branding" data-nav="branding">Eigenes Branding</a></li>
-      <li><a class="nav-cta" href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener">Discord</a></li>
+      <li class="discord-nav-li"><a class="nav-cta" href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener">Discord<span class="dm-stat dm-stat--inbtn" title="Aktuelle Mitglieder auf unserem Discord"><span class="dm-stat__dot" aria-hidden="true"></span><span class="dm-stat-num">&hellip;</span></span></a></li>
     </ul>
     <button class="burger" id="burgerBtn" aria-label="Menü öffnen" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
@@ -943,7 +968,7 @@
         <p>100 % kostenlose Designs für Streamer, Firmen und Communities – individuell gestaltet, mit persönlichem Support direkt auf Discord.</p>
         <div class="hero-actions">
           <a href="#designs" class="btn-primary">Designs entdecken</a>
-          <a href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener" class="btn-ghost">Auf Discord fragen</a>
+          <a href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener" class="btn-ghost btn-ghost--list"><span>Auf Discord Fragen</span><span class="dm-stat dm-stat--inbtn" title="Aktuelle Mitglieder auf unserem Discord">Mitglieder:&nbsp;<span class="dm-stat__dot" aria-hidden="true"></span><span class="dm-stat-num">&hellip;</span></span></a>
         </div>
         <div class="hero-actions" style="margin-top:14px;">
           <a href="#about" class="btn-ghost">Mehr Infos</a>
@@ -982,6 +1007,7 @@
           <h2>Bereit für dein eigenes Design?</h2>
           <p>Erstelle ein Ticket in unserem Discord und wir besprechen gemeinsam dein nächstes Projekt – von Logo bis komplettem Stream-Branding.</p>
           <a href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener" class="btn-primary">Ticket auf Discord erstellen</a>
+          <div class="dm-stat dm-stat--under" title="Aktuelle Mitglieder auf dem Discord-Server">Mitglieder auf dem Server:&nbsp;<span class="dm-stat__dot" aria-hidden="true"></span><span class="dm-stat-num">&hellip;</span></div>
         </div>
       </div>
     </section>
@@ -1143,7 +1169,7 @@
           <div class="donate-row">
             <a class="donate-link" href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener">
               <img src="assets/ic_discord.png" alt="Discord">
-              Ticket auf Discord öffnen
+              <span>Ticket auf Discord öffnen</span><span class="dm-stat dm-stat--inbtn" title="Aktuelle Mitglieder auf unserem Discord"><span class="dm-stat__dot" aria-hidden="true"></span><span class="dm-stat-num">&hellip;</span></span>
             </a>
             <span style="font-size:13.5px;color:var(--text-2);">Betrag bestimmst du selbst – Spende ist freiwillig.</span>
           </div>
@@ -5805,6 +5831,66 @@
       sections.forEach(function(s){ io.observe(s); });
     }
   })();
+</script>
+<!-- Discord-Mitgliederzahl: live-Anzeige mit localStorage-Cache -->
+<script>
+(function(){
+  var KEY='strudel_discord_members_v1';
+  var TTL=5*60*1000;
+  var URL='https://api.jsonbin.io/v3/b/6a6de7dcda38895dfeac6e77?meta=false';
+  var slots=document.querySelectorAll('.dm-stat');
+  var nodes=document.querySelectorAll('.dm-stat-num');
+  if(!slots.length||!nodes.length)return;
+
+  // a11y: Screenreader sollen die aktualisierte Mitgliederzahl ankündigen
+  slots.forEach(function(slot){
+    if(!slot.hasAttribute('aria-live')) slot.setAttribute('aria-live','polite');
+  });
+
+  function fmt(n){
+    try{ return new Intl.NumberFormat('de-DE').format(n); }
+    catch(e){ return String(n); }
+  }
+  var did=false;
+  function paint(n){
+    if(!isFinite(n)||n<=0)return false;
+    var t=fmt(n);
+    nodes.forEach(function(el){ el.textContent=t; });
+    return true;
+  }
+  function hideAll(){
+    // Wenn weder Cache noch Fetch liefern, blende den ganzen Stat aus
+    // (sonst stünde da „– Mitglieder sind bereits…“ was komisch liest)
+    slots.forEach(function(s){ s.style.display='none'; });
+  }
+  function loadFresh(){
+    fetch(URL)
+      .then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+      .then(function(d){
+        var n=d && (typeof d.members==='number' ? d.members : parseInt(d.members,10));
+        if(!isFinite(n)||n<=0) throw new Error('bad payload');
+        try{ localStorage.setItem(KEY, JSON.stringify({n:n,t:Date.now()})); }catch(e){}
+        if(paint(n)) did=true;
+      })
+      .catch(function(err){
+        if(!did) hideAll();
+        console.warn('Discord-Mitgliederzahl konnte nicht geladen werden:', err);
+      });  }
+  try{
+    var raw=localStorage.getItem(KEY);
+    if(raw){
+      var p=JSON.parse(raw);
+      if(p && typeof p.n==='number' && (Date.now()-p.t)<TTL){
+        did=paint(p.n);
+      }
+    }
+  }catch(e){}
+
+  loadFresh();
+
+  // Auto-Refresh: alle TTL Minuten neu laden, damit offene Tabs wirklich live bleiben
+  setInterval(loadFresh, TTL);
+})();
 </script>
 </body>
 </html>
