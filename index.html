@@ -4319,7 +4319,7 @@
         }
       })
       .catch(function(){
-        codeModalStatus.textContent = 'Worker nicht erreichbar – prüfe die Worker-URL.';
+          codeModalStatus.textContent = 'Worker nicht erreichbar oder Origin nicht erlaubt – prüfe Worker-URL und CORS-Freigabe für diese Domain.';
       })
       .finally(function(){ codeSubmitBtn.disabled = false; });
   });
@@ -5689,7 +5689,7 @@
         })
         .then(function(){
           lastSyncedSnapshot = JSON.stringify(data);
-          setGhStatus('Veröffentlicht ✓ – GitHub Pages aktualisiert die Live-Seite in Kürze für alle Besucher.', true);
+          setGhStatus('Veröffentlicht ✓ – die Live-Seite aktualisiert sich nach dem nächsten Deploy/Refresh.', true);
         })
         .catch(function(err){
           if(err && err.code === 401){
@@ -5697,7 +5697,7 @@
           } else if(err && err.code === 409){
             setGhStatus('Konflikt: Die Datei wurde gerade zeitgleich extern geändert. Bitte kurz erneut auf „Auf GitHub veröffentlichen“ klicken.');
           } else if(err && err.code === 0){
-            setGhStatus('Worker nicht erreichbar. Prüfe die Worker-URL und ob der Worker deployed ist.');
+            setGhStatus('Worker nicht erreichbar. Prüfe Worker-URL, Deployment und CORS-Freigabe für ' + location.origin + '.');
           } else {
             setGhStatus('Veröffentlichen fehlgeschlagen' + (err && err.message ? (': ' + err.message) : '.'));
           }
