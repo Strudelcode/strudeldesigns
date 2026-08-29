@@ -1,0 +1,8 @@
+{
+  "name": "StrudelDesigns",
+  "description": "Kreative Designs für Streamer & Creator – Logos, Overlays und Branding für Gaming-Communities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

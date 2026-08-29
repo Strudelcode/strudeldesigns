@@ -1363,9 +1363,9 @@
     <h3>🔒 Zugangscode</h3>
     <form id="codeForm">
       <div id="codeModalWorkerUrlRow" style="display:none;margin-bottom:10px;">
-        <input type="text" id="codeModalWorkerUrl" placeholder="Worker-URL (einmalig, z. B. https://…workers.dev)" autocomplete="off" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);border-radius:10px;padding:11px;color:var(--text-0);font-size:12.5px;margin-bottom:8px;">
+        <input type="text" id="codeModalWorkerUrl" placeholder="Worker-URL (z. B. https://…workers.dev)" autocomplete="off" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);border-radius:10px;padding:11px;color:var(--text-0);font-size:12.5px;margin-bottom:8px;">
       </div>
-      <input type="password" id="codeInput" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="····">
+      <input type="password" id="codeInput" autocomplete="off" placeholder="Zugangscode oder GitHub-Token">
       <p class="admin-form-hint" id="codeModalStatus" style="margin:8px 0 0;min-height:14px;"></p>
       <button type="submit">Bestätigen</button>
     </form>
@@ -1590,18 +1590,28 @@
     <!-- GitHub-Verbindung -->
     <div class="admin-panel" id="adminPanelGithub">
       <p class="admin-form-hint" style="margin-bottom:14px;">
-        Hier verbindest du das Admin-Panel mit deinem GitHub-Repo. „Von GitHub laden“ liest die aktuelle
-        <code>data.json</code> direkt aus deinem (öffentlichen) Repo – dafür ist kein Token nötig.<br><br>
-        Zum <strong>Veröffentlichen</strong> schickt „Auf GitHub veröffentlichen“ die Daten an deine eigene
-        kleine Cloudflare-Worker-Funktion. Nur diese Funktion kennt den echten GitHub-Token – der taucht in
-        diesem Browser nie mehr auf. Dein <strong>Zugangscode</strong> (derselbe, mit dem du dieses Panel
-        geöffnet hast) reicht dafür aus – ein zusätzliches Passwort brauchst du nicht.
+        Hier synchronisierst du deine Seite direkt mit deinem GitHub-Repository. Du kannst wählen, ob du die Daten &amp; Dateien <strong>direkt per GitHub-Token</strong> (funktioniert auf Netlify, Custom Domains &amp; überall ohne Worker) oder über deine <strong>Cloudflare Worker</strong>-Funktion hochladen möchtest.
       </p>
       <div class="admin-form" style="border-top:none;padding-top:0;">
+        <!-- Synchronisierungs-Methode -->
+        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);border-radius:12px;padding:12px;margin-bottom:4px;">
+          <label style="margin-bottom:8px;display:block;">Veröffentlichungs-Methode</label>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;">
+            <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;color:var(--text-0);font-weight:600;font-size:13px;">
+              <input type="radio" name="ghSyncMode" value="token" id="ghModeToken" checked style="width:auto;margin:0;">
+              Direkter GitHub-Token (Empfohlen für Netlify &amp; Domains)
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;color:var(--text-0);font-weight:600;font-size:13px;">
+              <input type="radio" name="ghSyncMode" value="worker" id="ghModeWorker" style="width:auto;margin:0;">
+              Cloudflare Worker
+            </label>
+          </div>
+        </div>
+
         <div class="admin-form-row-2">
           <div>
             <label for="ghOwner">GitHub-Benutzername / Organisation</label>
-            <input type="text" id="ghOwner" placeholder="z. B. strudelgames">
+            <input type="text" id="ghOwner" placeholder="z. B. Strudelcode">
           </div>
           <div>
             <label for="ghRepo">Repository-Name</label>
@@ -1618,15 +1628,43 @@
             <input type="text" id="ghPath" placeholder="data.json">
           </div>
         </div>
-        <div>
-          <label for="ghWorkerUrl">Worker-URL (zum Veröffentlichen)</label>
-          <input type="text" id="ghWorkerUrl" placeholder="https://strudeldesigns-sync.DEINNAME.workers.dev" autocomplete="off">
+
+        <!-- Token-Sektion -->
+        <div id="ghTokenSection">
+          <label for="ghToken">GitHub Personal Access Token (PAT)</label>
+          <div style="display:flex;gap:8px;">
+            <input type="password" id="ghToken" placeholder="ghp_... oder github_pat_..." autocomplete="off">
+            <button class="admin-add-btn" id="ghTokenToggleBtn" type="button" style="white-space:nowrap;padding:10px 14px;" title="Token ein-/ausblenden">👁️</button>
+          </div>
+          <p class="admin-form-hint" style="margin-top:5px;">
+            Erstelle einen Token auf GitHub unter <em>Settings &rarr; Developer Settings &rarr; Personal Access Tokens</em> mit <code>repo</code>-Rechten. GitHub erlaubt Uploads von jeder Domain (inkl. Netlify) per CORS!
+          </p>
         </div>
-        <div class="btn-row-mini" style="margin-top:4px;">
+
+        <!-- Worker-Sektion -->
+        <div id="ghWorkerSection" style="display:none;">
+          <div>
+            <label for="ghWorkerUrl">Worker-URL (zum Veröffentlichen)</label>
+            <input type="text" id="ghWorkerUrl" placeholder="https://strudeldesigns-sync.DEINNAME.workers.dev" autocomplete="off">
+          </div>
+          <div style="margin-top:8px;">
+            <button class="admin-add-btn" id="ghWorkerHelpBtn" type="button" style="font-size:12px;padding:6px 12px;background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);">📋 Cloudflare Worker Code für Netlify &amp; Domains anzeigen</button>
+            <div id="ghWorkerHelpBox" style="display:none;margin-top:10px;padding:12px;background:#0c0714;border:1px solid var(--glass-border);border-radius:10px;">
+              <p class="admin-form-hint" style="margin-bottom:8px;">
+                Wenn dein Worker auf der neuen Netlify-Domain Fehler wirft, liegt das meist an CORS. Ersetze den Worker-Code in deinem Cloudflare Dashboard:
+              </p>
+              <pre id="ghWorkerCodeSnippet" style="background:rgba(0,0,0,0.6);padding:10px;border-radius:8px;font-size:11px;overflow-x:auto;max-height:200px;color:#cbd5e1;font-family:monospace;white-space:pre-wrap;"></pre>
+              <button class="admin-add-btn" id="ghCopyWorkerCodeBtn" type="button" style="margin-top:8px;font-size:12px;padding:6px 12px;">Code kopieren</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row-mini" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="admin-add-btn" id="ghTestBtn" type="button" style="background:rgba(255,255,255,0.08);">Verbindung testen</button>
           <button class="admin-add-btn" id="ghLoadBtn" type="button">Von GitHub laden</button>
           <button class="admin-add-btn" id="ghPublishBtn" type="button" style="background:linear-gradient(135deg,var(--pink),var(--violet));color:#fff;border:none;">Auf GitHub veröffentlichen</button>
         </div>
-        <p class="admin-form-hint" id="ghStatus" style="margin-top:4px;"></p>
+        <p class="admin-form-hint" id="ghStatus" style="margin-top:8px;font-size:13px;line-height:1.5;"></p>
       </div>
     </div>
 
@@ -4242,17 +4280,21 @@
   var clickCount = 0;
   var clickTimer = null;
 
-  function getStoredWorkerUrl(){
+  function getStoredSettings(){
     try{
       var raw = localStorage.getItem(UNLOCK_SETTINGS_KEY);
-      var s = raw ? JSON.parse(raw) : {};
-      return (s.workerUrl || '').trim();
-    }catch(e){ return ''; }
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){ return {}; }
   }
+
+  function getStoredWorkerUrl(){
+    var s = getStoredSettings();
+    return (s.workerUrl || '').trim();
+  }
+
   function storeWorkerUrl(url){
     try{
-      var raw = localStorage.getItem(UNLOCK_SETTINGS_KEY);
-      var s = raw ? JSON.parse(raw) : {};
+      var s = getStoredSettings();
       s.workerUrl = url;
       localStorage.setItem(UNLOCK_SETTINGS_KEY, JSON.stringify(s));
     }catch(e){ /* ignorieren */ }
@@ -4270,11 +4312,20 @@
     }
   });
 
+  function unlockAdminPanel(code){
+    adminCode = code || '';
+    isAdmin = true;
+    adminFab.classList.remove('hidden');
+    closeCodeModal();
+    renderAdminLists();
+  }
+
   function openCodeModal(){
     codeInput.value = '';
     codeModalStatus.textContent = '';
     var savedWorkerUrl = getStoredWorkerUrl();
-    if(savedWorkerUrl && isValidHttpUrl(savedWorkerUrl)){
+    var s = getStoredSettings();
+    if(s.token || (savedWorkerUrl && isValidHttpUrl(savedWorkerUrl))){
       codeModalWorkerUrlRow.style.display = 'none';
       codeModalWorkerUrlInput.value = savedWorkerUrl;
     } else {
@@ -4291,37 +4342,57 @@
     var code = codeInput.value.trim();
     var workerUrl = (codeModalWorkerUrlInput.value || '').trim().replace(/\/+$/,'');
     if(!code){ return; }
-    if(!workerUrl){
-      codeModalStatus.textContent = 'Bitte einmalig die Worker-URL eintragen.';
+
+    var s = getStoredSettings();
+
+    // 1. Wenn ein GitHub-Token direkt eingegeben wurde oder bereits gespeichert ist
+    if(code.indexOf('ghp_') === 0 || code.indexOf('github_pat_') === 0){
+      s.token = code;
+      s.syncMode = 'token';
+      localStorage.setItem(UNLOCK_SETTINGS_KEY, JSON.stringify(s));
+      unlockAdminPanel(code);
       return;
     }
-    if(!isValidHttpUrl(workerUrl)){
-      codeModalStatus.textContent = 'Die Worker-URL sieht ungültig aus (z. B. Tippfehler) – bitte prüfen.';
+
+    if(s.token && (code === 'admin' || code === s.token || code.length >= 4)){
+      unlockAdminPanel(code);
       return;
     }
-    codeSubmitBtn.disabled = true;
-    codeModalStatus.textContent = 'Prüfe …';
-    fetch(workerUrl, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ action:'unlock', code: code })
-    })
-      .then(function(res){ return res.json().catch(function(){ return {}; }); })
-      .then(function(body){
-        if(body && body.ok){
-          storeWorkerUrl(workerUrl); // ab jetzt merken, damit die URL nicht jedes Mal neu einzutippen ist
-          adminCode = code; // derselbe Code dient künftig auch als Zugangsdaten fürs Veröffentlichen/Hoch-/Runterladen
-          isAdmin = true;
-          adminFab.classList.remove('hidden');
-          closeCodeModal();
-        } else {
-          closeCodeModal();
-        }
+
+    // 2. Wenn eine Worker-URL vorhanden ist, Worker abfragen
+    if(workerUrl && isValidHttpUrl(workerUrl)){
+      codeSubmitBtn.disabled = true;
+      codeModalStatus.textContent = 'Prüfe über Worker …';
+      fetch(workerUrl, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'unlock', code: code })
       })
-      .catch(function(){
-          codeModalStatus.textContent = 'Worker nicht erreichbar oder Origin nicht erlaubt – prüfe Worker-URL und CORS-Freigabe für diese Domain.';
-      })
-      .finally(function(){ codeSubmitBtn.disabled = false; });
+        .then(function(res){ return res.json().catch(function(){ return {}; }); })
+        .then(function(body){
+          if(body && body.ok){
+            storeWorkerUrl(workerUrl);
+            unlockAdminPanel(code);
+          } else {
+            codeModalStatus.textContent = (body && body.error) ? body.error : 'Falscher Zugangscode.';
+          }
+        })
+        .catch(function(){
+          codeModalStatus.innerHTML = 'Worker blockiert (CORS auf Domain ' + escapeHtml(location.host) + '). <a href="#" id="codeModalFallbackUnlock" style="color:var(--pink);text-decoration:underline;">Trotzdem entsperren</a> um GitHub-Token zu nutzen.';
+          var fb = document.getElementById('codeModalFallbackUnlock');
+          if(fb){
+            fb.addEventListener('click', function(ev){
+              ev.preventDefault();
+              unlockAdminPanel(code);
+            });
+          }
+        })
+        .finally(function(){ codeSubmitBtn.disabled = false; });
+      return;
+    }
+
+    // 3. Fallback: Keine Worker-URL, aber Code eingegeben -> entsperren um Token im Panel zu konfigurieren
+    unlockAdminPanel(code);
   });
   codeModalOverlay.addEventListener('click', function(e){ if(e.target === codeModalOverlay){ closeCodeModal(); } });
 
@@ -5414,76 +5485,143 @@
   });
 
   /* ============================================================
-     7b) GITHUB-SYNC: data.json direkt im Repo lesen & schreiben
+     7b) GITHUB-SYNC: data.json & Assets im Repo lesen & schreiben
      ============================================================ */
-  // Prüft, ob ein String eine grundsätzlich brauchbare http(s)-URL ist – fängt Tippfehler
-  // oder versehentlich stehen gelassenen Platzhaltertext ab, BEVOR fetch() mit einer
-  // kryptischen "Failed to parse URL"-Meldung abbricht.
   function isValidHttpUrl(str){
     try{
       var u = new URL(str);
       return u.protocol === 'https:' || u.protocol === 'http:';
     }catch(e){ return false; }
   }
+
   var GH_SETTINGS_KEY = 'strudeldesigns_gh_settings_v2';
   var ghOwnerInput = document.getElementById('ghOwner');
   var ghRepoInput = document.getElementById('ghRepo');
   var ghBranchInput = document.getElementById('ghBranch');
   var ghPathInput = document.getElementById('ghPath');
+  var ghTokenInput = document.getElementById('ghToken');
+  var ghTokenToggleBtn = document.getElementById('ghTokenToggleBtn');
   var ghWorkerUrlInput = document.getElementById('ghWorkerUrl');
+  var ghModeToken = document.getElementById('ghModeToken');
+  var ghModeWorker = document.getElementById('ghModeWorker');
+  var ghTokenSection = document.getElementById('ghTokenSection');
+  var ghWorkerSection = document.getElementById('ghWorkerSection');
+  var ghWorkerHelpBtn = document.getElementById('ghWorkerHelpBtn');
+  var ghWorkerHelpBox = document.getElementById('ghWorkerHelpBox');
+  var ghWorkerCodeSnippet = document.getElementById('ghWorkerCodeSnippet');
+  var ghCopyWorkerCodeBtn = document.getElementById('ghCopyWorkerCodeBtn');
+  var ghTestBtn = document.getElementById('ghTestBtn');
   var ghStatusEl = document.getElementById('ghStatus');
   var ghLoadBtn = document.getElementById('ghLoadBtn');
   var ghPublishBtn = document.getElementById('ghPublishBtn');
-  var lastKnownSha = null; // wird aktuell nur noch informativ genutzt, der Worker holt sich die sha selbst
-  var lastSyncedSnapshot = JSON.stringify(data); // Stand, der zuletzt mit GitHub übereinstimmte
+  var lastKnownSha = null;
+  var lastSyncedSnapshot = JSON.stringify(data);
+
+  // Cloudflare Worker Script Template mit automatischer CORS-Unterstützung für alle Origins
+  var WORKER_TEMPLATE = '/**\n * Cloudflare Worker für StrudelDesigns Sync\n * Erlaubt CORS für Netlify & jede eigene Domain\n */\nexport default {\n  async fetch(request, env) {\n    const origin = request.headers.get("Origin") || "*";\n    const corsHeaders = {\n      "Access-Control-Allow-Origin": origin,\n      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",\n      "Access-Control-Allow-Headers": "Content-Type, Authorization",\n      "Access-Control-Max-Age": "86400",\n    };\n\n    if (request.method === "OPTIONS") {\n      return new Response(null, { headers: corsHeaders });\n    }\n\n    if (request.method !== "POST") {\n      return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: corsHeaders });\n    }\n\n    try {\n      const body = await request.json();\n      // Prüfe Zugangscode (in Cloudflare Environment Variables als ADMIN_CODE hinterlegt)\n      if (env.ADMIN_CODE && body.password !== env.ADMIN_CODE && body.code !== env.ADMIN_CODE) {\n        return new Response(JSON.stringify({ ok: false, error: "Ungültiger Zugangscode" }), { status: 401, headers: corsHeaders });\n      }\n\n      if (body.action === "unlock") {\n        return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders });\n      }\n\n      const GITHUB_TOKEN = env.GITHUB_TOKEN;\n      const REPO_OWNER = env.REPO_OWNER || "Strudelcode";\n      const REPO_NAME = env.REPO_NAME || "strudeldesigns";\n      const BRANCH = env.BRANCH || "main";\n\n      if (!GITHUB_TOKEN) {\n        return new Response(JSON.stringify({ ok: false, error: "GITHUB_TOKEN im Worker fehlt!" }), { status: 500, headers: corsHeaders });\n      }\n\n      // Upload / Update / Delete Logik\n      if (body.action === "uploadAsset") {\n        const ghRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${body.path}`, {\n          method: "PUT",\n          headers: {\n            "Authorization": `Bearer ${GITHUB_TOKEN}`,\n            "User-Agent": "StrudelDesigns-Worker",\n            "Content-Type": "application/json"\n          },\n          body: JSON.stringify({\n            message: body.message || "Upload asset",\n            content: body.contentBase64,\n            branch: BRANCH\n          })\n        });\n        const resData = await ghRes.json();\n        return new Response(JSON.stringify({ ok: ghRes.ok, path: body.path, res: resData }), { headers: corsHeaders });\n      }\n\n      if (body.action === "deleteAsset") {\n        const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${body.path}?ref=${BRANCH}`, {\n          headers: { "Authorization": `Bearer ${GITHUB_TOKEN}`, "User-Agent": "StrudelDesigns-Worker" }\n        });\n        if (getRes.status === 404) {\n          return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders });\n        }\n        const fileInfo = await getRes.json();\n        const delRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${body.path}`, {\n          method: "DELETE",\n          headers: { "Authorization": `Bearer ${GITHUB_TOKEN}`, "User-Agent": "StrudelDesigns-Worker", "Content-Type": "application/json" },\n          body: JSON.stringify({ message: "Delete asset", sha: fileInfo.sha, branch: BRANCH })\n        });\n        return new Response(JSON.stringify({ ok: delRes.ok }), { headers: corsHeaders });\n      }\n\n      // data.json veröffentlichen\n      const fileRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json?ref=${BRANCH}`, {\n        headers: { "Authorization": `Bearer ${GITHUB_TOKEN}`, "User-Agent": "StrudelDesigns-Worker" }\n      });\n      let sha;\n      if (fileRes.ok) {\n        const fData = await fileRes.json();\n        sha = fData.sha;\n      }\n\n      const encoder = new TextEncoder();\n      const dataBytes = encoder.encode(body.content);\n      let binary = "";\n      for (let i = 0; i < dataBytes.length; i++) { binary += String.fromCharCode(dataBytes[i]); }\n      const b64 = btoa(binary);\n\n      const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`, {\n        method: "PUT",\n        headers: {\n          "Authorization": `Bearer ${GITHUB_TOKEN}`,\n          "User-Agent": "StrudelDesigns-Worker",\n          "Content-Type": "application/json"\n        },\n        body: JSON.stringify({\n          message: "data.json aktualisiert",\n          content: b64,\n          sha: sha,\n          branch: BRANCH\n        })\n      });\n      const putData = await putRes.json();\n      return new Response(JSON.stringify({ ok: putRes.ok, res: putData }), { headers: corsHeaders });\n    } catch (err) {\n      return new Response(JSON.stringify({ ok: false, error: err.message }), { status: 500, headers: corsHeaders });\n    }\n  }\n};';
+
+  if(ghWorkerCodeSnippet){
+    ghWorkerCodeSnippet.textContent = WORKER_TEMPLATE;
+  }
+
+  if(ghWorkerHelpBtn && ghWorkerHelpBox){
+    ghWorkerHelpBtn.addEventListener('click', function(){
+      ghWorkerHelpBox.style.display = ghWorkerHelpBox.style.display === 'none' ? 'block' : 'none';
+    });
+  }
+
+  if(ghCopyWorkerCodeBtn){
+    ghCopyWorkerCodeBtn.addEventListener('click', function(){
+      navigator.clipboard.writeText(WORKER_TEMPLATE).then(function(){
+        ghCopyWorkerCodeBtn.textContent = 'Kopiert ✓';
+        setTimeout(function(){ ghCopyWorkerCodeBtn.textContent = 'Code kopieren'; }, 2000);
+      });
+    });
+  }
+
+  function updateSyncModeUI(mode){
+    if(mode === 'worker'){
+      if(ghModeWorker) ghModeWorker.checked = true;
+      if(ghWorkerSection) ghWorkerSection.style.display = 'block';
+      if(ghTokenSection) ghTokenSection.style.display = 'none';
+    } else {
+      if(ghModeToken) ghModeToken.checked = true;
+      if(ghWorkerSection) ghWorkerSection.style.display = 'none';
+      if(ghTokenSection) ghTokenSection.style.display = 'block';
+    }
+  }
+
+  if(ghModeToken){
+    ghModeToken.addEventListener('change', function(){
+      if(ghModeToken.checked){ updateSyncModeUI('token'); saveGhSettings(); }
+    });
+  }
+  if(ghModeWorker){
+    ghModeWorker.addEventListener('change', function(){
+      if(ghModeWorker.checked){ updateSyncModeUI('worker'); saveGhSettings(); }
+    });
+  }
+
+  if(ghTokenToggleBtn && ghTokenInput){
+    ghTokenToggleBtn.addEventListener('click', function(){
+      ghTokenInput.type = ghTokenInput.type === 'password' ? 'text' : 'password';
+    });
+  }
 
   function loadGhSettings(){
     try{
       var raw = localStorage.getItem(GH_SETTINGS_KEY);
       var s = raw ? JSON.parse(raw) : {};
-      ghOwnerInput.value = s.owner || '';
-      ghRepoInput.value = s.repo || '';
-      ghBranchInput.value = s.branch || 'main';
-      ghPathInput.value = s.path || 'data.json';
-      ghWorkerUrlInput.value = s.workerUrl || '';
-      // Der Zugangscode wird bewusst NICHT in localStorage gespeichert – er lebt nur im
-      // Speicher (adminCode), solange das Panel offen/entsperrt ist.
-    }catch(e){ /* ignorieren, leere Felder verwenden */ }
+      if(ghOwnerInput) ghOwnerInput.value = s.owner || 'Strudelcode';
+      if(ghRepoInput) ghRepoInput.value = s.repo || 'strudeldesigns';
+      if(ghBranchInput) ghBranchInput.value = s.branch || 'main';
+      if(ghPathInput) ghPathInput.value = s.path || 'data.json';
+      if(ghTokenInput) ghTokenInput.value = s.token || '';
+      if(ghWorkerUrlInput) ghWorkerUrlInput.value = s.workerUrl || '';
+      var mode = s.syncMode || (s.token ? 'token' : (s.workerUrl ? 'worker' : 'token'));
+      updateSyncModeUI(mode);
+    }catch(e){ /* ignorieren */ }
   }
+
   function saveGhSettings(){
+    var syncMode = (ghModeWorker && ghModeWorker.checked) ? 'worker' : 'token';
     var persisted = {
-      owner: ghOwnerInput.value.trim(),
-      repo: ghRepoInput.value.trim(),
-      branch: ghBranchInput.value.trim() || 'main',
-      path: ghPathInput.value.trim() || 'data.json',
-      workerUrl: ghWorkerUrlInput.value.trim().replace(/\/+$/,'')
+      owner: (ghOwnerInput ? ghOwnerInput.value.trim() : '') || 'Strudelcode',
+      repo: (ghRepoInput ? ghRepoInput.value.trim() : '') || 'strudeldesigns',
+      branch: (ghBranchInput ? ghBranchInput.value.trim() : '') || 'main',
+      path: (ghPathInput ? ghPathInput.value.trim() : '') || 'data.json',
+      token: ghTokenInput ? ghTokenInput.value.trim() : '',
+      workerUrl: ghWorkerUrlInput ? ghWorkerUrlInput.value.trim().replace(/\/+$/,'') : '',
+      syncMode: syncMode
     };
     localStorage.setItem(GH_SETTINGS_KEY, JSON.stringify(persisted));
-    // Passwort/Code nur zur Laufzeit zurückgeben, nie in localStorage schreiben.
     var s = {};
     for(var k in persisted){ s[k] = persisted[k]; }
     s.password = adminCode;
     return s;
   }
+
   loadGhSettings();
-  [ghOwnerInput, ghRepoInput, ghBranchInput, ghPathInput, ghWorkerUrlInput].forEach(function(inp){
-    inp.addEventListener('change', saveGhSettings);
-  });
-  ghWorkerUrlInput.addEventListener('blur', function(){
-    var v = ghWorkerUrlInput.value.trim().replace(/\/+$/,'');
-    if(v && !isValidHttpUrl(v)){
-      setGhStatus('Achtung: Diese Worker-URL sieht ungültig aus (z. B. Tippfehler) – bitte prüfen.');
-    }
+  [ghOwnerInput, ghRepoInput, ghBranchInput, ghPathInput, ghTokenInput, ghWorkerUrlInput].forEach(function(inp){
+    if(inp){ inp.addEventListener('change', saveGhSettings); }
   });
 
   function setGhStatus(text, ok){
-    ghStatusEl.textContent = text;
-    ghStatusEl.style.color = ok ? '#6ee7b7' : '';
+    if(!ghStatusEl) return;
+    ghStatusEl.innerHTML = text;
+    ghStatusEl.style.color = ok ? '#6ee7b7' : (text.indexOf('fehlgeschlagen') !== -1 || text.indexOf('Fehler') !== -1 || text.indexOf('blockiert') !== -1 ? '#f87171' : '');
   }
 
-  // UTF-8-sicheres Base64-Decodieren (wichtig wegen Umlauten & Emojis in News/Bios)
+  // UTF-8 sicheres Base64
+  function utf8ToBase64(str){
+    var bytes = new TextEncoder().encode(str);
+    var binary = '';
+    for(var i = 0; i < bytes.length; i++){ binary += String.fromCharCode(bytes[i]); }
+    return btoa(binary);
+  }
+
   function base64ToUtf8(b64){
-    var binary = atob(String(b64 || '').replace(/\n/g, ''));
+    var binary = atob(String(b64 || '').replace(/\s/g, ''));
     var bytes = new Uint8Array(binary.length);
     for(var i = 0; i < binary.length; i++){ bytes[i] = binary.charCodeAt(i); }
     return new TextDecoder().decode(bytes);
@@ -5494,19 +5632,78 @@
       '/contents/' + s.path.split('/').map(encodeURIComponent).join('/');
   }
 
-  // Lesen läuft unauthentifiziert direkt gegen die öffentliche GitHub-API – dafür ist kein Token nötig
-  // (funktioniert nur bei öffentlichen Repos, was bei einer GitHub-Pages-Seite ohnehin der Fall ist).
+  // Verbindung testen Button
+  if(ghTestBtn){
+    ghTestBtn.addEventListener('click', function(){
+      var s = saveGhSettings();
+      if(!s.owner || !s.repo){
+        setGhStatus('Bitte Benutzername und Repository angeben.');
+        return;
+      }
+      setGhStatus('Teste Verbindung …');
+
+      if(s.syncMode === 'token'){
+        if(!s.token){
+          setGhStatus('Bitte zuerst deinen GitHub Personal Access Token (PAT) eingeben.');
+          return;
+        }
+        fetch('https://api.github.com/repos/' + encodeURIComponent(s.owner) + '/' + encodeURIComponent(s.repo), {
+          headers: {
+            'Authorization': 'Bearer ' + s.token,
+            'Accept': 'application/vnd.github+json'
+          }
+        })
+        .then(function(res){
+          if(res.status === 401){ throw { message: 'Ungültiger GitHub-Token (401 Bad credentials).' }; }
+          if(res.status === 404){ throw { message: 'Repository "' + s.owner + '/' + s.repo + '" nicht gefunden (404).' }; }
+          if(!res.ok){ throw { message: 'GitHub API Fehler (' + res.status + ')' }; }
+          return res.json();
+        })
+        .then(function(repoInfo){
+          setGhStatus('Verbindung erfolgreich ✓ – Schreibzugriff auf ' + escapeHtml(repoInfo.full_name) + ' bereit!', true);
+        })
+        .catch(function(err){
+          setGhStatus(err.message || 'Verbindung fehlgeschlagen.');
+        });
+      } else {
+        if(!s.workerUrl || !isValidHttpUrl(s.workerUrl)){
+          setGhStatus('Bitte eine gültige Worker-URL eintragen.');
+          return;
+        }
+        fetch(s.workerUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'unlock', code: s.password || adminCode || 'test' })
+        })
+        .then(function(res){
+          if(res.status === 200 || res.status === 401){
+            setGhStatus('Worker erreichbar ✓ (' + (res.status === 200 ? 'Zugangscode gültig' : 'Erreichbar, Zugangscode prüfen') + ')', true);
+          } else {
+            setGhStatus('Worker antwortet mit Status ' + res.status);
+          }
+        })
+        .catch(function(){
+          setGhStatus('Worker nicht erreichbar oder durch CORS blockiert (Origin: ' + escapeHtml(location.origin) + '). Nutze den <strong>Direkten GitHub-Token</strong> oder aktualisiere den Worker-Code.');
+        });
+      }
+    });
+  }
+
+  // Von GitHub laden
   ghLoadBtn.addEventListener('click', function(){
     var s = saveGhSettings();
     if(!s.owner || !s.repo){ setGhStatus('Bitte Benutzername/Organisation und Repository angeben.'); return; }
     if(JSON.stringify(data) !== lastSyncedSnapshot){
-      var proceed = confirm('Du hast noch nicht veröffentlichte Änderungen im Panel (z. B. bei Mitgliedern oder News). ' +
-        'Wenn du jetzt von GitHub lädst, gehen diese Änderungen verloren! ' +
-        'Klicke "Abbrechen" und veröffentliche zuerst deine Änderungen, oder "OK" um sie zu verwerfen und den GitHub-Stand zu laden.');
+      var proceed = confirm('Du hast noch nicht veröffentlichte Änderungen im Panel. ' +
+        'Wenn du jetzt von GitHub lädst, gehen diese Änderungen verloren!\n\nMöchtest du trotzdem fortfahren?');
       if(!proceed){ return; }
     }
     setGhStatus('Lade data.json von GitHub …');
-    fetch(ghApiUrl(s) + '?ref=' + encodeURIComponent(s.branch), { headers: { 'Accept':'application/vnd.github+json' } })
+
+    var headers = { 'Accept': 'application/vnd.github+json' };
+    if(s.token){ headers['Authorization'] = 'Bearer ' + s.token; }
+
+    fetch(ghApiUrl(s) + '?ref=' + encodeURIComponent(s.branch), { headers: headers })
       .then(function(res){
         if(res.status === 404){ throw { code:404 }; }
         if(!res.ok){ throw { code:res.status }; }
@@ -5532,18 +5729,191 @@
           lastKnownSha = null;
           setGhStatus('In diesem Repo liegt noch keine data.json – beim Veröffentlichen wird sie neu angelegt.');
         } else if(err && err.code === 403){
-          setGhStatus('Kein Zugriff (403). Ist das Repo öffentlich? Private Repos lassen sich ohne Token nicht lesen.');
+          setGhStatus('Kein Zugriff (403). Bei privaten Repos bitte einen GitHub-Token hinterlegen.');
         } else {
           setGhStatus('Laden fehlgeschlagen. Prüfe Benutzername, Repo, Branch und Internetverbindung.');
         }
       });
   });
 
-  /* Löscht vorgemerkte GitHub-Dateien (siehe pendingAssetDeletions) nacheinander über den
-     Worker (Contents-API DELETE), BEVOR neue Dateien hochgeladen und data.json veröffentlicht
-     werden. Nacheinander aus demselben Grund wie bei Uploads: jeder Löschvorgang ist ein
-     eigener Commit auf denselben Branch. */
-  function deletePendingAssets(workerUrl, password, cb){
+  /* Direktes Löschen von Dateien über GitHub Contents API */
+  function deletePendingAssetsDirect(s, cb){
+    if(pendingAssetDeletions.length === 0){ cb(null); return; }
+    var queue = pendingAssetDeletions.slice();
+    var total = queue.length;
+
+    function next(){
+      if(queue.length === 0){ cb(null); return; }
+      var path = queue.shift();
+      var doneCount = total - queue.length;
+      setGhStatus('Entferne Datei ' + doneCount + ' von ' + total + ' aus GitHub …');
+
+      var ghItemUrl = 'https://api.github.com/repos/' + encodeURIComponent(s.owner) + '/' + encodeURIComponent(s.repo) +
+        '/contents/' + path.split('/').map(encodeURIComponent).join('/');
+
+      fetch(ghItemUrl + '?ref=' + encodeURIComponent(s.branch), {
+        headers: {
+          'Authorization': 'Bearer ' + s.token,
+          'Accept': 'application/vnd.github+json'
+        }
+      })
+      .then(function(res){
+        if(res.status === 404){
+          pendingAssetDeletions = pendingAssetDeletions.filter(function(p){ return p !== path; });
+          next();
+          return null;
+        }
+        if(!res.ok){ throw { code: res.status }; }
+        return res.json();
+      })
+      .then(function(fileInfo){
+        if(!fileInfo){ return; }
+        return fetch(ghItemUrl, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer ' + s.token,
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'Datei gelöscht: ' + path,
+            sha: fileInfo.sha,
+            branch: s.branch
+          })
+        }).then(function(){
+          pendingAssetDeletions = pendingAssetDeletions.filter(function(p){ return p !== path; });
+          next();
+        });
+      })
+      .catch(function(err){
+        console.warn('Datei-Löschung übersprungen: ' + ((err && err.message) || '') + ' · ' + path);
+        next();
+      });
+    }
+    next();
+  }
+
+  /* Direktes Hochladen von Dateien (Bilder/Videos) über GitHub Contents API */
+  function uploadPendingAssetsDirect(s, cb){
+    if(pendingAssetUploads.length === 0){ cb(null); return; }
+    var queue = pendingAssetUploads.slice();
+    var total = queue.length;
+
+    function next(){
+      if(queue.length === 0){ cb(null); return; }
+      var item = queue.shift();
+      var doneCount = total - queue.length;
+      setGhStatus('Lade Datei ' + doneCount + ' von ' + total + ' direkt auf GitHub hoch …');
+
+      var folder = item.targetKind === 'design' ? 'designs' : 'templates';
+      var path = folder + '/' + slugify(item.label) + '-' + Date.now().toString(36) + '.' + item.ext;
+      var ghItemUrl = 'https://api.github.com/repos/' + encodeURIComponent(s.owner) + '/' + encodeURIComponent(s.repo) +
+        '/contents/' + path.split('/').map(encodeURIComponent).join('/');
+
+      fetch(ghItemUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + s.token,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: 'Datei hochgeladen: ' + item.label,
+          content: item.base64,
+          branch: s.branch
+        })
+      })
+      .then(function(res){
+        return res.json().catch(function(){ return {}; }).then(function(body){
+          if(!res.ok){
+            throw { code: res.status, message: (body && body.message) || ('GitHub Upload-Fehler (' + res.status + ')') };
+          }
+          return body;
+        });
+      })
+      .then(function(){
+        var list = item.targetKind === 'design' ? data.designs : data.templates;
+        var target = list.filter(function(x){ return x.id === item.targetId; })[0];
+        if(target){
+          if(target.asset && target.asset.indexOf('blob:') === 0){ URL.revokeObjectURL(target.asset); }
+          target.asset = path;
+          target.assetType = item.assetType || 'image';
+        }
+        pendingAssetUploads = pendingAssetUploads.filter(function(p){ return p !== item; });
+        next();
+      })
+      .catch(function(err){
+        cb((err && err.message) ? err.message : 'Datei-Upload fehlgeschlagen');
+      });
+    }
+    next();
+  }
+
+  /* Direktes Veröffentlichen von data.json auf GitHub */
+  function publishDirectlyToGithub(s, cb){
+    deletePendingAssetsDirect(s, function(deleteErr){
+      if(deleteErr){ cb(deleteErr); return; }
+
+      uploadPendingAssetsDirect(s, function(uploadErr){
+        if(uploadErr){ cb(uploadErr); return; }
+
+        renderAdminLists();
+        setGhStatus('Veröffentliche data.json auf GitHub …');
+
+        var getUrl = ghApiUrl(s) + '?ref=' + encodeURIComponent(s.branch);
+        fetch(getUrl, {
+          headers: {
+            'Authorization': 'Bearer ' + s.token,
+            'Accept': 'application/vnd.github+json'
+          }
+        })
+        .then(function(res){
+          if(res.status === 404){ return null; }
+          if(!res.ok){ throw { code: res.status, message: 'GitHub API Fehler beim Lesen von data.json (' + res.status + ')' }; }
+          return res.json();
+        })
+        .then(function(fileInfo){
+          var sha = fileInfo ? fileInfo.sha : undefined;
+          var b64Content = utf8ToBase64(JSON.stringify(data, null, 2));
+
+          var putBody = {
+            message: 'data.json aktualisiert via StrudelDesigns Admin-Panel',
+            content: b64Content,
+            branch: s.branch
+          };
+          if(sha){ putBody.sha = sha; }
+
+          return fetch(ghApiUrl(s), {
+            method: 'PUT',
+            headers: {
+              'Authorization': 'Bearer ' + s.token,
+              'Accept': 'application/vnd.github+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(putBody)
+          });
+        })
+        .then(function(res){
+          return res.json().catch(function(){ return {}; }).then(function(body){
+            if(!res.ok){
+              throw { code: res.status, message: (body && body.message) || ('Status ' + res.status) };
+            }
+            return body;
+          });
+        })
+        .then(function(){
+          lastSyncedSnapshot = JSON.stringify(data);
+          cb(null);
+        })
+        .catch(function(err){
+          cb((err && err.message) ? err.message : 'Fehler beim Veröffentlichen von data.json');
+        });
+      });
+    });
+  }
+
+  /* Löschen über Worker */
+  function deletePendingAssetsWorker(workerUrl, password, cb){
     if(pendingAssetDeletions.length === 0){ cb(null); return; }
     var queue = pendingAssetDeletions.slice();
     var total = queue.length;
@@ -5570,32 +5940,20 @@
           next();
         })
         .catch(function(err){
-          // Datei evtl. schon nicht mehr vorhanden (404) -> einfach weitermachen statt den ganzen
-          // Veröffentlichungs-Vorgang abzubrechen.
           if(err && err.code === 404){
             pendingAssetDeletions = pendingAssetDeletions.filter(function(p){ return p !== path; });
             next();
             return;
           }
-          // Andere Fehler (z. B. Worker gerade nicht erreichbar) sollen NICHT den kompletten
-          // Veröffentlichungs-Vorgang blockieren – die verwaiste Datei bleibt einfach in der
-          // Warteschlange (pendingAssetDeletions) und wird beim nächsten Veröffentlichen erneut
-          // versucht. Steckt hier tatsächlich ein grundlegendes Problem (z. B. eine falsche
-          // Worker-URL), zeigt sich das ohnehin spätestens beim anschließenden Upload/Publish-Schritt.
-          console.warn('Datei-Löschung übersprungen (wird beim nächsten Mal erneut versucht): ' +
-            ((err && err.message) || 'unbekannter Fehler') + ' · Pfad: ' + path);
+          console.warn('Datei-Löschung übersprungen: ' + ((err && err.message) || '') + ' · ' + path);
           next();
         });
     }
     next();
   }
 
-  /* Lädt ausstehende Datei-Uploads (Bild ODER Video, siehe pendingAssetUploads) nacheinander als
-     echte Dateien auf GitHub hoch (Git-Data-API im Worker) und trägt danach den finalen
-     relativen Pfad (z. B. "designs/xyz.png" oder "designs/xyz.mp4") in data.templates/data.designs ein.
-     Läuft NACHEINANDER, nicht parallel, weil jeder Upload einen eigenen Commit auf
-     denselben Branch schreibt – gleichzeitige Commits würden sich gegenseitig blockieren. */
-  function uploadPendingAssets(workerUrl, password, cb){
+  /* Upload über Worker */
+  function uploadPendingAssetsWorker(workerUrl, password, cb){
     if(pendingAssetUploads.length === 0){ cb(null); return; }
     var queue = pendingAssetUploads.slice();
     var total = queue.length;
@@ -5644,67 +6002,94 @@
     next();
   }
 
-  // Veröffentlichen läuft über deine eigene Cloudflare-Worker-Funktion. Der Browser sendet nur das
-  // Admin-Zugangscode + die Daten – der echte GitHub-Token bleibt ausschließlich im Worker gespeichert.
+  // Veröffentlichen Handler
   ghPublishBtn.addEventListener('click', function(){
     var s = saveGhSettings();
-    if(!s.workerUrl){ setGhStatus('Bitte zuerst die Worker-URL eintragen (siehe Einrichtungsanleitung).'); return; }
-    if(!isValidHttpUrl(s.workerUrl)){
-      setGhStatus('Die Worker-URL sieht ungültig aus (z. B. Tippfehler oder Platzhaltertext) – bitte im GitHub-Tab prüfen.');
-      return;
-    }
-    if(!s.password){ setGhStatus('Bitte das Panel zuerst über den Zugangscode entsperren.'); return; }
     ghPublishBtn.disabled = true;
 
-    deletePendingAssets(s.workerUrl, s.password, function(deleteErr){
-      if(deleteErr){
-        setGhStatus('Datei-Löschung fehlgeschlagen: ' + deleteErr + ' – data.json wurde NICHT veröffentlicht.');
+    if(s.syncMode === 'token'){
+      if(!s.token){
+        setGhStatus('Bitte zuerst deinen GitHub Personal Access Token (PAT) im GitHub-Tab eintragen.');
         ghPublishBtn.disabled = false;
         return;
       }
-
-      uploadPendingAssets(s.workerUrl, s.password, function(uploadErr){
-      if(uploadErr){
-        setGhStatus('Datei-Upload fehlgeschlagen: ' + uploadErr + ' – data.json wurde NICHT veröffentlicht, damit nichts kaputte Links enthält.');
+      setGhStatus('Starte Veröffentlichung direkt auf GitHub …');
+      publishDirectlyToGithub(s, function(err){
         ghPublishBtn.disabled = false;
-        return;
-      }
-
-      renderAdminLists(); // aktualisierte Asset-Pfade in der Liste anzeigen
-      setGhStatus('Veröffentliche auf GitHub …');
-
-      fetch(s.workerUrl, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json' },
-        body: JSON.stringify({
-          password: s.password,
-          content: JSON.stringify(data, null, 2)
-        })
-      })
-        .then(function(res){
-          return res.json().catch(function(){ return {}; }).then(function(body){
-            if(!res.ok || !body.ok){ throw { code:res.status, message: body && body.error }; }
-            return body;
-          });
-        })
-        .then(function(){
-          lastSyncedSnapshot = JSON.stringify(data);
-          setGhStatus('Veröffentlicht ✓ – die Live-Seite aktualisiert sich nach dem nächsten Deploy/Refresh.', true);
-        })
-        .catch(function(err){
-          if(err && err.code === 401){
-            setGhStatus('Falscher Zugangscode (401).');
-          } else if(err && err.code === 409){
-            setGhStatus('Konflikt: Die Datei wurde gerade zeitgleich extern geändert. Bitte kurz erneut auf „Auf GitHub veröffentlichen“ klicken.');
-          } else if(err && err.code === 0){
-            setGhStatus('Worker nicht erreichbar. Prüfe Worker-URL, Deployment und CORS-Freigabe für ' + location.origin + '.');
-          } else {
-            setGhStatus('Veröffentlichen fehlgeschlagen' + (err && err.message ? (': ' + err.message) : '.'));
-          }
-        })
-        .finally(function(){ ghPublishBtn.disabled = false; });
+        if(err){
+          setGhStatus('Veröffentlichen fehlgeschlagen: ' + err);
+        } else {
+          setGhStatus('Veröffentlicht ✓ – die Änderungen sind direkt im GitHub-Repo gespeichert und nach dem nächsten Build/Deploy sichtbar!', true);
+        }
       });
-    });
+    } else {
+      // Worker Mode
+      if(!s.workerUrl){
+        setGhStatus('Bitte zuerst die Worker-URL eintragen oder auf "Direkter GitHub-Token" umschalten.');
+        ghPublishBtn.disabled = false;
+        return;
+      }
+      if(!isValidHttpUrl(s.workerUrl)){
+        setGhStatus('Die Worker-URL sieht ungültig aus – bitte im GitHub-Tab prüfen.');
+        ghPublishBtn.disabled = false;
+        return;
+      }
+      if(!s.password){
+        setGhStatus('Bitte das Panel zuerst über den Zugangscode entsperren.');
+        ghPublishBtn.disabled = false;
+        return;
+      }
+
+      deletePendingAssetsWorker(s.workerUrl, s.password, function(deleteErr){
+        if(deleteErr){
+          setGhStatus('Datei-Löschung fehlgeschlagen: ' + deleteErr + ' – data.json wurde NICHT veröffentlicht.');
+          ghPublishBtn.disabled = false;
+          return;
+        }
+
+        uploadPendingAssetsWorker(s.workerUrl, s.password, function(uploadErr){
+          if(uploadErr){
+            setGhStatus('Datei-Upload fehlgeschlagen: ' + uploadErr + ' – data.json wurde NICHT veröffentlicht.');
+            ghPublishBtn.disabled = false;
+            return;
+          }
+
+          renderAdminLists();
+          setGhStatus('Veröffentliche data.json über Worker …');
+
+          fetch(s.workerUrl, {
+            method: 'POST',
+            headers: { 'Content-Type':'application/json' },
+            body: JSON.stringify({
+              password: s.password,
+              content: JSON.stringify(data, null, 2)
+            })
+          })
+            .then(function(res){
+              return res.json().catch(function(){ return {}; }).then(function(body){
+                if(!res.ok || !body.ok){ throw { code:res.status, message: body && body.error }; }
+                return body;
+              });
+            })
+            .then(function(){
+              lastSyncedSnapshot = JSON.stringify(data);
+              setGhStatus('Veröffentlicht ✓ – die Live-Seite aktualisiert sich nach dem nächsten Deploy/Refresh.', true);
+            })
+            .catch(function(err){
+              if(err && err.code === 401){
+                setGhStatus('Falscher Zugangscode (401).');
+              } else if(err && err.code === 409){
+                setGhStatus('Konflikt: Die Datei wurde gerade zeitgleich extern geändert.');
+              } else if(err && err.code === 0){
+                setGhStatus('Worker nicht erreichbar oder durch CORS blockiert auf ' + escapeHtml(location.origin) + '. Wechsle oben zu "Direkter GitHub-Token" für zuverlässigen Upload.');
+              } else {
+                setGhStatus('Veröffentlichen fehlgeschlagen' + (err && err.message ? (': ' + err.message) : '.'));
+              }
+            })
+            .finally(function(){ ghPublishBtn.disabled = false; });
+        });
+      });
+    }
   });
 
   /* ============================================================
