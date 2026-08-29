@@ -1973,7 +1973,8 @@
     "Intro",
     "Outro",
     "Stream Overlay",
-    "Thumbnail"
+    "Thumbnail",
+    "Flyer"
   ],
   "branding": {
     "asset": null,
