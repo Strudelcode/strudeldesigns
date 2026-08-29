@@ -1,0 +1,47 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const distDir = path.join(__dirname, 'dist');
+
+// Ensure dist directory exists
+if (fs.existsSync(distDir)) {
+  fs.rmSync(distDir, { recursive: true, force: true });
+}
+fs.mkdirSync(distDir, { recursive: true });
+
+// Items to copy to dist
+const itemsToCopy = [
+  'index.html',
+  'data.json',
+  'StrudelDesigns.png',
+  'sd_Banner.png',
+  'sd_logo_full.png',
+  'google3a461180ac099820.html',
+  'assets',
+  'designs',
+  'templates',
+  '_redirects',
+  '_headers'
+];
+
+for (const item of itemsToCopy) {
+  const src = path.join(__dirname, item);
+  const dest = path.join(distDir, item);
+
+  if (fs.existsSync(src)) {
+    const stats = fs.statSync(src);
+    if (stats.isDirectory()) {
+      fs.cpSync(src, dest, { recursive: true });
+      console.log(`Copied directory: ${item} -> dist/${item}`);
+    } else {
+      fs.copyFileSync(src, dest);
+      console.log(`Copied file: ${item} -> dist/${item}`);
+    }
+  }
+}
+
+console.log('Build completed successfully. Dist output generated in ./dist');
