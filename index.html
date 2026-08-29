@@ -1418,11 +1418,15 @@
         </div>
         <div>
           <label>Profilbild (optional)</label>
-          <div class="admin-file-row">
+          <div class="admin-file-row" style="align-items:center;">
+            <div id="newMemberAvatarPreviewWrap" style="display:none; align-items:center; gap:8px; margin-right:4px;">
+              <img id="newMemberAvatarPreview" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid rgba(255,255,255,0.2);">
+              <button type="button" id="newMemberAvatarClearBtn" class="admin-cancel-btn" style="padding:4px 8px; font-size:12px;">Entfernen</button>
+            </div>
             <input type="text" id="newMemberAvatarUrl" placeholder="Bild-URL einfÃ¼gen, z. B. https://.../twitch-logo.png" style="flex:1;">
             <label class="admin-mini-upload">
               Datei wÃ¤hlen
-              <input type="file" id="newMemberAvatarFile" accept="image/png,image/jpeg,image/webp,image/gif">
+              <input type="file" id="newMemberAvatarFile" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml">
             </label>
           </div>
           <span class="admin-form-hint" id="newMemberAvatarName">Kein Bild ausgewÃ¤hlt â€“ URL oder Datei angeben.</span>
@@ -1863,7 +1867,23 @@
     return cloneData(DEFAULT_DATA);
   }
 
-  function saveData(d){ localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+  function saveData(d){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+    }catch(err){
+      console.warn("LocalStorage voll oder eingeschrÃ¤nkt:", err);
+      try{
+        var light = cloneData(d);
+        (light.members || []).forEach(function(m){
+          if(m.avatar && m.avatar.indexOf("data:") === 0 && m.avatar.length > 500){ m.avatar = ""; }
+        });
+        (light.designs || []).forEach(function(x){
+          if(x.asset && x.asset.indexOf("data:") === 0 && x.asset.length > 500){ x.asset = ""; }
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(light));
+      }catch(err2){}
+    }
+  }
 
   var data = loadData();
 
@@ -4460,93 +4480,159 @@
     renderBrandingAdmin();
 
     // ---------- Mitglieder ----------
-    adminMembersList.innerHTML = data.members.length ? '' : '<div class="admin-form-hint">Noch keine Mitglieder.</div>';
+    adminMembersList.innerHTML = data.members.length ? "" : "<div class=\"admin-form-hint\">Noch keine Mitglieder.</div>";
     data.members.forEach(function(m){
-      var row = document.createElement('div');
-
+      var row = document.createElement("div");
       if(editingMemberId === m.id){
-        row.className = 'admin-list-item admin-list-item-editing';
+        row.className = "admin-list-item admin-list-item-editing";
+        var hasAvatar = !!m.avatar;
+        var avatarSrc = m.avatar || "";
         row.innerHTML =
-          '<div class="admin-edit-form">' +
-            '<div class="admin-form-row">' +
-              '<div><label>Name</label><input type="text" class="edit-name" value="' + escapeHtml(m.name) + '"></div>' +
-              '<div><label>Rolle / Status</label><input type="text" class="edit-role" value="' + escapeHtml(m.role || '') + '"></div>' +
-              '<div><label>KÃ¼rzel</label><input type="text" class="edit-initials" maxlength="2" value="' + escapeHtml(m.initials || '') + '"></div>' +
-            '</div>' +
-            '<div><label>Beschreibung (optional)</label><textarea class="edit-bio" style="min-height:64px;">' + escapeHtml(m.bio || '') + '</textarea></div>' +
-            '<div>' +
-              '<label>Profilbild (optional)</label>' +
-              '<div class="admin-file-row">' +
-                '<input type="text" class="edit-avatar-url" placeholder="Bild-URL" value="' + escapeHtml(m.avatar || '') + '" style="flex:1;">' +
-                '<label class="admin-mini-upload">Datei wÃ¤hlen<input type="file" class="edit-avatar-file" accept="image/png,image/jpeg,image/webp,image/gif"></label>' +
-              '</div>' +
-            '</div>' +
-            '<div>' +
-              '<label>Links</label>' +
-              '<div class="edit-member-links-rows"></div>' +
-              '<button class="admin-cancel-btn edit-add-link-row" type="button" style="margin-top:8px;">+ Link hinzufÃ¼gen</button>' +
-            '</div>' +
-            '<div class="item-actions" style="justify-content:flex-end;">' +
-              '<button class="admin-cancel-btn" type="button">Abbrechen</button>' +
-              '<button class="admin-save-inline-btn" type="button">Ãœbernehmen</button>' +
-            '</div>' +
-          '</div>';
-        var linkRowsEl = row.querySelector('.edit-member-links-rows');
+          "<div class=\"admin-edit-form\">" +
+            "<div class=\"admin-form-row\">" +
+              "<div><label>Name</label><input type=\"text\" class=\"edit-name\" value=\"" + escapeHtml(m.name) + "\"></div>" +
+              "<div><label>Rolle / Status</label><input type=\"text\" class=\"edit-role\" value=\"" + escapeHtml(m.role || "") + "\"></div>" +
+              "<div><label>KÃ¼rzel</label><input type=\"text\" class=\"edit-initials\" maxlength=\"2\" value=\"" + escapeHtml(m.initials || "") + "\"></div>" +
+            "</div>" +
+            "<div><label>Beschreibung (optional)</label><textarea class=\"edit-bio\" style=\"min-height:64px;\">" + escapeHtml(m.bio || "") + "</textarea></div>" +
+            "<div>" +
+              "<label>Profilbild (optional)</label>" +
+              "<div class="admin-file-row" style="align-items:center;">" +
+                (hasAvatar
+                  ? "<img class="edit-avatar-preview" src="" + escapeHtml(avatarSrc) + "" style="width:36px; height:36px; border-radius:50%; object-fit:cover; margin-right:8px; border:1px solid rgba(255,255,255,0.2); flex-shrink:0;">"
+                  : "<div class="edit-avatar-preview-placeholder" style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:8px; flex-shrink:0;">" + escapeHtml(m.initials || "?") + "</div>") +
+                "<input type="text" class="edit-avatar-url" placeholder="Bild-URL oder Datei wÃ¤hlen" value="" + (avatarSrc && avatarSrc.indexOf("blob:") !== 0 && avatarSrc.indexOf("data:") !== 0 ? escapeHtml(avatarSrc) : "") + "" style="flex:1;">" +
+                "<label class="admin-mini-upload">Datei wÃ¤hlen<input type="file" class="edit-avatar-file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"></label>" +
+                "<button type="button" class="admin-cancel-btn edit-avatar-remove" style="padding:4px 8px; font-size:12px; margin-left:4px;">Entfernen</button>" +
+              "</div>" +
+              "<span class="admin-form-hint edit-avatar-hint">" + (hasAvatar ? "Aktuelles Bild geladen" : "Kein Bild vorhanden â€“ URL oder Datei angeben.") + "</span>" +
+            "</div>" +
+            "<div>" +
+              "<label>Links</label>" +
+              "<div class="edit-member-links-rows"></div>" +
+              "<button class="admin-cancel-btn edit-add-link-row" type="button" style="margin-top:8px;">+ Link hinzufÃ¼gen</button>" +
+            "</div>" +
+            "<div class="item-actions" style="justify-content:flex-end;">" +
+              "<button class="admin-cancel-btn" type="button">Abbrechen</button>" +
+              "<button class="admin-save-inline-btn" type="button">Ãœbernehmen</button>" +
+            "</div>" +
+          "</div>";
+
+        var linkRowsEl = row.querySelector(".edit-member-links-rows");
         (m.links || []).forEach(function(l){ createMemberLinkRow(linkRowsEl, l.label, l.url); });
-        row.querySelector('.edit-add-link-row').addEventListener('click', function(){
-          createMemberLinkRow(linkRowsEl, '', '');
+        row.querySelector(".edit-add-link-row").addEventListener("click", function(){
+          createMemberLinkRow(linkRowsEl, "", "");
         });
-        row.querySelector('.item-actions .admin-cancel-btn').addEventListener('click', function(){
+        row.querySelector(".item-actions .admin-cancel-btn").addEventListener("click", function(){
           editingMemberId = null;
           renderAdminLists();
         });
-        row.querySelector('.admin-save-inline-btn').addEventListener('click', function(){
-          var name = row.querySelector('.edit-name').value.trim();
-          if(!name){ setStatus('Bitte einen Namen angeben.'); return; }
-          m.name = name;
-          m.role = row.querySelector('.edit-role').value.trim() || 'Mitglied';
-          m.initials = (row.querySelector('.edit-initials').value.trim().toUpperCase() || name.slice(0,2).toUpperCase()).slice(0,2);
-          m.bio = row.querySelector('.edit-bio').value.trim();
-          m.links = collectMemberLinks(linkRowsEl);
-          var avatarFile = row.querySelector('.edit-avatar-file').files[0];
-          var finishSave = function(avatar){
-            if(avatar !== undefined){ m.avatar = avatar; }
-            editingMemberId = null;
-            renderAdminLists();
-            setStatus('Mitglied aktualisiert â€“ noch nicht gespeichert.');
-          };
-          if(avatarFile){
-            setStatus('Profilbild wird verarbeitet â€¦');
-            compressImage(avatarFile, 300, function(dataUrl){
-              if(!dataUrl){ setStatus('Profilbild konnte nicht verarbeitet werden.'); return; }
-              finishSave(dataUrl);
-            });
-          } else {
-            finishSave(row.querySelector('.edit-avatar-url').value.trim());
+
+        var editFileInput = row.querySelector(".edit-avatar-file");
+        var editUrlInput = row.querySelector(".edit-avatar-url");
+        var editHint = row.querySelector(".edit-avatar-hint");
+        var editRemoveBtn = row.querySelector(".edit-avatar-remove");
+        var newPendingAvatar = null;
+        var avatarToRemove = false;
+
+        editFileInput.addEventListener("change", function(e){
+          var file = e.target.files && e.target.files[0];
+          if(!file){ return; }
+          editHint.textContent = "Datei wird verarbeitet â€¦";
+          loadMediaForGithubUpload(file, "image", function(previewUrl, assetType, err, pendingUpload){
+            if(err){ editHint.textContent = err; return; }
+            newPendingAvatar = { previewUrl: previewUrl, pendingUpload: pendingUpload };
+            avatarToRemove = false;
+            var prev = row.querySelector(".edit-avatar-preview") || row.querySelector(".edit-avatar-preview-placeholder");
+            if(prev){
+              var img = document.createElement("img");
+              img.className = "edit-avatar-preview";
+              img.src = previewUrl;
+              img.style.cssText = "width:36px; height:36px; border-radius:50%; object-fit:cover; margin-right:8px; border:1px solid rgba(255,255,255,0.2); flex-shrink:0;";
+              prev.parentNode.replaceChild(img, prev);
+            }
+            editHint.textContent = "AusgewÃ¤hlt: " + file.name + " (wird beim VerÃ¶ffentlichen auf GitHub gespeichert)";
+            editUrlInput.value = "";
+          });
+        });
+
+        editRemoveBtn.addEventListener("click", function(){
+          newPendingAvatar = null;
+          avatarToRemove = true;
+          editUrlInput.value = "";
+          editFileInput.value = "";
+          editHint.textContent = "Profilbild entfernt";
+          var prev = row.querySelector(".edit-avatar-preview");
+          if(prev){
+            var ph = document.createElement("div");
+            ph.className = "edit-avatar-preview-placeholder";
+            ph.style.cssText = "width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:8px; flex-shrink:0;";
+            ph.textContent = row.querySelector(".edit-initials").value.trim() || "?";
+            prev.parentNode.replaceChild(ph, prev);
           }
         });
+
+        row.querySelector(".admin-save-inline-btn").addEventListener("click", function(){
+          var name = row.querySelector(".edit-name").value.trim();
+          if(!name){ setStatus("Bitte einen Namen angeben."); return; }
+          m.name = name;
+          m.role = row.querySelector(".edit-role").value.trim() || "Mitglied";
+          m.initials = (row.querySelector(".edit-initials").value.trim().toUpperCase() || name.slice(0,2).toUpperCase()).slice(0,2);
+          m.bio = row.querySelector(".edit-bio").value.trim();
+          m.links = collectMemberLinks(linkRowsEl);
+
+          if(newPendingAvatar){
+            if(isRealGithubAssetPath(m.avatar)){ queueAssetDeletion(m.avatar); }
+            registerPendingAssetUpload("member", m.id, newPendingAvatar.pendingUpload, "avatar-" + name);
+            m.avatar = newPendingAvatar.previewUrl;
+          } else if(avatarToRemove){
+            if(isRealGithubAssetPath(m.avatar)){ queueAssetDeletion(m.avatar); }
+            clearPendingAssetUpload("member", m.id);
+            m.avatar = "";
+          } else {
+            var urlVal = editUrlInput.value.trim();
+            if(urlVal !== m.avatar){
+              if(isRealGithubAssetPath(m.avatar)){ queueAssetDeletion(m.avatar); }
+              clearPendingAssetUpload("member", m.id);
+              m.avatar = urlVal;
+            }
+          }
+
+          editingMemberId = null;
+          renderAdminLists();
+          renderPublic();
+          setStatus("Mitglied aktualisiert â€“ noch nicht auf GitHub verÃ¶ffentlicht.");
+        });
       } else {
-        row.className = 'admin-list-item';
+        row.className = "admin-list-item";
         row.innerHTML =
-          '<div class="item-main"><div class="item-title">' + escapeHtml(m.name) + '</div>' +
-          '<div class="item-meta">' + escapeHtml(m.role || '') + ' Â· KÃ¼rzel: ' + escapeHtml(m.initials || '') +
-            (m.avatar ? ' Â· Bild âœ“' : '') + (m.links && m.links.length ? ' Â· ' + m.links.length + ' Link(s)' : '') +
-            (m.bio ? ' Â· hat Beschreibung' : '') + '</div></div>' +
-          '<div class="item-actions"><button class="admin-edit-btn">Bearbeiten</button><button class="admin-del-btn">LÃ¶schen</button></div>';
-        row.querySelector('.admin-edit-btn').addEventListener('click', function(){
+          "<div class="item-main" style="display:flex; align-items:center;">" +
+            (m.avatar
+              ? "<img class="admin-item-thumb" src="" + escapeHtml(m.avatar) + "" alt="" style="width:36px; height:36px; border-radius:50%; object-fit:cover; flex-shrink:0; margin-right:12px; border:1px solid rgba(255,255,255,0.15);">"
+              : "<div style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:13px; flex-shrink:0; margin-right:12px;">" + escapeHtml(m.initials || "?") + "</div>") +
+            "<div><div class="item-title">" + escapeHtml(m.name) + "</div>" +
+            "<div class="item-meta">" + escapeHtml(m.role || "") + " Â· KÃ¼rzel: " + escapeHtml(m.initials || "") +
+              (m.avatar ? " Â· Bild âœ“" : "") + (m.links && m.links.length ? " Â· " + m.links.length + " Link(s)" : "") +
+              (m.bio ? " Â· hat Beschreibung" : "") + "</div></div>" +
+          "</div>" +
+          "<div class="item-actions"><button class="admin-edit-btn">Bearbeiten</button><button class="admin-del-btn">LÃ¶schen</button></div>";
+
+        row.querySelector(".admin-edit-btn").addEventListener("click", function(){
           editingMemberId = m.id;
           renderAdminLists();
         });
-        row.querySelector('.admin-del-btn').addEventListener('click', function(){
-          if(!confirm('Mitglied "' + m.name + '" wirklich lÃ¶schen?')){ return; }
+        row.querySelector(".admin-del-btn").addEventListener("click", function(){
+          if(!confirm("Mitglied \"" + m.name + "\" wirklich lÃ¶schen?")){ return; }
+          if(isRealGithubAssetPath(m.avatar)){ queueAssetDeletion(m.avatar); }
+          clearPendingAssetUpload("member", m.id);
           data.members = data.members.filter(function(x){ return x.id !== m.id; });
           renderAdminLists();
-          setStatus('Ã„nderung noch nicht gespeichert.');
+          renderPublic();
+          setStatus("Mitglied gelÃ¶scht â€“ noch nicht auf GitHub gespeichert.");
         });
       }
       adminMembersList.appendChild(row);
     });
-
     // ---------- News ----------
     adminNewsList.innerHTML = data.news.length ? '' : '<div class="admin-form-hint">Noch keine News.</div>';
     data.news.forEach(function(n){
@@ -4966,65 +5052,106 @@
   /* --- Mitglied hinzufÃ¼gen --- */
   /* Wiederverwendbare Link-Zeilen fÃ¼r Mitglieder (Add-Formular + Inline-Bearbeiten) */
   function createMemberLinkRow(container, label, url){
-    var row = document.createElement('div');
-    row.className = 'member-link-row';
+    var row = document.createElement("div");
+    row.className = "member-link-row";
     row.innerHTML =
-      '<input type="text" class="member-link-label" placeholder="Name, z. B. Twitch" value="' + escapeHtml(label || '') + '">' +
-      '<input type="text" class="member-link-url" placeholder="https://..." value="' + escapeHtml(url || '') + '">' +
-      '<button type="button" class="admin-del-btn member-link-remove">Ã—</button>';
-    row.querySelector('.member-link-remove').addEventListener('click', function(){ row.remove(); });
+      "<input type=\"text\" class=\"member-link-label\" placeholder=\"Name, z. B. Twitch\" value=\"" + escapeHtml(label || "") + "\">" +
+      "<input type=\"text\" class=\"member-link-url\" placeholder=\"https://...\" value=\"" + escapeHtml(url || "") + "\">" +
+      "<button type=\"button\" class=\"admin-del-btn member-link-remove\">Ã—</button>";
+    row.querySelector(".member-link-remove").addEventListener("click", function(){ row.remove(); });
     container.appendChild(row);
     return row;
   }
   function collectMemberLinks(container){
-    return Array.prototype.map.call(container.querySelectorAll('.member-link-row'), function(row){
+    return Array.prototype.map.call(container.querySelectorAll(".member-link-row"), function(row){
       return {
-        label: row.querySelector('.member-link-label').value.trim(),
-        url: row.querySelector('.member-link-url').value.trim()
+        label: row.querySelector(".member-link-label").value.trim(),
+        url: row.querySelector(".member-link-url").value.trim()
       };
     }).filter(function(l){ return l.url; });
   }
-
-  document.getElementById('addMemberLinkRowBtn').addEventListener('click', function(){
-    createMemberLinkRow(document.getElementById('newMemberLinksRows'), '', '');
+  document.getElementById("addMemberLinkRowBtn").addEventListener("click", function(){
+    createMemberLinkRow(document.getElementById("newMemberLinksRows"), "", "");
   });
 
-  document.getElementById('addMemberBtn').addEventListener('click', function(){
-    var nameInput = document.getElementById('newMemberName');
-    var roleInput = document.getElementById('newMemberRole');
-    var initInput = document.getElementById('newMemberInitials');
-    var bioInput = document.getElementById('newMemberBio');
-    var avatarUrlInput = document.getElementById('newMemberAvatarUrl');
-    var avatarFileInput = document.getElementById('newMemberAvatarFile');
+  var pendingNewMemberAvatar = null; // { previewUrl, pendingUpload }
+  var newMemberAvatarFile = document.getElementById("newMemberAvatarFile");
+  var newMemberAvatarUrl = document.getElementById("newMemberAvatarUrl");
+  var newMemberAvatarName = document.getElementById("newMemberAvatarName");
+  var newMemberAvatarPreview = document.getElementById("newMemberAvatarPreview");
+  var newMemberAvatarPreviewWrap = document.getElementById("newMemberAvatarPreviewWrap");
+  var newMemberAvatarClearBtn = document.getElementById("newMemberAvatarClearBtn");
+
+  if(newMemberAvatarFile){
+    newMemberAvatarFile.addEventListener("change", function(e){
+      var file = e.target.files && e.target.files[0];
+      if(!file){
+        pendingNewMemberAvatar = null;
+        if(newMemberAvatarPreviewWrap) newMemberAvatarPreviewWrap.style.display = "none";
+        newMemberAvatarName.textContent = "Kein Bild ausgewÃ¤hlt â€“ URL oder Datei angeben.";
+        return;
+      }
+      newMemberAvatarName.textContent = "Datei wird verarbeitet â€¦";
+      loadMediaForGithubUpload(file, "image", function(previewUrl, assetType, err, pendingUpload){
+        if(err){
+          pendingNewMemberAvatar = null;
+          if(newMemberAvatarPreviewWrap) newMemberAvatarPreviewWrap.style.display = "none";
+          newMemberAvatarName.textContent = err;
+          return;
+        }
+        pendingNewMemberAvatar = { previewUrl: previewUrl, pendingUpload: pendingUpload, fileName: file.name };
+        if(newMemberAvatarPreview && newMemberAvatarPreviewWrap){
+          newMemberAvatarPreview.src = previewUrl;
+          newMemberAvatarPreviewWrap.style.display = "inline-flex";
+        }
+        newMemberAvatarName.textContent = "AusgewÃ¤hlt: " + file.name + " (wird beim VerÃ¶ffentlichen auf GitHub gespeichert)";
+        if(newMemberAvatarUrl) newMemberAvatarUrl.value = "";
+      });
+    });
+  }
+
+  if(newMemberAvatarClearBtn){
+    newMemberAvatarClearBtn.addEventListener("click", function(){
+      pendingNewMemberAvatar = null;
+      if(newMemberAvatarFile) newMemberAvatarFile.value = "";
+      if(newMemberAvatarPreviewWrap) newMemberAvatarPreviewWrap.style.display = "none";
+      newMemberAvatarName.textContent = "Kein Bild ausgewÃ¤hlt â€“ URL oder Datei angeben.";
+    });
+  }
+
+  document.getElementById("addMemberBtn").addEventListener("click", function(){
+    var nameInput = document.getElementById("newMemberName");
+    var roleInput = document.getElementById("newMemberRole");
+    var initInput = document.getElementById("newMemberInitials");
+    var bioInput = document.getElementById("newMemberBio");
     var name = nameInput.value.trim();
-    if(!name){ setStatus('Bitte einen Namen angeben.'); nameInput.focus(); return; }
-    var role = roleInput.value.trim() || 'Mitglied';
+    if(!name){ setStatus("Bitte einen Namen angeben."); nameInput.focus(); return; }
+    var role = roleInput.value.trim() || "Mitglied";
     var initials = (initInput.value.trim().toUpperCase() || name.slice(0,2).toUpperCase()).slice(0,2);
     var bio = bioInput.value.trim();
-    var links = collectMemberLinks(document.getElementById('newMemberLinksRows'));
+    var links = collectMemberLinks(document.getElementById("newMemberLinksRows"));
+    var memberId = makeId("m");
+    var avatar = "";
 
-    function finish(avatar){
-      data.members.push({ id:makeId('m'), name:name, role:role, initials:initials, bio:bio, avatar:avatar || '', links:links });
-      nameInput.value = ''; roleInput.value = ''; initInput.value = ''; bioInput.value = '';
-      avatarUrlInput.value = ''; avatarFileInput.value = '';
-      document.getElementById('newMemberAvatarName').textContent = 'Kein Bild ausgewÃ¤hlt â€“ URL oder Datei angeben.';
-      document.getElementById('newMemberLinksRows').innerHTML = '';
-      renderAdminLists();
-      setStatus('Mitglied hinzugefÃ¼gt â€“ noch nicht gespeichert.');
-    }
-
-    var file = avatarFileInput.files && avatarFileInput.files[0];
-    if(file){
-      setStatus('Profilbild wird verarbeitet â€¦');
-      compressImage(file, 300, function(dataUrl){
-        if(!dataUrl){ setStatus('Profilbild konnte nicht verarbeitet werden.'); return; }
-        finish(dataUrl);
-      });
+    if(pendingNewMemberAvatar){
+      registerPendingAssetUpload("member", memberId, pendingNewMemberAvatar.pendingUpload, "avatar-" + name);
+      avatar = pendingNewMemberAvatar.previewUrl;
     } else {
-      finish(avatarUrlInput.value.trim());
+      avatar = (newMemberAvatarUrl ? newMemberAvatarUrl.value.trim() : "");
     }
-  });
 
+    data.members.push({ id:memberId, name:name, role:role, initials:initials, bio:bio, avatar:avatar, links:links });
+    nameInput.value = ""; roleInput.value = ""; initInput.value = ""; bioInput.value = "";
+    if(newMemberAvatarUrl) newMemberAvatarUrl.value = "";
+    if(newMemberAvatarFile) newMemberAvatarFile.value = "";
+    if(newMemberAvatarPreviewWrap) newMemberAvatarPreviewWrap.style.display = "none";
+    newMemberAvatarName.textContent = "Kein Bild ausgewÃ¤hlt â€“ URL oder Datei angeben.";
+    pendingNewMemberAvatar = null;
+    document.getElementById("newMemberLinksRows").innerHTML = "";
+    renderAdminLists();
+    renderPublic();
+    setStatus("Mitglied hinzugefÃ¼gt â€“ noch nicht auf GitHub gespeichert.");
+  });
   /* --- News hinzufÃ¼gen --- */
   document.getElementById('addNewsBtn').addEventListener('click', function(){
     var dateInput = document.getElementById('newNewsDate');
@@ -5798,27 +5925,27 @@
     if(pendingAssetUploads.length === 0){ cb(null); return; }
     var queue = pendingAssetUploads.slice();
     var total = queue.length;
-
     function next(){
       if(queue.length === 0){ cb(null); return; }
       var item = queue.shift();
       var doneCount = total - queue.length;
-      setGhStatus('Lade Datei ' + doneCount + ' von ' + total + ' direkt auf GitHub hoch â€¦');
-
-      var folder = item.targetKind === 'design' ? 'designs' : 'templates';
-      var path = folder + '/' + slugify(item.label) + '-' + Date.now().toString(36) + '.' + item.ext;
-      var ghItemUrl = 'https://api.github.com/repos/' + encodeURIComponent(s.owner) + '/' + encodeURIComponent(s.repo) +
-        '/contents/' + path.split('/').map(encodeURIComponent).join('/');
-
+      setGhStatus("Lade Datei " + doneCount + " von " + total + " direkt auf GitHub hoch â€¦");
+      var folder;
+      if(item.targetKind === "design"){ folder = "designs"; }
+      else if(item.targetKind === "template"){ folder = "templates"; }
+      else { folder = "assets"; }
+      var path = folder + "/" + slugify(item.label) + "-" + Date.now().toString(36) + "." + item.ext;
+      var ghItemUrl = "https://api.github.com/repos/" + encodeURIComponent(s.owner) + "/" + encodeURIComponent(s.repo) +
+        "/contents/" + path.split("/").map(encodeURIComponent).join("/");
       fetch(ghItemUrl, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Authorization': 'Bearer ' + s.token,
-          'Accept': 'application/vnd.github+json',
-          'Content-Type': 'application/json'
+          "Authorization": "Bearer " + s.token,
+          "Accept": "application/vnd.github+json",
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          message: 'Datei hochgeladen: ' + item.label,
+          message: "Datei hochgeladen: " + item.label,
           content: item.base64,
           branch: s.branch
         })
@@ -5826,24 +5953,38 @@
       .then(function(res){
         return res.json().catch(function(){ return {}; }).then(function(body){
           if(!res.ok){
-            throw { code: res.status, message: (body && body.message) || ('GitHub Upload-Fehler (' + res.status + ')') };
+            throw { code: res.status, message: (body && body.message) || ("GitHub Upload-Fehler (" + res.status + ")") };
           }
           return body;
         });
       })
       .then(function(){
-        var list = item.targetKind === 'design' ? data.designs : data.templates;
-        var target = list.filter(function(x){ return x.id === item.targetId; })[0];
-        if(target){
-          if(target.asset && target.asset.indexOf('blob:') === 0){ URL.revokeObjectURL(target.asset); }
-          target.asset = path;
-          target.assetType = item.assetType || 'image';
+        if(item.targetKind === "member"){
+          var member = data.members.filter(function(x){ return x.id === item.targetId; })[0];
+          if(member){
+            if(member.avatar && member.avatar.indexOf("blob:") === 0){ try{ URL.revokeObjectURL(member.avatar); }catch(e){} }
+            member.avatar = path;
+          }
+        } else if(item.targetKind === "template_watermark"){
+          var tpl = data.templates.filter(function(x){ return x.id === item.targetId; })[0];
+          if(tpl){
+            if(tpl.watermarkAsset && tpl.watermarkAsset.indexOf("blob:") === 0){ try{ URL.revokeObjectURL(tpl.watermarkAsset); }catch(e){} }
+            tpl.watermarkAsset = path;
+          }
+        } else {
+          var list = item.targetKind === "design" ? data.designs : data.templates;
+          var target = list.filter(function(x){ return x.id === item.targetId; })[0];
+          if(target){
+            if(target.asset && target.asset.indexOf("blob:") === 0){ try{ URL.revokeObjectURL(target.asset); }catch(e){} }
+            target.asset = path;
+            target.assetType = item.assetType || "image";
+          }
         }
         pendingAssetUploads = pendingAssetUploads.filter(function(p){ return p !== item; });
         next();
       })
       .catch(function(err){
-        cb((err && err.message) ? err.message : 'Datei-Upload fehlgeschlagen');
+        cb((err && err.message) ? err.message : "Datei-Upload fehlgeschlagen");
       });
     }
     next();
@@ -5853,42 +5994,37 @@
   function publishDirectlyToGithub(s, cb){
     deletePendingAssetsDirect(s, function(deleteErr){
       if(deleteErr){ cb(deleteErr); return; }
-
       uploadPendingAssetsDirect(s, function(uploadErr){
         if(uploadErr){ cb(uploadErr); return; }
-
         renderAdminLists();
-        setGhStatus('VerÃ¶ffentliche data.json auf GitHub â€¦');
-
-        var getUrl = ghApiUrl(s) + '?ref=' + encodeURIComponent(s.branch);
+        setGhStatus("VerÃ¶ffentliche data.json auf GitHub â€¦");
+        var getUrl = ghApiUrl(s) + "?ref=" + encodeURIComponent(s.branch);
         fetch(getUrl, {
           headers: {
-            'Authorization': 'Bearer ' + s.token,
-            'Accept': 'application/vnd.github+json'
+            "Authorization": "Bearer " + s.token,
+            "Accept": "application/vnd.github+json"
           }
         })
         .then(function(res){
           if(res.status === 404){ return null; }
-          if(!res.ok){ throw { code: res.status, message: 'GitHub API Fehler beim Lesen von data.json (' + res.status + ')' }; }
+          if(!res.ok){ throw { code: res.status, message: "GitHub API Fehler beim Lesen von data.json (" + res.status + ")" }; }
           return res.json();
         })
         .then(function(fileInfo){
           var sha = fileInfo ? fileInfo.sha : undefined;
           var b64Content = utf8ToBase64(JSON.stringify(data, null, 2));
-
           var putBody = {
-            message: 'data.json aktualisiert via StrudelDesigns Admin-Panel',
+            message: "data.json aktualisiert via StrudelDesigns Admin-Panel",
             content: b64Content,
             branch: s.branch
           };
           if(sha){ putBody.sha = sha; }
-
           return fetch(ghApiUrl(s), {
-            method: 'PUT',
+            method: "PUT",
             headers: {
-              'Authorization': 'Bearer ' + s.token,
-              'Accept': 'application/vnd.github+json',
-              'Content-Type': 'application/json'
+              "Authorization": "Bearer " + s.token,
+              "Accept": "application/vnd.github+json",
+              "Content-Type": "application/json"
             },
             body: JSON.stringify(putBody)
           });
@@ -5896,7 +6032,7 @@
         .then(function(res){
           return res.json().catch(function(){ return {}; }).then(function(body){
             if(!res.ok){
-              throw { code: res.status, message: (body && body.message) || ('Status ' + res.status) };
+              throw { code: res.status, message: (body && body.message) || ("Status " + res.status) };
             }
             return body;
           });
@@ -5906,7 +6042,7 @@
           cb(null);
         })
         .catch(function(err){
-          cb((err && err.message) ? err.message : 'Fehler beim VerÃ¶ffentlichen von data.json');
+          cb((err && err.message) ? err.message : "Fehler beim VerÃ¶ffentlichen von data.json");
         });
       });
     });
@@ -5917,17 +6053,15 @@
     if(pendingAssetDeletions.length === 0){ cb(null); return; }
     var queue = pendingAssetDeletions.slice();
     var total = queue.length;
-
     function next(){
       if(queue.length === 0){ cb(null); return; }
       var path = queue.shift();
       var doneCount = total - queue.length;
-      setGhStatus('Entferne Datei ' + doneCount + ' von ' + total + ' aus GitHub â€¦');
-
+      setGhStatus("Entferne Datei " + doneCount + " von " + total + " aus GitHub â€¦");
       fetch(workerUrl, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json' },
-        body: JSON.stringify({ action:'deleteAsset', password: password, path: path })
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify({ action:"deleteAsset", password: password, path: path })
       })
         .then(function(res){
           return res.json().catch(function(){ return {}; }).then(function(body){
@@ -5945,7 +6079,7 @@
             next();
             return;
           }
-          console.warn('Datei-LÃ¶schung Ã¼bersprungen: ' + ((err && err.message) || '') + ' Â· ' + path);
+          console.warn("Datei-LÃ¶schung Ã¼bersprungen: " + ((err && err.message) || "") + " Â· " + path);
           next();
         });
     }
@@ -5957,325 +6091,31 @@
     if(pendingAssetUploads.length === 0){ cb(null); return; }
     var queue = pendingAssetUploads.slice();
     var total = queue.length;
-
     function next(){
       if(queue.length === 0){ cb(null); return; }
       var item = queue.shift();
       var doneCount = total - queue.length;
-      setGhStatus('Lade Datei ' + doneCount + ' von ' + total + ' auf GitHub hoch â€¦');
-
-      var folder = item.targetKind === 'design' ? 'designs' : 'templates';
-      var path = folder + '/' + slugify(item.label) + '-' + Date.now().toString(36) + '.' + item.ext;
-
+      setGhStatus("Lade Datei " + doneCount + " von " + total + " auf GitHub hoch â€¦");
+      var folder;
+      if(item.targetKind === "design"){ folder = "designs"; }
+      else if(item.targetKind === "template"){ folder = "templates"; }
+      else { folder = "assets"; }
+      var path = folder + "/" + slugify(item.label) + "-" + Date.now().toString(36) + "." + item.ext;
       fetch(workerUrl, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json' },
-        body: JSON.stringify({
-          action: 'uploadAsset',
-          password: password,
-          path: path,
-          contentBase64: item.base64,
-          message: 'Datei hochgeladen: ' + item.label
-        })
-      })
-        .then(function(res){
-          return res.json().catch(function(){ return {}; }).then(function(body){
-            if(!res.ok || !body.ok){ throw { code:res.status, message: body && body.error }; }
-            return body;
-          });
-        })
-        .then(function(body){
-          var list = item.targetKind === 'design' ? data.designs : data.templates;
-          var target = list.filter(function(x){ return x.id === item.targetId; })[0];
-          if(target){
-            if(target.asset && target.asset.indexOf('blob:') === 0){ URL.revokeObjectURL(target.asset); }
-            target.asset = body.path;
-            target.assetType = item.assetType || 'image';
-          }
-          pendingAssetUploads = pendingAssetUploads.filter(function(p){ return p !== item; });
-          next();
-        })
-        .catch(function(err){
-          cb((err && err.message) ? err.message : ('Datei-Upload fehlgeschlagen (' + (err && err.code || '?') + ').'));
-        });
-    }
-    next();
-  }
-
-  // VerÃ¶ffentlichen Handler
-  ghPublishBtn.addEventListener('click', function(){
-    var s = saveGhSettings();
-    ghPublishBtn.disabled = true;
-
-    if(s.syncMode === 'token'){
-      if(!s.token){
-        setGhStatus('Bitte zuerst deinen GitHub Personal Access Token (PAT) im GitHub-Tab eintragen.');
-        ghPublishBtn.disabled = false;
-        return;
-      }
-      setGhStatus('Starte VerÃ¶ffentlichung direkt auf GitHub â€¦');
-      publishDirectlyToGithub(s, function(err){
-        ghPublishBtn.disabled = false;
-        if(err){
-          setGhStatus('VerÃ¶ffentlichen fehlgeschlagen: ' + err);
-        } else {
-          setGhStatus('VerÃ¶ffentlicht âœ“ â€“ die Ã„nderungen sind direkt im GitHub-Repo gespeichert und nach dem nÃ¤chsten Build/Deploy sichtbar!', true);
-        }
-      });
-    } else {
-      // Worker Mode
-      if(!s.workerUrl){
-        setGhStatus('Bitte zuerst die Worker-URL eintragen oder auf "Direkter GitHub-Token" umschalten.');
-        ghPublishBtn.disabled = false;
-        return;
-      }
-      if(!isValidHttpUrl(s.workerUrl)){
-        setGhStatus('Die Worker-URL sieht ungÃ¼ltig aus â€“ bitte im GitHub-Tab prÃ¼fen.');
-        ghPublishBtn.disabled = false;
-        return;
-      }
-      if(!s.password){
-        setGhStatus('Bitte das Panel zuerst Ã¼ber den Zugangscode entsperren.');
-        ghPublishBtn.disabled = false;
-        return;
-      }
-
-      deletePendingAssetsWorker(s.workerUrl, s.password, function(deleteErr){
-        if(deleteErr){
-          setGhStatus('Datei-LÃ¶schung fehlgeschlagen: ' + deleteErr + ' â€“ data.json wurde NICHT verÃ¶ffentlicht.');
-          ghPublishBtn.disabled = false;
-          return;
-        }
-
-        uploadPendingAssetsWorker(s.workerUrl, s.password, function(uploadErr){
-          if(uploadErr){
-            setGhStatus('Datei-Upload fehlgeschlagen: ' + uploadErr + ' â€“ data.json wurde NICHT verÃ¶ffentlicht.');
-            ghPublishBtn.disabled = false;
-            return;
-          }
-
-          renderAdminLists();
-          setGhStatus('VerÃ¶ffentliche data.json Ã¼ber Worker â€¦');
-
-          fetch(s.workerUrl, {
-            method: 'POST',
-            headers: { 'Content-Type':'application/json' },
-            body: JSON.stringify({
-              password: s.password,
-              content: JSON.stringify(data, null, 2)
-            })
-          })
-            .then(function(res){
-              return res.json().catch(function(){ return {}; }).then(function(body){
-                if(!res.ok || !body.ok){ throw { code:res.status, message: body && body.error }; }
-                return body;
-              });
-            })
-            .then(function(){
-              lastSyncedSnapshot = JSON.stringify(data);
-              setGhStatus('VerÃ¶ffentlicht âœ“ â€“ die Live-Seite aktualisiert sich nach dem nÃ¤chsten Deploy/Refresh.', true);
-            })
-            .catch(function(err){
-              if(err && err.code === 401){
-                setGhStatus('Falscher Zugangscode (401).');
-              } else if(err && err.code === 409){
-                setGhStatus('Konflikt: Die Datei wurde gerade zeitgleich extern geÃ¤ndert.');
-              } else if(err && err.code === 0){
-                setGhStatus('Worker nicht erreichbar oder durch CORS blockiert auf ' + escapeHtml(location.origin) + '. Wechsle oben zu "Direkter GitHub-Token" fÃ¼r zuverlÃ¤ssigen Upload.');
-              } else {
-                setGhStatus('VerÃ¶ffentlichen fehlgeschlagen' + (err && err.message ? (': ' + err.message) : '.'));
-              }
-            })
-            .finally(function(){ ghPublishBtn.disabled = false; });
-        });
-      });
-    }
-  });
-
-  /* ============================================================
-     8) Mobile Nav
-     ============================================================ */
-  var burgerBtn = document.getElementById('burgerBtn');
-  var navLinks = document.getElementById('navLinks');
-  var navBackdrop = document.createElement('div');
-  navBackdrop.className = 'nav-backdrop';
-  document.body.appendChild(navBackdrop);
-  function closeMobileNav(){
-    navLinks.classList.remove('open');
-    navBackdrop.classList.remove('visible');
-    burgerBtn.setAttribute('aria-expanded','false');
-  }
-  burgerBtn.addEventListener('click', function(){
-    var isOpen = navLinks.classList.toggle('open');
-    navBackdrop.classList.toggle('visible', isOpen);
-    burgerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-  });
-  navBackdrop.addEventListener('click', closeMobileNav);
-  navLinks.querySelectorAll('a').forEach(function(a){
-    a.addEventListener('click', closeMobileNav);
-  });
-
-  /* ============================================================
-     8b) Scroll-to-top-Button (v. a. fÃ¼r lange Listen auf dem Handy)
-     ============================================================ */
-  var scrollTopBtn = document.getElementById('scrollTopBtn');
-  window.addEventListener('scroll', function(){
-    scrollTopBtn.classList.toggle('visible', window.scrollY > 500);
-  }, { passive:true });
-  scrollTopBtn.addEventListener('click', function(){
-    window.scrollTo({ top:0, behavior:'smooth' });
-  });
-
-  /* ============================================================
-     9) INIT
-     ============================================================ */
-  // Sofort mit lokalem/Standard-Stand rendern, damit die Seite nie leer ist â€¦
-  renderPublic();
-  // routeFromHash() initial call runs in the first init block above; no need to repeat here.
-
-  // â€¦ und danach versuchen, die aktuelle data.json zu laden (z. B. von GitHub Pages).
-  // Das ist die Datei, die im Admin-Panel Ã¼ber "Auf GitHub verÃ¶ffentlichen" aktualisiert wird
-  // und die damit fÃ¼r ALLE Besucher der Seite gilt â€“ nicht nur fÃ¼r den eigenen Browser.
-  fetch('data.json?_=' + Date.now())
-    .then(function(res){ return res.ok ? res.json() : null; })
-    .then(function(parsed){
-      if(parsed && Array.isArray(parsed.members) && Array.isArray(parsed.news) && Array.isArray(parsed.templates)){
-        parsed.templates.forEach(normalizeTemplate);
-        normalizeRootData(parsed);
-        data = parsed;
-        lastSyncedSnapshot = JSON.stringify(data);
-        renderPublic();
-      }
-    })
-    .catch(function(){ /* z. B. lokal ohne Server geÃ¶ffnet oder data.json existiert noch nicht -> Fallback bleibt aktiv */ });
-
-  // PNG-Override fÃ¼r Mitglieder-Plattform-Icons im Hintergrund aufwÃ¤rmen
-  // (nach 'available' gecachte Bilder ersetzen das SVG im Member-Lightbox automatisch via upgradeOpenLightboxIcon)
-  if(typeof bootstrapPlatformAssets === 'function'){ bootstrapPlatformAssets(); }
-})();
-  // --- Make footer links with [data-nav] switch pages too (top nav already handles its own links) ---
-  // showPage/routeFromHash live in the main init block above â€” they are NOT global.
-  // So we don't try to call them directly. Instead we let the browser change the URL
-  // hash, which fires the hashchange listener registered in init â†’ routeFromHash â†’ showPage.
-  (function(){
-    document.querySelectorAll('[data-nav]').forEach(function(a){
-      if(a.closest('#navLinks')) return; // top nav relies on built-in behavior
-      a.addEventListener('click', function(e){
-        var name = a.getAttribute('data-nav');
-        if(!name) return;
-        // Don't preventDefault: let the browser actually update the URL hash,
-        // which triggers our hashchange listener and routes to page-about correctly.
-        if(location.hash !== '#' + name){ location.hash = name; }
-      });
-    });
-  })();
-
-  // --- Smooth-scroll + scrollspy for the About page TOC ---
-  (function(){
-    var toc = document.querySelector('#page-about .about-toc');
-    if(!toc) return;
-    var links = toc.querySelectorAll('a[href^="#about-"]');
-    function scrollToSection(id){
-      var el = document.getElementById(id);
-      if(!el) return;
-      var headerOffset = 90;
-      var top = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-      var smooth = 'scrollBehavior' in document.documentElement.style;
-      if(smooth){ window.scrollTo({top: top, behavior: 'smooth'}); }
-      else { window.scrollTo(0, top); }
-      history.replaceState(null, '', '#' + id);
-    }
-    function setActive(activeLink){
-      links.forEach(function(l){
-        var isOn = l === activeLink;
-        l.classList.toggle('is-active', isOn);
-        if(isOn){ l.setAttribute('aria-current', 'location'); }
-        else { l.removeAttribute('aria-current'); }
-      });
-    }
-    links.forEach(function(a){
-      a.addEventListener('click', function(e){
-        e.preventDefault();
-        var id = a.getAttribute('href').slice(1);
-        scrollToSection(id);
-        setActive(a);
-      });
-    });
-    var sections = Array.prototype.map.call(links, function(a){ return document.getElementById(a.getAttribute('href').slice(1)); }).filter(Boolean);
-    if(sections.length && 'IntersectionObserver' in window){
-      var io = new IntersectionObserver(function(entries){
-        entries.forEach(function(entry){
-          if(entry.isIntersecting){
-            var id = entry.target.id;
-            var match = null;
-            links.forEach(function(l){ if(l.getAttribute('href') === '#' + id){ match = l; } });
-            if(match) setActive(match);
-          }
-        });
-      }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
-      sections.forEach(function(s){ io.observe(s); });
-    }
-  })();
-</script>
-<!-- Discord-Mitgliederzahl: live-Anzeige mit localStorage-Cache -->
-<script>
-(function(){
-  var KEY='strudel_discord_members_v1';
-  var TTL=5*60*1000;
-  var URL='https://api.jsonbin.io/v3/b/6a6de7dcda38895dfeac6e77?meta=false';
-  var slots=document.querySelectorAll('.dm-stat');
-  var nodes=document.querySelectorAll('.dm-stat-num');
-  if(!slots.length||!nodes.length)return;
-
-  // a11y: Screenreader sollen die aktualisierte Mitgliederzahl ankÃ¼ndigen
-  slots.forEach(function(slot){
-    if(!slot.hasAttribute('aria-live')) slot.setAttribute('aria-live','polite');
-  });
-
-  function fmt(n){
-    try{ return new Intl.NumberFormat('de-DE').format(n); }
-    catch(e){ return String(n); }
-  }
-  var did=false;
-  function paint(n){
-    if(!isFinite(n)||n<=0)return false;
-    var t=fmt(n);
-    nodes.forEach(function(el){ el.textContent=t; });
-    return true;
-  }
-  function hideAll(){
-    // Wenn weder Cache noch Fetch liefern, blende den ganzen Stat aus
-    // (sonst stÃ¼nde da â€â€“ Mitglieder sind bereitsâ€¦â€œ was komisch liest)
-    slots.forEach(function(s){ s.style.display='none'; });
-  }
-  function loadFresh(){
-    fetch(URL)
-      .then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
-      .then(function(d){
-        var n=d && (typeof d.members==='number' ? d.members : parseInt(d.members,10));
-        if(!isFinite(n)||n<=0) throw new Error('bad payload');
-        try{ localStorage.setItem(KEY, JSON.stringify({n:n,t:Date.now()})); }catch(e){}
-        if(paint(n)) did=true;
-      })
-      .catch(function(err){
-        if(!did) hideAll();
-        console.warn('Discord-Mitgliederzahl konnte nicht geladen werden:', err);
-      });  }
-  try{
-    var raw=localStorage.getItem(KEY);
-    if(raw){
-      var p=JSON.parse(raw);
-      if(p && typeof p.n==='number' && (Date.now()-p.t)<TTL){
-        did=paint(p.n);
-      }
-    }
-  }catch(e){}
-
-  loadFresh();
-
-  // Auto-Refresh: alle TTL Minuten neu laden, damit offene Tabs wirklich live bleiben
-  setInterval(loadFresh, TTL);
-})();
-</script>
-</body>
-</html>
+        method: "POSTxœ´[ÛrÛFš¾×S´™Úˆ<™8	Æ%ù{"[.KÉT6•u5‰&‰Øi4)Ó¶ªr±µ°³—Ss•šG˜+ßéMü$óıİ84J²=ZU*úğ÷>5ÜÛŞbåßLğDèbÀ^³Ş=%¦²ÊEoĞãy¥cnR%wş\(ÙcçÍ¾‘JVöÇã£§qat*§éd¾®§ãcÚ8`½E)ì…0½moAÎ‹âLédP?µgÍl`ÿï†¼wş0`©óxd_üUsQ|*pö}nDÊfj<›Š„>ì3·/ã#‘Õ»Î£­µÆb32œ,¤%%Ô¢ˆ|
+µ0-ñSÄÄ0ŠÁ¬ñ¬Ù½®Ö¼>ßà5xÄÂ@ÆÒIx‹à©Söæ»E+ğ8f¦Õd4V‰ĞŠÂp³(¶Zi-ûİïìo,´VšÑ¡-ğ%6´dÏ›8öº|èßAwÉ5›¤’gÏ %6t'“ÄwúõÏ e–ë†ë©0ß§2aÃáõæb>º·Æíf 7á†Çî­ˆ'if„n°zÙ0ùeœ: ŞAbüÏ»¿ì­óÙ\;×›‰ùçjbik êâåÑ$ì25ô"{ä.ÉH¯^³ÆZ,Õ©8ıYŒŞÛ # äôDD¯Ï×ÄÚgøšÁmümçLd…¸”ÃË3ØÁ‹3üOÏ¹>İÄm“g««7Èl@ßÄiÇ5VÖC»»£Áó.k¿—á~—£YZˆ2ID‘NáPï:»×‚Ö°×“°ıåcç7ŠÈÎÄ¼÷ş1bñ¶_'ÿäKEÑ^G‘«ây3 wÔKçğ’½+ÄèÇ!D4«?ØèU è†Ñ òF 9»Ur¯å`“â¥	/q¹k~¼%”ñ(¤1~âÒùGĞ#ïjºÈ×wx²‰˜eSQŒg¦%f}8U,—îB†Ÿ±^÷¢‚îÙñ¨AŸŞwvØB_üs2A\Fº€Áq™dBcv:{¶AUgFÆ<I,±êª+$ØŒ±á4Øf^ÄÜª4X^ğ¥ønv,Œã‹Šg- IZğQ& ëPº…ØÛÚ*!r%ÇOˆ2ÒÊÀ@ePs“"mÛAÃ-Î³¡5Rc{µ@Ø1,©iß¥æÑbÄaLAÙşx¦³‚ÃÂgû'Kçåªş	1l3š¸G/#aÂáKšeN•ª÷JE[HâWË¶rÊ’T‹SÃøbR!ıî×48äîüûX56ÙêDaÑl1
+Omí{OœÁØu­m!ÜÑ–¶rX $şu]ì {÷·¿‚Ø¿‚‚]ü7|”CpRAş·äK#¥ç"Wä‚ğÑ†-°Jòñ2Ÿ3yñÛxFúÊi–ìÜ0©@á ×· ½¤w>¶u"YZM{ÌŸ”>EfCºÙÒÆ3;şƒÎŞO#AƒÔ‡gm¬¶rïİ·´â­RHRÓ[ÌÁmÏuƒJI¤Å<K“GÆä "ô	ºŒ¢ûm"ŠTÌH Ó‹·™I§ ¢°’YÂÛ–•ë‹·“›&¡ˆ«bäj$¼`Ï¸Y%‹·”¬¢Â`ÿ¹˜rx+ëS¡’Ğ+­oÍò!™0â™
+ÇBŸãÛ¬!Å3i·÷AË@A÷¦áuIÙ€rxñÏÂù—Mf[ƒÁsàLòªØÙBƒ!Oß{tÂ–mƒmñæ½¹³ÎCŒ¹¢óãxäö®3\Ú<±‘O¯cRåßbÒ°©Ë¨«hš|ä~2O%Åæ"lt•÷öPwPº¶2ÔxP&‚›óÛLœ3S	Xôìèø$ØnÍyMŠÀoRƒ`½IøM
+ú»¶QAM/ÂÓˆµ5eï¡‹X°Íä"I¿Z›Îı×óöÜ5Í…Fl7Ú` ¿ÿç&ƒ‡ùz£Á±aïruØÒA?ã…9Fb'’cÉób¦¨6Ø ‘hıÜ÷ÎÓ¥èdîŒŸš"¢Ò
+ù›ò—ì<°lw‚MT^“ç—bZOÑ)‘ıÃîí2mQ÷€R™V(
+icÇ‰øİƒÍ§}}İiß+9ÉÒSs×qs~l*4ì–½/§eW¥ƒ€^LÅÅoärºNí:|v¯Ã¦t@ÒŠ•"/§¹¤(Yh qïèù1CÅ:>µr¥LÉæœÅ˜çâ‘™g!æ¬G‰•N§©¤š(ˆÙŸ$	¦Fú«Å¥éÕäâ­Æ<üwvñ[ÊË]<¸œÜk¨º&iÖê¹ª¼ËÂ N¨›jCÀ¤‹Ê•këïlÕr>W‡ µ¾bÇxÕä¹;Ÿ’p?úÏş*BF=J! §|é†ş ìÓ-W‰š©A¦Æ‹9ÄO…y	z<X=NÂ ^äDLû$_¦ò´¸j[µ¦µë€O­rãXXV¹7’té¶xËã1œcñ”Ï©Bû£r& •5(ë¼7õïÍPÓ„³1gª©àiåŒ+œİy”1ÄZÌÕR„Ê…¬t¼ƒYkå^ÚR-®ÙCï÷\ùha°Œë”÷ÅËœÃ]$Áv`5+¨»Í¶k.¤Å0›6ĞbÔŞê}h©VV´l—p?Œ¦
+™», ÀyúdvÄ|9©myUA²:F‚>6Jïgğ¢x¢ôîG"^r‰Ø17jÈ£ˆµÊ²¾Qø/ï,Œ:†Ëx9ÿš!°Q¬¶!˜\8ej<­¢›´ıÂâq¢òkÌß_çäv–ÊDmà¢[ºA1}WjY	Ú­ÿ‰}Ë¾ØİuR@RmsY¤0R¦R{ZßßRZçœ¨¢Ê»Ûl$f|™*=Š¹Rf”çÜ¤|±ÇOŸÜ”0wvØ±‚¶6OËÔ)‡øv_eÂuÒ·e!$·QÖĞ*Ê]"(ñ”	AÃPq³UM6ş]Á„#´‚…?Ôjşˆ³0b©LMÊ36Fèdz!Œ Íl’RÓ€¦]&ÂønqIÅ¤@5
+äpù¨}´ˆ·xœl»S	·y(2ŒbAéÀ¶E•²U‘e~Q†,Å^{²ğUÌb¶TM©@Åğ}^XÒ’*ƒsÓ9³Uaßµ:\‰×ÛoZŠËµ¼¤×N™ÏR¸,Ö©(k-xÿğğ;–êœè’×Ó436w9œ\h·È”LQ/…J!4aï
+Ë ¦ùî‹!%<DE,ÕY9°©Üò,Cw½JN˜*º½*ZÛs]ˆÄo&»JÀöµæ«8-ìo9^]_F—.âìŠÙúFÈo¤­ÏÕÎ\*=‡^‰“rÊËÃê¹ç0\0‰W´4Kˆ•tßaÇ›á¨¼º6Òä™c»%-Ü‡ÓVk¥LÍ$™¡†®Qá u“Â”ù|­èâ%Ô×êœTT¦YÕéËP
+e”ÁÊD:2¤é¡vU;ìÙÓïúG ®SÔVÓP½’
+œĞöğuŞŒú¿ ‹x”JäüSM*Àsvñ›Fp°Bk—_ò4£d8 ÆcA­ie(0¯ ÂÔA<şñ;‚øÄ*Gÿ0ÎÌH½T£æ(@
+²ñ”³E>¥BŠ²„jaC¤ºU.Ôµ¶2Ï	eÂØu½ÜåGÅŞ ì½daH×q[çQíËúı>{ÂOÁltŸI¹ìYjfìgb|©Å/¬À ĞÌÉ›Àk)"FPÖÁx†”5Y±™½ë€Œ:“NDàİ9Ğ¤3rF;-ç‰eKQyË9ÇÃº³„ø?š]1®‘ó°i¦F<‹+oÏÎào@³¡ëHò¨ÖcÇÜ^ĞµGÌKDAĞÚjE§œsaã™Í1hè‡ç‡ê¨! Ï¨˜…'š1M£åê¬ŒªĞı)=j8…
+ùwÿó¿íaG*ú	ïNã£N8ºé[#„«ò8«"<¶)[Âá“¦âˆª¾ VIMh>%‘¾Â÷{íKxWe†MCÃóS®ª±U	§ÄÉK…+üº˜ÚS´<ê´-)PYyæZĞù÷Å„/23èH)e+XN¨Eè¤çƒs‚:Sdê ±f“,mn@‚#·ºŞ‡
+.+]*’~İ> Xö8ø„b’¥ê5kOíğ^÷Ú¨Ì¨ÂÚQ‘AÛ|«ïR2€tE¾‚•jKç¾EŒpd'G÷J3ëè•ı–@ı”¶¥aPÌØş W‚"!áµ-#÷Õƒ«x1¹©äøy¦Åä¿†½OÄŞ/Àºæ¬²ÍcáN›0KğEvE6aŒÙº×L>šLÜw_ïú“ÆVİ"#Èja¯îÁ"¤y|Â(¦ŸU™1±è§R¿Ø‡érdªÉm¥=äjRª‡’ÕU&<j¨O'+§¤œ÷òrV%æçQ£Y®ÑÔÙ|ŞPá_¯›Aí•^¡TGò0Ôƒ¡ëo°q§Ë5«Ï×ÄûÆJ|nÈ×Ô´ÊÑõUÙš³@ALÅVfcWÆKE6”GiÑwK]E-ÛÅÀô6•âã]Ğ"­2Í ò»Ú%ã²²yqÙşhƒo]Avã¢?Ø¥Š¸íıËÁdƒ³%ÓC¨( X„·½LÎ›lÚmáEán3Ù¾Kas­Œ¢ä$ó<¦ØZFx$ñ&¿Ì¤¯!"²×åg8Je‚ËÆEU8Å™S˜ Òëà1eoåÄÑ¨°y¥µDg-g“*rÏâŒmÚäuï%Ğkİß”#]™ÓÄjı^Ñ"åoN‘ÓŸèY¡ºµå7O©—W«æ”OÚT¾´f/·>´62Ú¥•Å¿®¡SeÔ¹Ê¡o'i>ò”Æ´¯ë§F¡¨q¡á±€°”.JûŸïşÛÍ_²ş÷@÷*3ºaQY2`»ŞæZÊÒ¨ÆKU¬œÄğº·Ö}&»ùfúŸææÛ­on!ÂŞGÚ­tÒoŠ€W|–l>Úß—¯¨-{ĞécxJŠ“÷8İ†öû RA[‹¹$›ïü4{/‘½HÜA/ÊÒğÅòvPõ€ON‡_|zg÷ÓÛ»»»Õ ˜a03&/;;<Omá3Jeœªåç;£;üN"¾LÆ	ÿü«¯¾ş"™>¾#¾üòî\>t-Å
+X‘¡^‘]ÆÉ¼O×^c%×{méËÅÜm³_TĞI¥¾ysËB)_£*8»ü†ß¾½PçO©m,eüÕJiû.N°¶t ^¼E°ÚBÌÙÕ—fU!F)Øº;'ASrlç7„;¿ä*K×£õûæ“¹	«ÏÊì§¥“+]I?]ÌR-NÍ|Ñ¿ÿÀ%ñô.ë@RY8¶•v½â¼M’&ÃúÚ¿Æ"GÕÔàá>ĞyH…¢yôæüf¸[JÀÿfÀfACGAÙü¶"ëº2rÈ”ŒxiÊKù¡i¬„ì>Ês¨Ö˜ÍPj“Ê”¨Ñ'QBÂ“<™3%[Æ?¤Ş,OLlWµDN )—TDSnB	U`B˜DaXaH¨Û„"ñïÔKjôÅ}î¤ï~ıÇ»_ÿÆÎP‹Ÿª¹-¸©ü1®7q™îÂågté…$i5¤’°®*k÷‰¥‹¿‡ä¸*r]Ç
+æ\İ°­÷¦œC¾¥éV¾¼”'Íy@÷í¡u,øL—·óP…ªUö®öš»»5ÈÉzU6´«ª…P·©àôiU4 O”«a6pM!¨pXnßŞÖª·®šu©¡æÎùŠ˜ãÖZ|ÏJøØˆyß¹İùŒCä¶4½¾ó¨ıQ±Ve‘5—J/]ªØuåµ<‘†­Q£¾ŞÔBòŸq-é«¶M1*&¥m&Ssªü)PzMÿ.áÍÿè‘òv«FÄÚ.5?¶˜3m˜Ód=XÕÊbò¡e›ôªŠÜ~ÓíÄŸÇÒ<)FÃÙ~›è&!ÄGÇUl]oï‘x‚À«g•Ëß_Õ/¿œ0NÍkk•º×‘¢ì_WyE½f¬á#êDéSê:»N‘íï9ïP"µät‘_¹Mpql'äïĞm(ıÎÌ<ûvë_   ÿÿ Ô‚»
