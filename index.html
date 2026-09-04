@@ -1351,7 +1351,6 @@
         <li><a href="#branding">Eigenes Branding</a></li>
         <li><a href="#about" data-nav="about">Infos</a></li>
         <li><a href="https://discord.gg/B4naaGmrhf" target="_blank" rel="noopener">Discord</a></li>
-        <li><a href="#admin" id="footerAdminLink" title="Admin-Panel √∂ffnen">Admin</a></li>
       </ul>
     </div>
     <p class="footer-copy">Gestaltet mit ‚ô• von StrudelDesigns ¬∑ Alle Logos &amp; Designs urheberrechtlich gesch√ºtzt.</p>
@@ -1364,9 +1363,9 @@
     <h3>üîí Zugangscode</h3>
     <form id="codeForm">
       <div id="codeModalWorkerUrlRow" style="display:none;margin-bottom:10px;">
-        <input type="text" id="codeModalWorkerUrl" placeholder="Worker-URL (z. B. https://‚Ä¶workers.dev)" autocomplete="off" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);border-radius:10px;padding:11px;color:var(--text-0);font-size:12.5px;margin-bottom:8px;">
+        <input type="text" id="codeModalWorkerUrl" placeholder="Worker-URL (einmalig, z. B. https://‚Ä¶workers.dev)" autocomplete="off" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);border-radius:10px;padding:11px;color:var(--text-0);font-size:12.5px;margin-bottom:8px;">
       </div>
-      <input type="password" id="codeInput" autocomplete="off" placeholder="Zugangscode oder GitHub-Token">
+      <input type="password" id="codeInput" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="¬∑¬∑¬∑¬∑">
       <p class="admin-form-hint" id="codeModalStatus" style="margin:8px 0 0;min-height:14px;"></p>
       <button type="submit">Best√§tigen</button>
     </form>
@@ -1419,15 +1418,11 @@
         </div>
         <div>
           <label>Profilbild (optional)</label>
-          <div class="admin-file-row" style="align-items:center;">
-            <div id="newMemberAvatarPreviewWrap" style="display:none; align-items:center; gap:8px; margin-right:4px;">
-              <img id="newMemberAvatarPreview" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid rgba(255,255,255,0.2);">
-              <button type="button" id="newMemberAvatarClearBtn" class="admin-cancel-btn" style="padding:4px 8px; font-size:12px;">Entfernen</button>
-            </div>
+          <div class="admin-file-row">
             <input type="text" id="newMemberAvatarUrl" placeholder="Bild-URL einf√ºgen, z. B. https://.../twitch-logo.png" style="flex:1;">
             <label class="admin-mini-upload">
               Datei w√§hlen
-              <input type="file" id="newMemberAvatarFile" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml">
+              <input type="file" id="newMemberAvatarFile" accept="image/png,image/jpeg,image/webp,image/gif">
             </label>
           </div>
           <span class="admin-form-hint" id="newMemberAvatarName">Kein Bild ausgew√§hlt ‚Äì URL oder Datei angeben.</span>
@@ -1595,28 +1590,18 @@
     <!-- GitHub-Verbindung -->
     <div class="admin-panel" id="adminPanelGithub">
       <p class="admin-form-hint" style="margin-bottom:14px;">
-        Hier synchronisierst du deine Seite direkt mit deinem GitHub-Repository. Du kannst w√§hlen, ob du die Daten &amp; Dateien <strong>direkt per GitHub-Token</strong> (funktioniert auf Netlify, Custom Domains &amp; √ºberall ohne Worker) oder √ºber deine <strong>Cloudflare Worker</strong>-Funktion hochladen m√∂chtest.
+        Hier verbindest du das Admin-Panel mit deinem GitHub-Repo. ‚ÄûVon GitHub laden‚Äú liest die aktuelle
+        <code>data.json</code> direkt aus deinem (√∂ffentlichen) Repo ‚Äì daf√ºr ist kein Token n√∂tig.<br><br>
+        Zum <strong>Ver√∂ffentlichen</strong> schickt ‚ÄûAuf GitHub ver√∂ffentlichen‚Äú die Daten an deine eigene
+        kleine Cloudflare-Worker-Funktion. Nur diese Funktion kennt den echten GitHub-Token ‚Äì der taucht in
+        diesem Browser nie mehr auf. Dein <strong>Zugangscode</strong> (derselbe, mit dem du dieses Panel
+        ge√∂ffnet hast) reicht daf√ºr aus ‚Äì ein zus√§tzliches Passwort brauchst du nicht.
       </p>
       <div class="admin-form" style="border-top:none;padding-top:0;">
-        <!-- Synchronisierungs-Methode -->
-        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);border-radius:12px;padding:12px;margin-bottom:4px;">
-          <label style="margin-bottom:8px;display:block;">Ver√∂ffentlichungs-Methode</label>
-          <div style="display:flex;gap:16px;flex-wrap:wrap;">
-            <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;color:var(--text-0);font-weight:600;font-size:13px;">
-              <input type="radio" name="ghSyncMode" value="token" id="ghModeToken" checked style="width:auto;margin:0;">
-              Direkter GitHub-Token (Empfohlen f√ºr Netlify &amp; Domains)
-            </label>
-            <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;color:var(--text-0);font-weight:600;font-size:13px;">
-              <input type="radio" name="ghSyncMode" value="worker" id="ghModeWorker" style="width:auto;margin:0;">
-              Cloudflare Worker
-            </label>
-          </div>
-        </div>
-
         <div class="admin-form-row-2">
           <div>
             <label for="ghOwner">GitHub-Benutzername / Organisation</label>
-            <input type="text" id="ghOwner" placeholder="z. B. Strudelcode">
+            <input type="text" id="ghOwner" placeholder="z. B. strudelgames">
           </div>
           <div>
             <label for="ghRepo">Repository-Name</label>
@@ -1633,43 +1618,15 @@
             <input type="text" id="ghPath" placeholder="data.json">
           </div>
         </div>
-
-        <!-- Token-Sektion -->
-        <div id="ghTokenSection">
-          <label for="ghToken">GitHub Personal Access Token (PAT)</label>
-          <div style="display:flex;gap:8px;">
-            <input type="password" id="ghToken" placeholder="ghp_... oder github_pat_..." autocomplete="off">
-            <button class="admin-add-btn" id="ghTokenToggleBtn" type="button" style="white-space:nowrap;padding:10px 14px;" title="Token ein-/ausblenden">üëÅÔ∏è</button>
-          </div>
-          <p class="admin-form-hint" style="margin-top:5px;">
-            Erstelle einen Token auf GitHub unter <em>Settings &rarr; Developer Settings &rarr; Personal Access Tokens</em> mit <code>repo</code>-Rechten. GitHub erlaubt Uploads von jeder Domain (inkl. Netlify) per CORS!
-          </p>
+        <div>
+          <label for="ghWorkerUrl">Worker-URL (zum Ver√∂ffentlichen)</label>
+          <input type="text" id="ghWorkerUrl" placeholder="https://strudeldesigns-sync.DEINNAME.workers.dev" autocomplete="off">
         </div>
-
-        <!-- Worker-Sektion -->
-        <div id="ghWorkerSection" style="display:none;">
-          <div>
-            <label for="ghWorkerUrl">Worker-URL (zum Ver√∂ffentlichen)</label>
-            <input type="text" id="ghWorkerUrl" placeholder="https://strudeldesigns-sync.DEINNAME.workers.dev" autocomplete="off">
-          </div>
-          <div style="margin-top:8px;">
-            <button class="admin-add-btn" id="ghWorkerHelpBtn" type="button" style="font-size:12px;padding:6px 12px;background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);">üìã Cloudflare Worker Code f√ºr Netlify &amp; Domains anzeigen</button>
-            <div id="ghWorkerHelpBox" style="display:none;margin-top:10px;padding:12px;background:#0c0714;border:1px solid var(--glass-border);border-radius:10px;">
-              <p class="admin-form-hint" style="margin-bottom:8px;">
-                Wenn dein Worker auf der neuen Netlify-Domain Fehler wirft, liegt das meist an CORS. Ersetze den Worker-Code in deinem Cloudflare Dashboard:
-              </p>
-              <pre id="ghWorkerCodeSnippet" style="background:rgba(0,0,0,0.6);padding:10px;border-radius:8px;font-size:11px;overflow-x:auto;max-height:200px;color:#cbd5e1;font-family:monospace;white-space:pre-wrap;"></pre>
-              <button class="admin-add-btn" id="ghCopyWorkerCodeBtn" type="button" style="margin-top:8px;font-size:12px;padding:6px 12px;">Code kopieren</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="btn-row-mini" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="admin-add-btn" id="ghTestBtn" type="button" style="background:rgba(255,255,255,0.08);">Verbindung testen</button>
+        <div class="btn-row-mini" style="margin-top:4px;">
           <button class="admin-add-btn" id="ghLoadBtn" type="button">Von GitHub laden</button>
           <button class="admin-add-btn" id="ghPublishBtn" type="button" style="background:linear-gradient(135deg,var(--pink),var(--violet));color:#fff;border:none;">Auf GitHub ver√∂ffentlichen</button>
         </div>
-        <p class="admin-form-hint" id="ghStatus" style="margin-top:8px;font-size:13px;line-height:1.5;"></p>
+        <p class="admin-form-hint" id="ghStatus" style="margin-top:4px;"></p>
       </div>
     </div>
 
@@ -1868,23 +1825,7 @@
     return cloneData(DEFAULT_DATA);
   }
 
-  function saveData(d){
-    try{
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
-    }catch(err){
-      console.warn("LocalStorage voll oder eingeschr√§nkt:", err);
-      try{
-        var light = cloneData(d);
-        (light.members || []).forEach(function(m){
-          if(m.avatar && m.avatar.indexOf("data:") === 0 && m.avatar.length > 500){ m.avatar = ""; }
-        });
-        (light.designs || []).forEach(function(x){
-          if(x.asset && x.asset.indexOf("data:") === 0 && x.asset.length > 500){ x.asset = ""; }
-        });
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(light));
-      }catch(err2){}
-    }
-  }
+  function saveData(d){ localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
 
   var data = loadData();
 
@@ -2092,16 +2033,6 @@
       var qs = hashString.split('?')[1] || '';
       var params = new URLSearchParams(qs);
       deepLinkDesignId = params.get('d');
-    }
-    if (h === 'admin' || h === 'code') {
-      if (typeof isAdmin !== 'undefined' && isAdmin && typeof adminModalOverlay !== 'undefined' && adminModalOverlay) {
-        adminModalOverlay.classList.remove('hidden');
-        if (typeof renderAdminLists === 'function') { renderAdminLists(); }
-      } else if (typeof openCodeModal === 'function') {
-        openCodeModal();
-      }
-      showPage('home');
-      return;
     }
     var topLevelPages = ['news','branding','designs','about'];
     if(topLevelPages.indexOf(h) !== -1){
@@ -2624,54 +2555,27 @@
 
   function openDesignLightbox(d){
     currentLightboxDesign = d;
-    var mediaHtml = "";
-    if (d.asset) {
-      if (d.assetType === "video") {
-        mediaHtml = "<video src=\"" + d.asset + "\" controls autoplay muted loop playsinline></video>";
-      } else {
-        mediaHtml = "<img src=\"" + d.asset + "\" alt=\"" + escapeHtml(d.title) + "\">";
-      }
-    } else if (d.thumb) {
-      mediaHtml = "<img src=\"" + d.thumb + "\" alt=\"" + escapeHtml(d.title) + "\">";
-    }
-    designLightboxMedia.innerHTML = mediaHtml;
-
-    if (d.asset && d.thumb) {
-      if (d.assetType === "video") {
-        var vEl = designLightboxMedia.querySelector("video");
-        if (vEl) {
-          vEl.addEventListener("error", function(){
-            if (currentLightboxDesign === d) {
-              designLightboxMedia.innerHTML = "<img src=\"" + d.thumb + "\" alt=\"" + escapeHtml(d.title) + "\">";
-            }
-          }, { once: true });
-        }
-      } else {
-        var iEl = designLightboxMedia.querySelector("img");
-        if (iEl) {
-          iEl.addEventListener("error", function(){
-            if (currentLightboxDesign === d) {
-              iEl.src = d.thumb;
-            }
-          }, { once: true });
-        }
-      }
-    }
-
+    designLightboxMedia.innerHTML = d.asset
+      ? (d.assetType === 'video'
+          ? '<video src="' + d.asset + '" controls autoplay muted loop playsinline></video>'
+          : '<img src="' + d.asset + '" alt="' + escapeHtml(d.title) + '">')
+      : '';
     designLightboxTitle.textContent = d.title;
-    designLightboxDate.textContent = d.date ? ("Ver√∂ffentlicht: " + d.date) : "";
-    designLightboxDate.style.display = d.date ? "" : "none";
-    designLightboxDescription.textContent = d.description || "";
-    designLightboxDescription.style.display = d.description ? "" : "none";
-    designLightboxTags.innerHTML = (d.categories || []).map(function(c){ return "<span>" + escapeHtml(c) + "</span>"; }).join("");
+    designLightboxDate.textContent = d.date ? ('Ver√∂ffentlicht: ' + d.date) : '';
+    designLightboxDate.style.display = d.date ? '' : 'none';
+    designLightboxDescription.textContent = d.description || '';
+    designLightboxDescription.style.display = d.description ? '' : 'none';
+    designLightboxTags.innerHTML = d.categories.map(function(c){ return '<span>' + escapeHtml(c) + '</span>'; }).join('');
+
     setLightboxResolutionText(designLightboxRes, d.width, d.height);
     populateLightboxResSelect(designLightboxResSelect, d);
 
+    // √Ñltere Designs, bei denen die Aufl√∂sung noch nicht gespeichert wurde: nachtr√§glich ermitteln.
     if(d.asset && (!d.width || !d.height)){
-      if(d.assetType === "video"){
-        var videoEl = designLightboxMedia.querySelector("video");
+      if(d.assetType === 'video'){
+        var videoEl = designLightboxMedia.querySelector('video');
         if(videoEl){
-          videoEl.addEventListener("loadedmetadata", function(){
+          videoEl.addEventListener('loadedmetadata', function(){
             if(currentLightboxDesign !== d){ return; }
             d.width = videoEl.videoWidth; d.height = videoEl.videoHeight;
             setLightboxResolutionText(designLightboxRes, d.width, d.height);
@@ -2690,17 +2594,16 @@
       }
     }
 
-    var downloadHref = d.asset || d.thumb || "";
-    if(downloadHref){
-      designLightboxDownload.href = downloadHref;
-      designLightboxDownload.setAttribute("download", designDownloadFilename(d));
-      designLightboxDownload.style.display = "";
+    if(d.asset){
+      designLightboxDownload.href = d.asset;
+      designLightboxDownload.setAttribute('download', designDownloadFilename(d));
+      designLightboxDownload.style.display = '';
     } else {
-      designLightboxDownload.removeAttribute("href");
-      designLightboxDownload.style.display = "none";
+      designLightboxDownload.removeAttribute('href');
+      designLightboxDownload.style.display = 'none';
     }
     updateDesignLightboxNav();
-    designLightboxOverlay.classList.remove("hidden");
+    designLightboxOverlay.classList.remove('hidden');
   }
   function updateDesignLightboxNav(){
     var idx = currentDesignsFiltered.indexOf(currentLightboxDesign);
@@ -4339,21 +4242,17 @@
   var clickCount = 0;
   var clickTimer = null;
 
-  function getStoredSettings(){
+  function getStoredWorkerUrl(){
     try{
       var raw = localStorage.getItem(UNLOCK_SETTINGS_KEY);
-      return raw ? JSON.parse(raw) : {};
-    }catch(e){ return {}; }
+      var s = raw ? JSON.parse(raw) : {};
+      return (s.workerUrl || '').trim();
+    }catch(e){ return ''; }
   }
-
-  function getStoredWorkerUrl(){
-    var s = getStoredSettings();
-    return (s.workerUrl || '').trim();
-  }
-
   function storeWorkerUrl(url){
     try{
-      var s = getStoredSettings();
+      var raw = localStorage.getItem(UNLOCK_SETTINGS_KEY);
+      var s = raw ? JSON.parse(raw) : {};
       s.workerUrl = url;
       localStorage.setItem(UNLOCK_SETTINGS_KEY, JSON.stringify(s));
     }catch(e){ /* ignorieren */ }
@@ -4371,24 +4270,11 @@
     }
   });
 
-  function unlockAdminPanel(code){
-    adminCode = code || '';
-    isAdmin = true;
-    try { sessionStorage.setItem('strudel_admin_unlocked', '1'); } catch(e){}
-    if (adminFab) { adminFab.classList.remove('hidden'); }
-    closeCodeModal();
-    renderAdminLists();
-    if (adminModalOverlay) {
-      adminModalOverlay.classList.remove('hidden');
-    }
-  }
-
   function openCodeModal(){
     codeInput.value = '';
     codeModalStatus.textContent = '';
     var savedWorkerUrl = getStoredWorkerUrl();
-    var s = getStoredSettings();
-    if(s.token || (savedWorkerUrl && isValidHttpUrl(savedWorkerUrl))){
+    if(savedWorkerUrl && isValidHttpUrl(savedWorkerUrl)){
       codeModalWorkerUrlRow.style.display = 'none';
       codeModalWorkerUrlInput.value = savedWorkerUrl;
     } else {
@@ -4405,92 +4291,39 @@
     var code = codeInput.value.trim();
     var workerUrl = (codeModalWorkerUrlInput.value || '').trim().replace(/\/+$/,'');
     if(!code){ return; }
-
-    var s = getStoredSettings();
-
-    // 1. Wenn ein GitHub-Token direkt eingegeben wurde oder bereits gespeichert ist
-    if(code.indexOf('ghp_') === 0 || code.indexOf('github_pat_') === 0){
-      s.token = code;
-      s.syncMode = 'token';
-      localStorage.setItem(UNLOCK_SETTINGS_KEY, JSON.stringify(s));
-      unlockAdminPanel(code);
+    if(!workerUrl){
+      codeModalStatus.textContent = 'Bitte einmalig die Worker-URL eintragen.';
       return;
     }
-
-    if(s.token && (code === 'admin' || code === s.token || code.length >= 4)){
-      unlockAdminPanel(code);
+    if(!isValidHttpUrl(workerUrl)){
+      codeModalStatus.textContent = 'Die Worker-URL sieht ung√ºltig aus (z. B. Tippfehler) ‚Äì bitte pr√ºfen.';
       return;
     }
-
-    // 2. Wenn eine Worker-URL vorhanden ist, Worker abfragen
-    if(workerUrl && isValidHttpUrl(workerUrl)){
-      codeSubmitBtn.disabled = true;
-      codeModalStatus.textContent = 'Pr√ºfe √ºber Worker ‚Ä¶';
-      fetch(workerUrl, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ action:'unlock', code: code })
+    codeSubmitBtn.disabled = true;
+    codeModalStatus.textContent = 'Pr√ºfe ‚Ä¶';
+    fetch(workerUrl, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'unlock', code: code })
+    })
+      .then(function(res){ return res.json().catch(function(){ return {}; }); })
+      .then(function(body){
+        if(body && body.ok){
+          storeWorkerUrl(workerUrl); // ab jetzt merken, damit die URL nicht jedes Mal neu einzutippen ist
+          adminCode = code; // derselbe Code dient k√ºnftig auch als Zugangsdaten f√ºrs Ver√∂ffentlichen/Hoch-/Runterladen
+          isAdmin = true;
+          adminFab.classList.remove('hidden');
+          closeCodeModal();
+        } else {
+          closeCodeModal();
+        }
       })
-        .then(function(res){ return res.json().catch(function(){ return {}; }); })
-        .then(function(body){
-          if(body && body.ok){
-            storeWorkerUrl(workerUrl);
-            unlockAdminPanel(code);
-          } else {
-            codeModalStatus.textContent = (body && body.error) ? body.error : 'Falscher Zugangscode.';
-          }
-        })
-        .catch(function(){
-          codeModalStatus.innerHTML = 'Worker blockiert (CORS auf Domain ' + escapeHtml(location.host) + '). <a href="#" id="codeModalFallbackUnlock" style="color:var(--pink);text-decoration:underline;">Trotzdem entsperren</a> um GitHub-Token zu nutzen.';
-          var fb = document.getElementById('codeModalFallbackUnlock');
-          if(fb){
-            fb.addEventListener('click', function(ev){
-              ev.preventDefault();
-              unlockAdminPanel(code);
-            });
-          }
-        })
-        .finally(function(){ codeSubmitBtn.disabled = false; });
-      return;
-    }
-
-    // 3. Fallback: Keine Worker-URL, aber Code eingegeben -> entsperren um Token im Panel zu konfigurieren
-    unlockAdminPanel(code);
+      .catch(function(){
+          codeModalStatus.textContent = 'Worker nicht erreichbar oder Origin nicht erlaubt ‚Äì pr√ºfe Worker-URL und CORS-Freigabe f√ºr diese Domain.';
+      })
+      .finally(function(){ codeSubmitBtn.disabled = false; });
   });
   codeModalOverlay.addEventListener('click', function(e){ if(e.target === codeModalOverlay){ closeCodeModal(); } });
-
-  // Session & Shortcut Support f√ºr Admin-Zugang
-  try {
-    if (sessionStorage.getItem('strudel_admin_unlocked') === '1' || (getStoredSettings() && getStoredSettings().token)) {
-      isAdmin = true;
-      if (adminFab) { adminFab.classList.remove('hidden'); }
-    }
-  } catch(e){}
-
-  var footerAdminLink = document.getElementById('footerAdminLink');
-  if (footerAdminLink) {
-    footerAdminLink.addEventListener('click', function(e){
-      e.preventDefault();
-      if (isAdmin && adminModalOverlay) {
-        adminModalOverlay.classList.remove('hidden');
-        renderAdminLists();
-      } else {
-        openCodeModal();
-      }
-    });
-  }
-
-  document.addEventListener('keydown', function(e){
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
-      e.preventDefault();
-      if (isAdmin && adminModalOverlay) {
-        adminModalOverlay.classList.remove('hidden');
-        renderAdminLists();
-      } else {
-        openCodeModal();
-      }
-    }
-  });
 
   /* ============================================================
      7) ADMIN-DASHBOARD
@@ -4556,157 +4389,93 @@
     renderBrandingAdmin();
 
     // ---------- Mitglieder ----------
-    adminMembersList.innerHTML = data.members.length ? "" : "<div class=\"admin-form-hint\">Noch keine Mitglieder.</div>";
+    adminMembersList.innerHTML = data.members.length ? '' : '<div class="admin-form-hint">Noch keine Mitglieder.</div>';
     data.members.forEach(function(m){
-      var row = document.createElement("div");
+      var row = document.createElement('div');
+
       if(editingMemberId === m.id){
-        row.className = "admin-list-item admin-list-item-editing";
-        var hasAvatar = !!m.avatar;
-        var avatarSrc = m.avatar || "";
+        row.className = 'admin-list-item admin-list-item-editing';
         row.innerHTML =
-          "<div class=\"admin-edit-form\">" +
-            "<div class=\"admin-form-row\">" +
-              "<div><label>Name</label><input type=\"text\" class=\"edit-name\" value=\"" + escapeHtml(m.name) + "\"></div>" +
-              "<div><label>Rolle / Status</label><input type=\"text\" class=\"edit-role\" value=\"" + escapeHtml(m.role || "") + "\"></div>" +
-              "<div><label>K√ºrzel</label><input type=\"text\" class=\"edit-initials\" maxlength=\"2\" value=\"" + escapeHtml(m.initials || "") + "\"></div>" +
-            "</div>" +
-            "<div><label>Beschreibung (optional)</label><textarea class=\"edit-bio\" style=\"min-height:64px;\">" + escapeHtml(m.bio || "") + "</textarea></div>" +
-            "<div>" +
-              "<label>Profilbild (optional)</label>" +
-              "<div class=\"admin-file-row\" style=\"align-items:center;\">" +
-                (hasAvatar
-                  ? "<img class=\"edit-avatar-preview\" src=\"" + escapeHtml(avatarSrc) + "\" style=\"width:36px; height:36px; border-radius:50%; object-fit:cover; margin-right:8px; border:1px solid rgba(255,255,255,0.2); flex-shrink:0;\">"
-                  : "<div class=\"edit-avatar-preview-placeholder\" style=\"width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:8px; flex-shrink:0;\">" + escapeHtml(m.initials || "?") + "</div>") +
-                "<input type=\"text\" class=\"edit-avatar-url\" placeholder=\"Bild-URL oder Datei w√§hlen\" value=\"" + (avatarSrc && avatarSrc.indexOf("blob:") !== 0 && avatarSrc.indexOf("data:") !== 0 ? escapeHtml(avatarSrc) : "") + "\" style=\"flex:1;\">" +
-                "<label class=\"admin-mini-upload\">Datei w√§hlen<input type=\"file\" class=\"edit-avatar-file\" accept=\"image/png,image/jpeg,image/webp,image/gif,image/svg+xml\"></label>" +
-                "<button type=\"button\" class=\"admin-cancel-btn edit-avatar-remove\" style=\"padding:4px 8px; font-size:12px; margin-left:4px;\">Entfernen</button>" +
-              "</div>" +
-              "<span class=\"admin-form-hint edit-avatar-hint\">" + (hasAvatar ? "Aktuelles Bild geladen" : "Kein Bild vorhanden ‚Äì URL oder Datei angeben.") + "</span>" +
-            "</div>" +
-            "<div>" +
-              "<label>Links</label>" +
-              "<div class=\"edit-member-links-rows\"></div>" +
-              "<button class=\"admin-cancel-btn edit-add-link-row\" type=\"button\" style=\"margin-top:8px;\">+ Link hinzuf√ºgen</button>" +
-            "</div>" +
-            "<div class=\"item-actions\" style=\"justify-content:flex-end;\">" +
-              "<button class=\"admin-cancel-btn\" type=\"button\">Abbrechen</button>" +
-              "<button class=\"admin-save-inline-btn\" type=\"button\">√úbernehmen</button>" +
-            "</div>" +
-          "</div>";
-        var linkRowsEl = row.querySelector(".edit-member-links-rows");
+          '<div class="admin-edit-form">' +
+            '<div class="admin-form-row">' +
+              '<div><label>Name</label><input type="text" class="edit-name" value="' + escapeHtml(m.name) + '"></div>' +
+              '<div><label>Rolle / Status</label><input type="text" class="edit-role" value="' + escapeHtml(m.role || '') + '"></div>' +
+              '<div><label>K√ºrzel</label><input type="text" class="edit-initials" maxlength="2" value="' + escapeHtml(m.initials || '') + '"></div>' +
+            '</div>' +
+            '<div><label>Beschreibung (optional)</label><textarea class="edit-bio" style="min-height:64px;">' + escapeHtml(m.bio || '') + '</textarea></div>' +
+            '<div>' +
+              '<label>Profilbild (optional)</label>' +
+              '<div class="admin-file-row">' +
+                '<input type="text" class="edit-avatar-url" placeholder="Bild-URL" value="' + escapeHtml(m.avatar || '') + '" style="flex:1;">' +
+                '<label class="admin-mini-upload">Datei w√§hlen<input type="file" class="edit-avatar-file" accept="image/png,image/jpeg,image/webp,image/gif"></label>' +
+              '</div>' +
+            '</div>' +
+            '<div>' +
+              '<label>Links</label>' +
+              '<div class="edit-member-links-rows"></div>' +
+              '<button class="admin-cancel-btn edit-add-link-row" type="button" style="margin-top:8px;">+ Link hinzuf√ºgen</button>' +
+            '</div>' +
+            '<div class="item-actions" style="justify-content:flex-end;">' +
+              '<button class="admin-cancel-btn" type="button">Abbrechen</button>' +
+              '<button class="admin-save-inline-btn" type="button">√úbernehmen</button>' +
+            '</div>' +
+          '</div>';
+        var linkRowsEl = row.querySelector('.edit-member-links-rows');
         (m.links || []).forEach(function(l){ createMemberLinkRow(linkRowsEl, l.label, l.url); });
-        row.querySelector(".edit-add-link-row").addEventListener("click", function(){
-          createMemberLinkRow(linkRowsEl, "", "");
+        row.querySelector('.edit-add-link-row').addEventListener('click', function(){
+          createMemberLinkRow(linkRowsEl, '', '');
         });
-        row.querySelector(".item-actions .admin-cancel-btn").addEventListener("click", function(){
+        row.querySelector('.item-actions .admin-cancel-btn').addEventListener('click', function(){
           editingMemberId = null;
           renderAdminLists();
         });
-
-        var editFileInput = row.querySelector(".edit-avatar-file");
-        var editUrlInput = row.querySelector(".edit-avatar-url");
-        var editHint = row.querySelector(".edit-avatar-hint");
-        var editRemoveBtn = row.querySelector(".edit-avatar-remove");
-        var newPendingAvatar = null;
-        var avatarToRemove = false;
-
-        editFileInput.addEventListener("change", function(e){
-          var file = e.target.files && e.target.files[0];
-          if(!file){ return; }
-          editHint.textContent = "Datei wird verarbeitet ‚Ä¶";
-          loadMediaForGithubUpload(file, "image", function(previewUrl, assetType, err, pendingUpload){
-            if(err){ editHint.textContent = err; return; }
-            newPendingAvatar = { previewUrl: previewUrl, pendingUpload: pendingUpload };
-            avatarToRemove = false;
-            var prev = row.querySelector(".edit-avatar-preview") || row.querySelector(".edit-avatar-preview-placeholder");
-            if(prev){
-              var img = document.createElement("img");
-              img.className = "edit-avatar-preview";
-              img.src = previewUrl;
-              img.style.cssText = "width:36px; height:36px; border-radius:50%; object-fit:cover; margin-right:8px; border:1px solid rgba(255,255,255,0.2); flex-shrink:0;";
-              prev.parentNode.replaceChild(img, prev);
-            }
-            editHint.textContent = "Ausgew√§hlt: " + file.name + " (wird beim Ver√∂ffentlichen auf GitHub gespeichert)";
-            editUrlInput.value = "";
-          });
-        });
-
-        editRemoveBtn.addEventListener("click", function(){
-          newPendingAvatar = null;
-          avatarToRemove = true;
-          editUrlInput.value = "";
-          editFileInput.value = "";
-          editHint.textContent = "Profilbild entfernt";
-          var prev = row.querySelector(".edit-avatar-preview");
-          if(prev){
-            var ph = document.createElement("div");
-            ph.className = "edit-avatar-preview-placeholder";
-            ph.style.cssText = "width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:8px; flex-shrink:0;";
-            ph.textContent = row.querySelector(".edit-initials").value.trim() || "?";
-            prev.parentNode.replaceChild(ph, prev);
-          }
-        });
-
-        row.querySelector(".admin-save-inline-btn").addEventListener("click", function(){
-          var name = row.querySelector(".edit-name").value.trim();
-          if(!name){ setStatus("Bitte einen Namen angeben."); return; }
+        row.querySelector('.admin-save-inline-btn').addEventListener('click', function(){
+          var name = row.querySelector('.edit-name').value.trim();
+          if(!name){ setStatus('Bitte einen Namen angeben.'); return; }
           m.name = name;
-          m.role = row.querySelector(".edit-role").value.trim() || "Mitglied";
-          m.initials = (row.querySelector(".edit-initials").value.trim().toUpperCase() || name.slice(0,2).toUpperCase()).slice(0,2);
-          m.bio = row.querySelector(".edit-bio").value.trim();
+          m.role = row.querySelector('.edit-role').value.trim() || 'Mitglied';
+          m.initials = (row.querySelector('.edit-initials').value.trim().toUpperCase() || name.slice(0,2).toUpperCase()).slice(0,2);
+          m.bio = row.querySelector('.edit-bio').value.trim();
           m.links = collectMemberLinks(linkRowsEl);
-
-          if(newPendingAvatar){
-            if(isRealGithubAssetPath(m.avatar)){ queueAssetDeletion(m.avatar); }
-            registerPendingAssetUpload("member", m.id, newPendingAvatar.pendingUpload, "avatar-" + name);
-            m.avatar = newPendingAvatar.previewUrl;
-          } else if(avatarToRemove){
-            if(isRealGithubAssetPath(m.avatar)){ queueAssetDeletion(m.avatar); }
-            clearPendingAssetUpload("member", m.id);
-            m.avatar = "";
+          var avatarFile = row.querySelector('.edit-avatar-file').files[0];
+          var finishSave = function(avatar){
+            if(avatar !== undefined){ m.avatar = avatar; }
+            editingMemberId = null;
+            renderAdminLists();
+            setStatus('Mitglied aktualisiert ‚Äì noch nicht gespeichert.');
+          };
+          if(avatarFile){
+            setStatus('Profilbild wird verarbeitet ‚Ä¶');
+            compressImage(avatarFile, 300, function(dataUrl){
+              if(!dataUrl){ setStatus('Profilbild konnte nicht verarbeitet werden.'); return; }
+              finishSave(dataUrl);
+            });
           } else {
-            var urlVal = editUrlInput.value.trim();
-            if(urlVal !== m.avatar){
-              if(isRealGithubAssetPath(m.avatar)){ queueAssetDeletion(m.avatar); }
-              clearPendingAssetUpload("member", m.id);
-              m.avatar = urlVal;
-            }
+            finishSave(row.querySelector('.edit-avatar-url').value.trim());
           }
-
-          editingMemberId = null;
-          renderAdminLists();
-          renderPublic();
-          setStatus("Mitglied aktualisiert ‚Äì noch nicht auf GitHub ver√∂ffentlicht.");
         });
       } else {
-        row.className = "admin-list-item";
+        row.className = 'admin-list-item';
         row.innerHTML =
-          "<div class=\"item-main\" style=\"display:flex; align-items:center;\">" +
-            (m.avatar
-              ? "<img class=\"admin-item-thumb\" src=\"" + escapeHtml(m.avatar) + "\" alt=\"\" style=\"width:36px; height:36px; border-radius:50%; object-fit:cover; flex-shrink:0; margin-right:12px; border:1px solid rgba(255,255,255,0.15);\">"
-              : "<div style=\"width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:13px; flex-shrink:0; margin-right:12px;\">" + escapeHtml(m.initials || "?") + "</div>") +
-            "<div><div class=\"item-title\">" + escapeHtml(m.name) + "</div>" +
-            "<div class=\"item-meta\">" + escapeHtml(m.role || "") + " ¬∑ K√ºrzel: " + escapeHtml(m.initials || "") +
-              (m.avatar ? " ¬∑ Bild ‚úì" : "") + (m.links && m.links.length ? " ¬∑ " + m.links.length + " Link(s)" : "") +
-              (m.bio ? " ¬∑ hat Beschreibung" : "") + "</div></div>" +
-          "</div>" +
-          "<div class=\"item-actions\"><button class=\"admin-edit-btn\">Bearbeiten</button><button class=\"admin-del-btn\">L√∂schen</button></div>";
-        row.querySelector(".admin-edit-btn").addEventListener("click", function(){
+          '<div class="item-main"><div class="item-title">' + escapeHtml(m.name) + '</div>' +
+          '<div class="item-meta">' + escapeHtml(m.role || '') + ' ¬∑ K√ºrzel: ' + escapeHtml(m.initials || '') +
+            (m.avatar ? ' ¬∑ Bild ‚úì' : '') + (m.links && m.links.length ? ' ¬∑ ' + m.links.length + ' Link(s)' : '') +
+            (m.bio ? ' ¬∑ hat Beschreibung' : '') + '</div></div>' +
+          '<div class="item-actions"><button class="admin-edit-btn">Bearbeiten</button><button class="admin-del-btn">L√∂schen</button></div>';
+        row.querySelector('.admin-edit-btn').addEventListener('click', function(){
           editingMemberId = m.id;
           renderAdminLists();
         });
-        row.querySelector(".admin-del-btn").addEventListener("click", function(){
-          if(!confirm("Mitglied \"" + m.name + "\" wirklich l√∂schen?")){ return; }
-          if(isRealGithubAssetPath(m.avatar)){ queueAssetDeletion(m.avatar); }
-          clearPendingAssetUpload("member", m.id);
+        row.querySelector('.admin-del-btn').addEventListener('click', function(){
+          if(!confirm('Mitglied "' + m.name + '" wirklich l√∂schen?')){ return; }
           data.members = data.members.filter(function(x){ return x.id !== m.id; });
           renderAdminLists();
-          renderPublic();
-          setStatus("Mitglied gel√∂scht ‚Äì noch nicht auf GitHub gespeichert.");
+          setStatus('√Ñnderung noch nicht gespeichert.');
         });
       }
       adminMembersList.appendChild(row);
     });
+
     // ---------- News ----------
     adminNewsList.innerHTML = data.news.length ? '' : '<div class="admin-form-hint">Noch keine News.</div>';
     data.news.forEach(function(n){
@@ -5126,106 +4895,65 @@
   /* --- Mitglied hinzuf√ºgen --- */
   /* Wiederverwendbare Link-Zeilen f√ºr Mitglieder (Add-Formular + Inline-Bearbeiten) */
   function createMemberLinkRow(container, label, url){
-    var row = document.createElement("div");
-    row.className = "member-link-row";
+    var row = document.createElement('div');
+    row.className = 'member-link-row';
     row.innerHTML =
-      "<input type=\"text\" class=\"member-link-label\" placeholder=\"Name, z. B. Twitch\" value=\"" + escapeHtml(label || "") + "\">" +
-      "<input type=\"text\" class=\"member-link-url\" placeholder=\"https://...\" value=\"" + escapeHtml(url || "") + "\">" +
-      "<button type=\"button\" class=\"admin-del-btn member-link-remove\">√ó</button>";
-    row.querySelector(".member-link-remove").addEventListener("click", function(){ row.remove(); });
+      '<input type="text" class="member-link-label" placeholder="Name, z. B. Twitch" value="' + escapeHtml(label || '') + '">' +
+      '<input type="text" class="member-link-url" placeholder="https://..." value="' + escapeHtml(url || '') + '">' +
+      '<button type="button" class="admin-del-btn member-link-remove">√ó</button>';
+    row.querySelector('.member-link-remove').addEventListener('click', function(){ row.remove(); });
     container.appendChild(row);
     return row;
   }
   function collectMemberLinks(container){
-    return Array.prototype.map.call(container.querySelectorAll(".member-link-row"), function(row){
+    return Array.prototype.map.call(container.querySelectorAll('.member-link-row'), function(row){
       return {
-        label: row.querySelector(".member-link-label").value.trim(),
-        url: row.querySelector(".member-link-url").value.trim()
+        label: row.querySelector('.member-link-label').value.trim(),
+        url: row.querySelector('.member-link-url').value.trim()
       };
     }).filter(function(l){ return l.url; });
   }
-  document.getElementById("addMemberLinkRowBtn").addEventListener("click", function(){
-    createMemberLinkRow(document.getElementById("newMemberLinksRows"), "", "");
+
+  document.getElementById('addMemberLinkRowBtn').addEventListener('click', function(){
+    createMemberLinkRow(document.getElementById('newMemberLinksRows'), '', '');
   });
 
-  var pendingNewMemberAvatar = null; // { previewUrl, pendingUpload }
-  var newMemberAvatarFile = document.getElementById("newMemberAvatarFile");
-  var newMemberAvatarUrl = document.getElementById("newMemberAvatarUrl");
-  var newMemberAvatarName = document.getElementById("newMemberAvatarName");
-  var newMemberAvatarPreview = document.getElementById("newMemberAvatarPreview");
-  var newMemberAvatarPreviewWrap = document.getElementById("newMemberAvatarPreviewWrap");
-  var newMemberAvatarClearBtn = document.getElementById("newMemberAvatarClearBtn");
-
-  if(newMemberAvatarFile){
-    newMemberAvatarFile.addEventListener("change", function(e){
-      var file = e.target.files && e.target.files[0];
-      if(!file){
-        pendingNewMemberAvatar = null;
-        if(newMemberAvatarPreviewWrap) newMemberAvatarPreviewWrap.style.display = "none";
-        newMemberAvatarName.textContent = "Kein Bild ausgew√§hlt ‚Äì URL oder Datei angeben.";
-        return;
-      }
-      newMemberAvatarName.textContent = "Datei wird verarbeitet ‚Ä¶";
-      loadMediaForGithubUpload(file, "image", function(previewUrl, assetType, err, pendingUpload){
-        if(err){
-          pendingNewMemberAvatar = null;
-          if(newMemberAvatarPreviewWrap) newMemberAvatarPreviewWrap.style.display = "none";
-          newMemberAvatarName.textContent = err;
-          return;
-        }
-        pendingNewMemberAvatar = { previewUrl: previewUrl, pendingUpload: pendingUpload, fileName: file.name };
-        if(newMemberAvatarPreview && newMemberAvatarPreviewWrap){
-          newMemberAvatarPreview.src = previewUrl;
-          newMemberAvatarPreviewWrap.style.display = "inline-flex";
-        }
-        newMemberAvatarName.textContent = "Ausgew√§hlt: " + file.name + " (wird beim Ver√∂ffentlichen auf GitHub gespeichert)";
-        if(newMemberAvatarUrl) newMemberAvatarUrl.value = "";
-      });
-    });
-  }
-
-  if(newMemberAvatarClearBtn){
-    newMemberAvatarClearBtn.addEventListener("click", function(){
-      pendingNewMemberAvatar = null;
-      if(newMemberAvatarFile) newMemberAvatarFile.value = "";
-      if(newMemberAvatarPreviewWrap) newMemberAvatarPreviewWrap.style.display = "none";
-      newMemberAvatarName.textContent = "Kein Bild ausgew√§hlt ‚Äì URL oder Datei angeben.";
-    });
-  }
-
-  document.getElementById("addMemberBtn").addEventListener("click", function(){
-    var nameInput = document.getElementById("newMemberName");
-    var roleInput = document.getElementById("newMemberRole");
-    var initInput = document.getElementById("newMemberInitials");
-    var bioInput = document.getElementById("newMemberBio");
+  document.getElementById('addMemberBtn').addEventListener('click', function(){
+    var nameInput = document.getElementById('newMemberName');
+    var roleInput = document.getElementById('newMemberRole');
+    var initInput = document.getElementById('newMemberInitials');
+    var bioInput = document.getElementById('newMemberBio');
+    var avatarUrlInput = document.getElementById('newMemberAvatarUrl');
+    var avatarFileInput = document.getElementById('newMemberAvatarFile');
     var name = nameInput.value.trim();
-    if(!name){ setStatus("Bitte einen Namen angeben."); nameInput.focus(); return; }
-    var role = roleInput.value.trim() || "Mitglied";
+    if(!name){ setStatus('Bitte einen Namen angeben.'); nameInput.focus(); return; }
+    var role = roleInput.value.trim() || 'Mitglied';
     var initials = (initInput.value.trim().toUpperCase() || name.slice(0,2).toUpperCase()).slice(0,2);
     var bio = bioInput.value.trim();
-    var links = collectMemberLinks(document.getElementById("newMemberLinksRows"));
-    var memberId = makeId("m");
-    var avatar = "";
+    var links = collectMemberLinks(document.getElementById('newMemberLinksRows'));
 
-    if(pendingNewMemberAvatar){
-      registerPendingAssetUpload("member", memberId, pendingNewMemberAvatar.pendingUpload, "avatar-" + name);
-      avatar = pendingNewMemberAvatar.previewUrl;
-    } else {
-      avatar = (newMemberAvatarUrl ? newMemberAvatarUrl.value.trim() : "");
+    function finish(avatar){
+      data.members.push({ id:makeId('m'), name:name, role:role, initials:initials, bio:bio, avatar:avatar || '', links:links });
+      nameInput.value = ''; roleInput.value = ''; initInput.value = ''; bioInput.value = '';
+      avatarUrlInput.value = ''; avatarFileInput.value = '';
+      document.getElementById('newMemberAvatarName').textContent = 'Kein Bild ausgew√§hlt ‚Äì URL oder Datei angeben.';
+      document.getElementById('newMemberLinksRows').innerHTML = '';
+      renderAdminLists();
+      setStatus('Mitglied hinzugef√ºgt ‚Äì noch nicht gespeichert.');
     }
 
-    data.members.push({ id:memberId, name:name, role:role, initials:initials, bio:bio, avatar:avatar, links:links });
-    nameInput.value = ""; roleInput.value = ""; initInput.value = ""; bioInput.value = "";
-    if(newMemberAvatarUrl) newMemberAvatarUrl.value = "";
-    if(newMemberAvatarFile) newMemberAvatarFile.value = "";
-    if(newMemberAvatarPreviewWrap) newMemberAvatarPreviewWrap.style.display = "none";
-    newMemberAvatarName.textContent = "Kein Bild ausgew√§hlt ‚Äì URL oder Datei angeben.";
-    pendingNewMemberAvatar = null;
-    document.getElementById("newMemberLinksRows").innerHTML = "";
-    renderAdminLists();
-    renderPublic();
-    setStatus("Mitglied hinzugef√ºgt ‚Äì noch nicht auf GitHub gespeichert.");
+    var file = avatarFileInput.files && avatarFileInput.files[0];
+    if(file){
+      setStatus('Profilbild wird verarbeitet ‚Ä¶');
+      compressImage(file, 300, function(dataUrl){
+        if(!dataUrl){ setStatus('Profilbild konnte nicht verarbeitet werden.'); return; }
+        finish(dataUrl);
+      });
+    } else {
+      finish(avatarUrlInput.value.trim());
+    }
   });
+
   /* --- News hinzuf√ºgen --- */
   document.getElementById('addNewsBtn').addEventListener('click', function(){
     var dateInput = document.getElementById('newNewsDate');
@@ -5686,143 +5414,76 @@
   });
 
   /* ============================================================
-     7b) GITHUB-SYNC: data.json & Assets im Repo lesen & schreiben
+     7b) GITHUB-SYNC: data.json direkt im Repo lesen & schreiben
      ============================================================ */
+  // Pr√ºft, ob ein String eine grunds√§tzlich brauchbare http(s)-URL ist ‚Äì f√§ngt Tippfehler
+  // oder versehentlich stehen gelassenen Platzhaltertext ab, BEVOR fetch() mit einer
+  // kryptischen "Failed to parse URL"-Meldung abbricht.
   function isValidHttpUrl(str){
     try{
       var u = new URL(str);
       return u.protocol === 'https:' || u.protocol === 'http:';
     }catch(e){ return false; }
   }
-
   var GH_SETTINGS_KEY = 'strudeldesigns_gh_settings_v2';
   var ghOwnerInput = document.getElementById('ghOwner');
   var ghRepoInput = document.getElementById('ghRepo');
   var ghBranchInput = document.getElementById('ghBranch');
   var ghPathInput = document.getElementById('ghPath');
-  var ghTokenInput = document.getElementById('ghToken');
-  var ghTokenToggleBtn = document.getElementById('ghTokenToggleBtn');
   var ghWorkerUrlInput = document.getElementById('ghWorkerUrl');
-  var ghModeToken = document.getElementById('ghModeToken');
-  var ghModeWorker = document.getElementById('ghModeWorker');
-  var ghTokenSection = document.getElementById('ghTokenSection');
-  var ghWorkerSection = document.getElementById('ghWorkerSection');
-  var ghWorkerHelpBtn = document.getElementById('ghWorkerHelpBtn');
-  var ghWorkerHelpBox = document.getElementById('ghWorkerHelpBox');
-  var ghWorkerCodeSnippet = document.getElementById('ghWorkerCodeSnippet');
-  var ghCopyWorkerCodeBtn = document.getElementById('ghCopyWorkerCodeBtn');
-  var ghTestBtn = document.getElementById('ghTestBtn');
   var ghStatusEl = document.getElementById('ghStatus');
   var ghLoadBtn = document.getElementById('ghLoadBtn');
   var ghPublishBtn = document.getElementById('ghPublishBtn');
-  var lastKnownSha = null;
-  var lastSyncedSnapshot = JSON.stringify(data);
-
-  // Cloudflare Worker Script Template mit automatischer CORS-Unterst√ºtzung f√ºr alle Origins
-  var WORKER_TEMPLATE = '/**\n * Cloudflare Worker f√ºr StrudelDesigns Sync\n * Erlaubt CORS f√ºr Netlify & jede eigene Domain\n */\nexport default {\n  async fetch(request, env) {\n    const origin = request.headers.get("Origin") || "*";\n    const corsHeaders = {\n      "Access-Control-Allow-Origin": origin,\n      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",\n      "Access-Control-Allow-Headers": "Content-Type, Authorization",\n      "Access-Control-Max-Age": "86400",\n    };\n\n    if (request.method === "OPTIONS") {\n      return new Response(null, { headers: corsHeaders });\n    }\n\n    if (request.method !== "POST") {\n      return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: corsHeaders });\n    }\n\n    try {\n      const body = await request.json();\n      // Pr√ºfe Zugangscode (in Cloudflare Environment Variables als ADMIN_CODE hinterlegt)\n      if (env.ADMIN_CODE && body.password !== env.ADMIN_CODE && body.code !== env.ADMIN_CODE) {\n        return new Response(JSON.stringify({ ok: false, error: "Ung√ºltiger Zugangscode" }), { status: 401, headers: corsHeaders });\n      }\n\n      if (body.action === "unlock") {\n        return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders });\n      }\n\n      const GITHUB_TOKEN = env.GITHUB_TOKEN;\n      const REPO_OWNER = env.REPO_OWNER || "Strudelcode";\n      const REPO_NAME = env.REPO_NAME || "strudeldesigns";\n      const BRANCH = env.BRANCH || "main";\n\n      if (!GITHUB_TOKEN) {\n        return new Response(JSON.stringify({ ok: false, error: "GITHUB_TOKEN im Worker fehlt!" }), { status: 500, headers: corsHeaders });\n      }\n\n      // Upload / Update / Delete Logik\n      if (body.action === "uploadAsset") {\n        const ghRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${body.path}`, {\n          method: "PUT",\n          headers: {\n            "Authorization": `Bearer ${GITHUB_TOKEN}`,\n            "User-Agent": "StrudelDesigns-Worker",\n            "Content-Type": "application/json"\n          },\n          body: JSON.stringify({\n            message: body.message || "Upload asset",\n            content: body.contentBase64,\n            branch: BRANCH\n          })\n        });\n        const resData = await ghRes.json();\n        return new Response(JSON.stringify({ ok: ghRes.ok, path: body.path, res: resData }), { headers: corsHeaders });\n      }\n\n      if (body.action === "deleteAsset") {\n        const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${body.path}?ref=${BRANCH}`, {\n          headers: { "Authorization": `Bearer ${GITHUB_TOKEN}`, "User-Agent": "StrudelDesigns-Worker" }\n        });\n        if (getRes.status === 404) {\n          return new Response(JSON.stringify({ ok: true }), { headers: corsHeaders });\n        }\n        const fileInfo = await getRes.json();\n        const delRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${body.path}`, {\n          method: "DELETE",\n          headers: { "Authorization": `Bearer ${GITHUB_TOKEN}`, "User-Agent": "StrudelDesigns-Worker", "Content-Type": "application/json" },\n          body: JSON.stringify({ message: "Delete asset", sha: fileInfo.sha, branch: BRANCH })\n        });\n        return new Response(JSON.stringify({ ok: delRes.ok }), { headers: corsHeaders });\n      }\n\n      // data.json ver√∂ffentlichen\n      const fileRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json?ref=${BRANCH}`, {\n        headers: { "Authorization": `Bearer ${GITHUB_TOKEN}`, "User-Agent": "StrudelDesigns-Worker" }\n      });\n      let sha;\n      if (fileRes.ok) {\n        const fData = await fileRes.json();\n        sha = fData.sha;\n      }\n\n      const encoder = new TextEncoder();\n      const dataBytes = encoder.encode(body.content);\n      let binary = "";\n      for (let i = 0; i < dataBytes.length; i++) { binary += String.fromCharCode(dataBytes[i]); }\n      const b64 = btoa(binary);\n\n      const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`, {\n        method: "PUT",\n        headers: {\n          "Authorization": `Bearer ${GITHUB_TOKEN}`,\n          "User-Agent": "StrudelDesigns-Worker",\n          "Content-Type": "application/json"\n        },\n        body: JSON.stringify({\n          message: "data.json aktualisiert",\n          content: b64,\n          sha: sha,\n          branch: BRANCH\n        })\n      });\n      const putData = await putRes.json();\n      return new Response(JSON.stringify({ ok: putRes.ok, res: putData }), { headers: corsHeaders });\n    } catch (err) {\n      return new Response(JSON.stringify({ ok: false, error: err.message }), { status: 500, headers: corsHeaders });\n    }\n  }\n};';
-
-  if(ghWorkerCodeSnippet){
-    ghWorkerCodeSnippet.textContent = WORKER_TEMPLATE;
-  }
-
-  if(ghWorkerHelpBtn && ghWorkerHelpBox){
-    ghWorkerHelpBtn.addEventListener('click', function(){
-      ghWorkerHelpBox.style.display = ghWorkerHelpBox.style.display === 'none' ? 'block' : 'none';
-    });
-  }
-
-  if(ghCopyWorkerCodeBtn){
-    ghCopyWorkerCodeBtn.addEventListener('click', function(){
-      navigator.clipboard.writeText(WORKER_TEMPLATE).then(function(){
-        ghCopyWorkerCodeBtn.textContent = 'Kopiert ‚úì';
-        setTimeout(function(){ ghCopyWorkerCodeBtn.textContent = 'Code kopieren'; }, 2000);
-      });
-    });
-  }
-
-  function updateSyncModeUI(mode){
-    if(mode === 'worker'){
-      if(ghModeWorker) ghModeWorker.checked = true;
-      if(ghWorkerSection) ghWorkerSection.style.display = 'block';
-      if(ghTokenSection) ghTokenSection.style.display = 'none';
-    } else {
-      if(ghModeToken) ghModeToken.checked = true;
-      if(ghWorkerSection) ghWorkerSection.style.display = 'none';
-      if(ghTokenSection) ghTokenSection.style.display = 'block';
-    }
-  }
-
-  if(ghModeToken){
-    ghModeToken.addEventListener('change', function(){
-      if(ghModeToken.checked){ updateSyncModeUI('token'); saveGhSettings(); }
-    });
-  }
-  if(ghModeWorker){
-    ghModeWorker.addEventListener('change', function(){
-      if(ghModeWorker.checked){ updateSyncModeUI('worker'); saveGhSettings(); }
-    });
-  }
-
-  if(ghTokenToggleBtn && ghTokenInput){
-    ghTokenToggleBtn.addEventListener('click', function(){
-      ghTokenInput.type = ghTokenInput.type === 'password' ? 'text' : 'password';
-    });
-  }
+  var lastKnownSha = null; // wird aktuell nur noch informativ genutzt, der Worker holt sich die sha selbst
+  var lastSyncedSnapshot = JSON.stringify(data); // Stand, der zuletzt mit GitHub √ºbereinstimmte
 
   function loadGhSettings(){
     try{
       var raw = localStorage.getItem(GH_SETTINGS_KEY);
       var s = raw ? JSON.parse(raw) : {};
-      if(ghOwnerInput) ghOwnerInput.value = s.owner || 'Strudelcode';
-      if(ghRepoInput) ghRepoInput.value = s.repo || 'strudeldesigns';
-      if(ghBranchInput) ghBranchInput.value = s.branch || 'main';
-      if(ghPathInput) ghPathInput.value = s.path || 'data.json';
-      if(ghTokenInput) ghTokenInput.value = s.token || '';
-      if(ghWorkerUrlInput) ghWorkerUrlInput.value = s.workerUrl || '';
-      var mode = s.syncMode || (s.token ? 'token' : (s.workerUrl ? 'worker' : 'token'));
-      updateSyncModeUI(mode);
-    }catch(e){ /* ignorieren */ }
+      ghOwnerInput.value = s.owner || '';
+      ghRepoInput.value = s.repo || '';
+      ghBranchInput.value = s.branch || 'main';
+      ghPathInput.value = s.path || 'data.json';
+      ghWorkerUrlInput.value = s.workerUrl || '';
+      // Der Zugangscode wird bewusst NICHT in localStorage gespeichert ‚Äì er lebt nur im
+      // Speicher (adminCode), solange das Panel offen/entsperrt ist.
+    }catch(e){ /* ignorieren, leere Felder verwenden */ }
   }
-
   function saveGhSettings(){
-    var syncMode = (ghModeWorker && ghModeWorker.checked) ? 'worker' : 'token';
     var persisted = {
-      owner: (ghOwnerInput ? ghOwnerInput.value.trim() : '') || 'Strudelcode',
-      repo: (ghRepoInput ? ghRepoInput.value.trim() : '') || 'strudeldesigns',
-      branch: (ghBranchInput ? ghBranchInput.value.trim() : '') || 'main',
-      path: (ghPathInput ? ghPathInput.value.trim() : '') || 'data.json',
-      token: ghTokenInput ? ghTokenInput.value.trim() : '',
-      workerUrl: ghWorkerUrlInput ? ghWorkerUrlInput.value.trim().replace(/\/+$/,'') : '',
-      syncMode: syncMode
+      owner: ghOwnerInput.value.trim(),
+      repo: ghRepoInput.value.trim(),
+      branch: ghBranchInput.value.trim() || 'main',
+      path: ghPathInput.value.trim() || 'data.json',
+      workerUrl: ghWorkerUrlInput.value.trim().replace(/\/+$/,'')
     };
     localStorage.setItem(GH_SETTINGS_KEY, JSON.stringify(persisted));
+    // Passwort/Code nur zur Laufzeit zur√ºckgeben, nie in localStorage schreiben.
     var s = {};
     for(var k in persisted){ s[k] = persisted[k]; }
     s.password = adminCode;
     return s;
   }
-
   loadGhSettings();
-  [ghOwnerInput, ghRepoInput, ghBranchInput, ghPathInput, ghTokenInput, ghWorkerUrlInput].forEach(function(inp){
-    if(inp){ inp.addEventListener('change', saveGhSettings); }
+  [ghOwnerInput, ghRepoInput, ghBranchInput, ghPathInput, ghWorkerUrlInput].forEach(function(inp){
+    inp.addEventListener('change', saveGhSettings);
+  });
+  ghWorkerUrlInput.addEventListener('blur', function(){
+    var v = ghWorkerUrlInput.value.trim().replace(/\/+$/,'');
+    if(v && !isValidHttpUrl(v)){
+      setGhStatus('Achtung: Diese Worker-URL sieht ung√ºltig aus (z. B. Tippfehler) ‚Äì bitte pr√ºfen.');
+    }
   });
 
   function setGhStatus(text, ok){
-    if(!ghStatusEl) return;
-    ghStatusEl.innerHTML = text;
-    ghStatusEl.style.color = ok ? '#6ee7b7' : (text.indexOf('fehlgeschlagen') !== -1 || text.indexOf('Fehler') !== -1 || text.indexOf('blockiert') !== -1 ? '#f87171' : '');
+    ghStatusEl.textContent = text;
+    ghStatusEl.style.color = ok ? '#6ee7b7' : '';
   }
 
-  // UTF-8 sicheres Base64
-  function utf8ToBase64(str){
-    var bytes = new TextEncoder().encode(str);
-    var binary = '';
-    for(var i = 0; i < bytes.length; i++){ binary += String.fromCharCode(bytes[i]); }
-    return btoa(binary);
-  }
-
+  // UTF-8-sicheres Base64-Decodieren (wichtig wegen Umlauten & Emojis in News/Bios)
   function base64ToUtf8(b64){
-    var binary = atob(String(b64 || '').replace(/\s/g, ''));
+    var binary = atob(String(b64 || '').replace(/\n/g, ''));
     var bytes = new Uint8Array(binary.length);
     for(var i = 0; i < binary.length; i++){ bytes[i] = binary.charCodeAt(i); }
     return new TextDecoder().decode(bytes);
@@ -5833,78 +5494,19 @@
       '/contents/' + s.path.split('/').map(encodeURIComponent).join('/');
   }
 
-  // Verbindung testen Button
-  if(ghTestBtn){
-    ghTestBtn.addEventListener('click', function(){
-      var s = saveGhSettings();
-      if(!s.owner || !s.repo){
-        setGhStatus('Bitte Benutzername und Repository angeben.');
-        return;
-      }
-      setGhStatus('Teste Verbindung ‚Ä¶');
-
-      if(s.syncMode === 'token'){
-        if(!s.token){
-          setGhStatus('Bitte zuerst deinen GitHub Personal Access Token (PAT) eingeben.');
-          return;
-        }
-        fetch('https://api.github.com/repos/' + encodeURIComponent(s.owner) + '/' + encodeURIComponent(s.repo), {
-          headers: {
-            'Authorization': 'Bearer ' + s.token,
-            'Accept': 'application/vnd.github+json'
-          }
-        })
-        .then(function(res){
-          if(res.status === 401){ throw { message: 'Ung√ºltiger GitHub-Token (401 Bad credentials).' }; }
-          if(res.status === 404){ throw { message: 'Repository "' + s.owner + '/' + s.repo + '" nicht gefunden (404).' }; }
-          if(!res.ok){ throw { message: 'GitHub API Fehler (' + res.status + ')' }; }
-          return res.json();
-        })
-        .then(function(repoInfo){
-          setGhStatus('Verbindung erfolgreich ‚úì ‚Äì Schreibzugriff auf ' + escapeHtml(repoInfo.full_name) + ' bereit!', true);
-        })
-        .catch(function(err){
-          setGhStatus(err.message || 'Verbindung fehlgeschlagen.');
-        });
-      } else {
-        if(!s.workerUrl || !isValidHttpUrl(s.workerUrl)){
-          setGhStatus('Bitte eine g√ºltige Worker-URL eintragen.');
-          return;
-        }
-        fetch(s.workerUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'unlock', code: s.password || adminCode || 'test' })
-        })
-        .then(function(res){
-          if(res.status === 200 || res.status === 401){
-            setGhStatus('Worker erreichbar ‚úì (' + (res.status === 200 ? 'Zugangscode g√ºltig' : 'Erreichbar, Zugangscode pr√ºfen') + ')', true);
-          } else {
-            setGhStatus('Worker antwortet mit Status ' + res.status);
-          }
-        })
-        .catch(function(){
-          setGhStatus('Worker nicht erreichbar oder durch CORS blockiert (Origin: ' + escapeHtml(location.origin) + '). Nutze den <strong>Direkten GitHub-Token</strong> oder aktualisiere den Worker-Code.');
-        });
-      }
-    });
-  }
-
-  // Von GitHub laden
+  // Lesen l√§uft unauthentifiziert direkt gegen die √∂ffentliche GitHub-API ‚Äì daf√ºr ist kein Token n√∂tig
+  // (funktioniert nur bei √∂ffentlichen Repos, was bei einer GitHub-Pages-Seite ohnehin der Fall ist).
   ghLoadBtn.addEventListener('click', function(){
     var s = saveGhSettings();
     if(!s.owner || !s.repo){ setGhStatus('Bitte Benutzername/Organisation und Repository angeben.'); return; }
     if(JSON.stringify(data) !== lastSyncedSnapshot){
-      var proceed = confirm('Du hast noch nicht ver√∂ffentlichte √Ñnderungen im Panel. ' +
-        'Wenn du jetzt von GitHub l√§dst, gehen diese √Ñnderungen verloren!\n\nM√∂chtest du trotzdem fortfahren?');
+      var proceed = confirm('Du hast noch nicht ver√∂ffentlichte √Ñnderungen im Panel (z. B. bei Mitgliedern oder News). ' +
+        'Wenn du jetzt von GitHub l√§dst, gehen diese √Ñnderungen verloren! ' +
+        'Klicke "Abbrechen" und ver√∂ffentliche zuerst deine √Ñnderungen, oder "OK" um sie zu verwerfen und den GitHub-Stand zu laden.');
       if(!proceed){ return; }
     }
     setGhStatus('Lade data.json von GitHub ‚Ä¶');
-
-    var headers = { 'Accept': 'application/vnd.github+json' };
-    if(s.token){ headers['Authorization'] = 'Bearer ' + s.token; }
-
-    fetch(ghApiUrl(s) + '?ref=' + encodeURIComponent(s.branch), { headers: headers })
+    fetch(ghApiUrl(s) + '?ref=' + encodeURIComponent(s.branch), { headers: { 'Accept':'application/vnd.github+json' } })
       .then(function(res){
         if(res.status === 404){ throw { code:404 }; }
         if(!res.ok){ throw { code:res.status }; }
@@ -5930,15 +5532,18 @@
           lastKnownSha = null;
           setGhStatus('In diesem Repo liegt noch keine data.json ‚Äì beim Ver√∂ffentlichen wird sie neu angelegt.');
         } else if(err && err.code === 403){
-          setGhStatus('Kein Zugriff (403). Bei privaten Repos bitte einen GitHub-Token hinterlegen.');
+          setGhStatus('Kein Zugriff (403). Ist das Repo √∂ffentlich? Private Repos lassen sich ohne Token nicht lesen.');
         } else {
           setGhStatus('Laden fehlgeschlagen. Pr√ºfe Benutzername, Repo, Branch und Internetverbindung.');
         }
       });
   });
 
-  /* Direktes L√∂schen von Dateien √ºber GitHub Contents API */
-  function deletePendingAssetsDirect(s, cb){
+  /* L√∂scht vorgemerkte GitHub-Dateien (siehe pendingAssetDeletions) nacheinander √ºber den
+     Worker (Contents-API DELETE), BEVOR neue Dateien hochgeladen und data.json ver√∂ffentlicht
+     werden. Nacheinander aus demselben Grund wie bei Uploads: jeder L√∂schvorgang ist ein
+     eigener Commit auf denselben Branch. */
+  function deletePendingAssets(workerUrl, password, cb){
     if(pendingAssetDeletions.length === 0){ cb(null); return; }
     var queue = pendingAssetDeletions.slice();
     var total = queue.length;
@@ -5949,169 +5554,343 @@
       var doneCount = total - queue.length;
       setGhStatus('Entferne Datei ' + doneCount + ' von ' + total + ' aus GitHub ‚Ä¶');
 
-      var ghItemUrl = 'https://api.github.com/repos/' + encodeURIComponent(s.owner) + '/' + encodeURIComponent(s.repo) +
-        '/contents/' + path.split('/').map(encodeURIComponent).join('/');
-
-      fetch(ghItemUrl + '?ref=' + encodeURIComponent(s.branch), {
-        headers: {
-          'Authorization': 'Bearer ' + s.token,
-          'Accept': 'application/vnd.github+json'
-        }
+      fetch(workerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({ action:'deleteAsset', password: password, path: path })
       })
-      .then(function(res){
-        if(res.status === 404){
+        .then(function(res){
+          return res.json().catch(function(){ return {}; }).then(function(body){
+            if(!res.ok || !body.ok){ throw { code:res.status, message: body && body.error }; }
+            return body;
+          });
+        })
+        .then(function(){
           pendingAssetDeletions = pendingAssetDeletions.filter(function(p){ return p !== path; });
           next();
-          return null;
-        }
-        if(!res.ok){ throw { code: res.status }; }
-        return res.json();
-      })
-      .then(function(fileInfo){
-        if(!fileInfo){ return; }
-        return fetch(ghItemUrl, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': 'Bearer ' + s.token,
-            'Accept': 'application/vnd.github+json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            message: 'Datei gel√∂scht: ' + path,
-            sha: fileInfo.sha,
-            branch: s.branch
-          })
-        }).then(function(){
-          pendingAssetDeletions = pendingAssetDeletions.filter(function(p){ return p !== path; });
+        })
+        .catch(function(err){
+          // Datei evtl. schon nicht mehr vorhanden (404) -> einfach weitermachen statt den ganzen
+          // Ver√∂ffentlichungs-Vorgang abzubrechen.
+          if(err && err.code === 404){
+            pendingAssetDeletions = pendingAssetDeletions.filter(function(p){ return p !== path; });
+            next();
+            return;
+          }
+          // Andere Fehler (z. B. Worker gerade nicht erreichbar) sollen NICHT den kompletten
+          // Ver√∂ffentlichungs-Vorgang blockieren ‚Äì die verwaiste Datei bleibt einfach in der
+          // Warteschlange (pendingAssetDeletions) und wird beim n√§chsten Ver√∂ffentlichen erneut
+          // versucht. Steckt hier tats√§chlich ein grundlegendes Problem (z. B. eine falsche
+          // Worker-URL), zeigt sich das ohnehin sp√§testens beim anschlie√üenden Upload/Publish-Schritt.
+          console.warn('Datei-L√∂schung √ºbersprungen (wird beim n√§chsten Mal erneut versucht): ' +
+            ((err && err.message) || 'unbekannter Fehler') + ' ¬∑ Pfad: ' + path);
           next();
         });
-      })
-      .catch(function(err){
-        console.warn('Datei-L√∂schung √ºbersprungen: ' + ((err && err.message) || '') + ' ¬∑ ' + path);
-        next();
-      });
     }
     next();
   }
 
-  /* Direktes Hochladen von Dateien (Bilder/Videos) √ºber GitHub Contents API */
-  function uploadPendingAssetsDirect(s, cb){
+  /* L√§dt ausstehende Datei-Uploads (Bild ODER Video, siehe pendingAssetUploads) nacheinander als
+     echte Dateien auf GitHub hoch (Git-Data-API im Worker) und tr√§gt danach den finalen
+     relativen Pfad (z. B. "designs/xyz.png" oder "designs/xyz.mp4") in data.templates/data.designs ein.
+     L√§uft NACHEINANDER, nicht parallel, weil jeder Upload einen eigenen Commit auf
+     denselben Branch schreibt ‚Äì gleichzeitige Commits w√ºrden sich gegenseitig blockieren. */
+  function uploadPendingAssets(workerUrl, password, cb){
     if(pendingAssetUploads.length === 0){ cb(null); return; }
     var queue = pendingAssetUploads.slice();
     var total = queue.length;
+
     function next(){
       if(queue.length === 0){ cb(null); return; }
       var item = queue.shift();
       var doneCount = total - queue.length;
-      setGhStatus("Lade Datei " + doneCount + " von " + total + " direkt auf GitHub hoch ‚Ä¶");
-      var folder;
-      if(item.targetKind === "design"){ folder = "designs"; }
-      else if(item.targetKind === "template"){ folder = "templates"; }
-      else { folder = "assets"; }
-      var path = folder + "/" + slugify(item.label) + "-" + Date.now().toString(36) + "." + item.ext;
-      var ghItemUrl = "https://api.github.com/repos/" + encodeURIComponent(s.owner) + "/" + encodeURIComponent(s.repo) +
-        "/contents/" + path.split("/").map(encodeURIComponent).join("/");
-      fetch(ghItemUrl, {
-        method: "PUT",
-        headers: {
-          "Authorization": "Bearer " + s.token,
-          "Accept": "application/vnd.github+json",
-          "Content-Type": "application/json"
-        },
+      setGhStatus('Lade Datei ' + doneCount + ' von ' + total + ' auf GitHub hoch ‚Ä¶');
+
+      var folder = item.targetKind === 'design' ? 'designs' : 'templates';
+      var path = folder + '/' + slugify(item.label) + '-' + Date.now().toString(36) + '.' + item.ext;
+
+      fetch(workerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
         body: JSON.stringify({
-          message: "Datei hochgeladen: " + item.label,
-          content: item.base64,
-          branch: s.branch
+          action: 'uploadAsset',
+          password: password,
+          path: path,
+          contentBase64: item.base64,
+          message: 'Datei hochgeladen: ' + item.label
         })
       })
-      .then(function(res){
-        return res.json().catch(function(){ return {}; }).then(function(body){
-          if(!res.ok){
-            throw { code: res.status, message: (body && body.message) || ("GitHub Upload-Fehler (" + res.status + ")") };
-          }
-          return body;
-        });
-      })
-      .then(function(){
-        if(item.targetKind === "member"){
-          var member = data.members.filter(function(x){ return x.id === item.targetId; })[0];
-          if(member){
-            if(member.avatar && member.avatar.indexOf("blob:") === 0){ try{ URL.revokeObjectURL(member.avatar); }catch(e){} }
-            member.avatar = path;
-          }
-        } else if(item.targetKind === "template_watermark"){
-          var tpl = data.templates.filter(function(x){ return x.id === item.targetId; })[0];
-          if(tpl){
-            if(tpl.watermarkAsset && tpl.watermarkAsset.indexOf("blob:") === 0){ try{ URL.revokeObjectURL(tpl.watermarkAsset); }catch(e){} }
-            tpl.watermarkAsset = path;
-          }
-        } else {
-          var list = item.targetKind === "design" ? data.designs : data.templates;
+        .then(function(res){
+          return res.json().catch(function(){ return {}; }).then(function(body){
+            if(!res.ok || !body.ok){ throw { code:res.status, message: body && body.error }; }
+            return body;
+          });
+        })
+        .then(function(body){
+          var list = item.targetKind === 'design' ? data.designs : data.templates;
           var target = list.filter(function(x){ return x.id === item.targetId; })[0];
           if(target){
-            if(target.asset && target.asset.indexOf("blob:") === 0){ try{ URL.revokeObjectURL(target.asset); }catch(e){} }
-            target.asset = path;
-            target.assetType = item.assetType || "image";
+            if(target.asset && target.asset.indexOf('blob:') === 0){ URL.revokeObjectURL(target.asset); }
+            target.asset = body.path;
+            target.assetType = item.assetType || 'image';
           }
-        }
-        pendingAssetUploads = pendingAssetUploads.filter(function(p){ return p !== item; });
-        next();
-      })
-      .catch(function(err){
-        cb((err && err.message) ? err.message : "Datei-Upload fehlgeschlagen");
-      });
+          pendingAssetUploads = pendingAssetUploads.filter(function(p){ return p !== item; });
+          next();
+        })
+        .catch(function(err){
+          cb((err && err.message) ? err.message : ('Datei-Upload fehlgeschlagen (' + (err && err.code || '?') + ').'));
+        });
     }
     next();
   }
 
-  /* Direktes Ver√∂ffentlichen von data.json auf GitHub */
-  function publishDirectlyToGithub(s, cb){
-    deletePendingAssetsDirect(s, function(deleteErr){
-      if(deleteErr){ cb(deleteErr); return; }
-      uploadPendingAssetsDirect(s, function(uploadErr){
-        if(uploadErr){ cb(uploadErr); return; }
-        renderAdminLists();
-        setGhStatus("Ver√∂ffentliche data.json auf GitHub ‚Ä¶");
-        var getUrl = ghApiUrl(s) + "?ref=" + encodeURIComponent(s.branch);
-        fetch(getUrl, {
-          headers: {
-            "Authorization": "Bearer " + s.token,
-            "Accept": "application/vnd.github+json"
-          }
+  // Ver√∂ffentlichen l√§uft √ºber deine eigene Cloudflare-Worker-Funktion. Der Browser sendet nur das
+  // Admin-Zugangscode + die Daten ‚Äì der echte GitHub-Token bleibt ausschlie√ülich im Worker gespeichert.
+  ghPublishBtn.addEventListener('click', function(){
+    var s = saveGhSettings();
+    if(!s.workerUrl){ setGhStatus('Bitte zuerst die Worker-URL eintragen (siehe Einrichtungsanleitung).'); return; }
+    if(!isValidHttpUrl(s.workerUrl)){
+      setGhStatus('Die Worker-URL sieht ung√ºltig aus (z. B. Tippfehler oder Platzhaltertext) ‚Äì bitte im GitHub-Tab pr√ºfen.');
+      return;
+    }
+    if(!s.password){ setGhStatus('Bitte das Panel zuerst √ºber den Zugangscode entsperren.'); return; }
+    ghPublishBtn.disabled = true;
+
+    deletePendingAssets(s.workerUrl, s.password, function(deleteErr){
+      if(deleteErr){
+        setGhStatus('Datei-L√∂schung fehlgeschlagen: ' + deleteErr + ' ‚Äì data.json wurde NICHT ver√∂ffentlicht.');
+        ghPublishBtn.disabled = false;
+        return;
+      }
+
+      uploadPendingAssets(s.workerUrl, s.password, function(uploadErr){
+      if(uploadErr){
+        setGhStatus('Datei-Upload fehlgeschlagen: ' + uploadErr + ' ‚Äì data.json wurde NICHT ver√∂ffentlicht, damit nichts kaputte Links enth√§lt.');
+        ghPublishBtn.disabled = false;
+        return;
+      }
+
+      renderAdminLists(); // aktualisierte Asset-Pfade in der Liste anzeigen
+      setGhStatus('Ver√∂ffentliche auf GitHub ‚Ä¶');
+
+      fetch(s.workerUrl, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({
+          password: s.password,
+          content: JSON.stringify(data, null, 2)
         })
-        .then(function(res){
-          if(res.status === 404){ return null; }
-          if(!res.ok){ throw { code: res.status, message: "GitHub API Fehler beim Lesen von data.json (" + res.status + ")" }; }
-          return res.json();
-        })
-        .then(function(fileInfo){
-          var sha = fileInfo ? fileInfo.sha : undefined;
-          var b64Content = utf8ToBase64(JSON.stringify(data, null, 2));
-          var putBody = {
-            message: "data.json aktualisiert via StrudelDesigns Admin-Panel",
-            content: b64Content,
-            branch: s.branch
-          };
-          if(sha){ putBody.sha = sha; }
-          return fetch(ghApiUrl(s), {
-            method: "PUT",
-            headers: {
-              "Authorization": "Bearer " + s.token,
-              "Accept": "application/vnd.github+json",
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(putBody)
-          });
-        })
+      })
         .then(function(res){
           return res.json().catch(function(){ return {}; }).then(function(body){
-            if(!res.ok){
-              throw { code: res.status, xúÏ[€r€Föæ◊S¥ô⁄òà†úÉS±]:Ÿ÷F∂TñúT&ïU5Å&â`MJ¥FUs1µ∞≥ó{ô⁄GòΩ…’ÍMÚ$˚˝›84 RímÕÏ^¨ eÇËÓøˇÛ©õSëe|,Ã&¡Ç˝Ówå>Ω©y›e˙s;«ä´Y∆:Ï3&EÊe˙kó]mÆ1ÎÔ™ˆM
-5ì±ÜfOªÍVﬂÆ∫Â£ß&"vG≥ÿWaª›KkIƒ3uºà}«<Õ&âbOÿ?æ"2å«·h·\ÒÆΩè?t„Y≠ÿÕÁ üT€	)k;b1Ω#n‡£b∆3˚+∞Œs1âÑdCNŸ˜B^ˇm4±äB‘∞y3¬À˚Cñƒù&≈sÒd>Ø÷_ˇSvp˝∑LC∏˛uË?$Úüˆ1Z†Ã	%éDÄ[Y&TfÊπÁ˙„≠å÷Y ≥_ÉuPîé‹‘Z¥K` /Û"è’Ñ=yÚÑmt/+˛ÂÇ‹Ã≈;Áí˝q&f2X(˘¬Õ	£È*Q<¬tΩ,ﬂ«åñ‘ƒ‚BUBéˆ‹[q2€§ú¶Êªdìp§‹íœ4$±ÿIf1ièA©∑%∆@Ããâ—x∑≥´ëê±`ª\âP[@Á3|'!”[ëﬁpX ãPΩúŸo˛œJÓ#A:gIß“∏©Pì$Ä>üt÷À˜¡!≥ªdùù$V–≠ﬁ…"ùAáß)¯Ãâ{}≠_Ï™ZGF7hö»%„öŸÉé—-∂N•$K]àó√—“lV[+|BÕ|r”'WA®π›¶ΩAñ˘úÀ+±€ÄGË◊ jïx@í3ÚH¥èJŒ GMdr˛¯I ïsZg”¬±’¸Ï7ëÏjÛÔÊ¨ñ⁄ƒJ[ÖëÇ…ñ†“ä3){ µ'l÷`π±|êc-øF<”∆ıÂ∆ó~ˇ»hRI¢&€1c∑$ﬁ9ó±€—6Ÿ3ﬁrèçªÃRâg¥Y.˜„P°Nß´≠ıøˇKœ#oarÓ©◊Í£Öœ~õF	nÚÿ3=„£=∂ŸË£˝uÊÀ[áJLÔ›[¿]æóßûzí¯ì∫ª&$FIˇªYJX{äÀ±PﬂÖq†iÖ;Õ¬1¸e>üïÔ≤NE¥à2±ﬁ•Æ)ﬁ∂¿ÿì∏÷§Œ“Xòœ≠}¢<ãf:h">ë∂Åç◊º89á≥V…±ÓèÙ∏G„z‰˛&öY∂ö«5÷1&ñ6€)∑C\m¥vÎuWCnÛL<˙r`ËÍ/ˆ¨2 g§ıh,"ö;†ä◊m˝ˇu˘-tµ1Ü1èéåbÎùµíw\ÍAn©ëM≈Œπ”‡Å6#Ä´”uÛ≠’.*&_x°jm¥„⁄¯y≥…g∞±Ø5‚Ò9ˆ’a™ˆ¬Í‚‚p‰vÜQ2 bæU…≈%{˚Ê¿ìbûúâ√·ÑØΩÆ˜ ËâË^^5ƒÍ{ë∑(º∫¨ª∫õ;=«r ÂŸ2n´4*X]z∏˚c6†/„4^{%V⁄Cª€o?ÄÁm ∑0~	.Ô√˝6G£0#7E'‘Æö„y`BÒZ¿f[L¿Ù{îè_*"=‚ÒR8÷˜ãµ¸6Åÿ;ØE}EÆÇÁ’ ,√)ºdÁ1Æ(ÚîlE¢vkéMò‹c©p◊HëÜÁ	HL¢±@Ba8∆(%·ÕöÉ∏ÙÃ$‡]Ø”ΩSöç,ªﬂÓ±º‰q	â—Ò‰h6Ñ™N∂UÏÒ ÿõc÷TWƒ`õ„c¡ô≥ŒöUi:±<„sÅDR(∆gœj@É0„√Hîë ôÿ\+“sÑ»EÏø*™)GAc«Nêdû~iqÿN\ùÌP)¡ﬁÕvDÉ¥<3=¬ª˙»∂|Lg'áπG[']NÛYΩ>dX¶$q›s,éÆ"aƒ·K™iı∫´P—í¯î¿≤.™ªÇPä3eß”»§+R≥ˇ.f˘*Zú$ò4ô›ÃíF]˚Óà≥©fkZ[C∏•-uÂ0H,˝kªÿ@*ˆ€¸ƒ˛,Ï˙/Q¶¯d˘ﬂú/ïîﬁà4a@ ÑèTlÜY1GÈ†äØÒ'§Øl{FAW¿§ ÖçÜ\>ÄˆíﬁŸÿ6€àuÏa0y%J∫Y”∆2qøõFÇ:©œZ)K®º πwv5≠¯V($©iáÕ¶‡6áÁ∫G•$
-¬Ï{Ö¡K•R·⁄≠¢h∑NDä		`|˝k§¬±n€ë$áö∫e•Ú˙◊—}ìêyE1r≥û±#ã®êÜÈ1†¬`øüç9ºïˆ©PIËïî˜Éf˛∞∫Àlq|ùU§X&m÷Ó’t/{›îT£Ø≥ÃlK0xvå	≠vv>ì`»Î˝ùó'l^7ÿoÓÃùv[™‰ª°Øs;èÃ⁄&3¿•ÂK˘¥4&ïP>äIÔ¡¶Â˝ª…Gn”0¶ÿú’€7yoıZì-5”ö®1øŒƒ¢A·PÉ¬YØçYM
-«nR8ßŸ§pÏ&˝›⁄®†ø™aiDcNﬁ{h¡"¨3Í™≠≥œªµEWˆ◊´˙ÿ-ÕÖJl˜⁄`†øøsì¡¬ºŸh0lÿ\Õ£õ€¯Ù˜AÁéÙwÁå· úãﬁ±@ÊŒ¯ôö!¢!*!-†êø,/0AˇçÅeØù,£Úñ<?”ÚcÅáKdZ£Ó9< •2µP‰“¬ñ±ªÀw{|€nﬂ%Ò(
-œ`ÃM«Õ¯±±ê‘˚}^é# ÆJΩãÎ_»Â¥ù⁄m¯l‹ÜMÓÄb-Väºx@ûfí¢`&ÅƒŒ·õcÜä’?”r•LIÁúôœSÒRM#c⁄£xâ«aL5ë„±$	ñ!ıw≥ïÈ’Ë˙Wâq¯ÔË˙óï=¶õx∞ö‹[®∫%ivı\Q>cÆS&‘UµàW¿§ç ç´ÎÔhQs>7á†F_±uºæfû◊ÙQÕìè¯3ÄøÈ"£Ü–k>7Ø>®9(¢Jt8ì–dêH≤ƒüM!o,‘^$Ëq{±∏N9…àò÷≈|~∆gŸMÀä9µU€‹?dí⁄})`Y˘Z◊	¬πYbM˜|8«Ï5üRÑ ˜Ü˘àC3KP⁄y#n"ÍÔLP”∏≥<SÚ£$Ü©‡i·åúÕ~î1xRLìπpù$q°„-Ãj3Á™–ñbr…>zø•‡ á3Öi\Üº'.Rw8Îé÷,ßÏ>TÀﬁØπfá¿lZBãJ∆Vw°•òY–≤û√}?ö
-dû1ááCÊiìŸÛjRÎÚ*ˇà:eqå›Wâ‹ä"‡·tΩQ"˜∏âxŒ%˛~€‹´!ªÏÿóIıTÇio{¶‘—ù{¿À¯◊Åçbµ¡‰¬)(S„i—ΩO€œ4'Izã˘€Ûå‹Œ√8HŒóp—L]¢ò6åµ,mÊˇ»û≤Ø66åêTÎ\)ÃÄî)◊û‰ª[JmüìƒEÜò§Éçu6>9p≤ií®âS‹ï∫G-x‹e˚Ø˜OÓKò˝>;N†ÌäMC≈¢‰åC|}ƒ◊8‡2ËÈáºä◊Q÷–, M"„)Çá¢‚f≠(öt¸ÛM¡Ñ-d.ìÈKûM‹.„PÖ<b>B'ì≥8√§ŸÇçBj–∞…D¬-n≤8a±@U	6H·ÚQ˚H·≠ÿYwßÆÛPdŸå“Åuç*e´"äÏ¢Yä>ˆdÓ;èm{˙∏Ωha"»∫ûºÀ3MZPdpb8e∫*ÏôVá)Ò:[UKqﬁ»K:ıî˘<îÅŸ@cäú±⁄Ç∑ˆÿ∂–PÁDÊºáë“…∏…·‚ô4ÛâA…ı‚P®dBzZ;LiÈîT?;}‚‘œçGXVpŸ% °gV≠7L5›fë5ñß\f"∞€…Ê•`[RÚÖf˙3_`vWNà≈˘£Âôê›JkéïÓ<N‰Rx'NÚ!++«ﬁ¿t¡$^–RM!V“âá~_Ω˛Ä⁄ã:¯zè∆˚∂ıî|T(ÏìQ´)a∫¯ˇ}efÇS4Kü∑8P4ÅTÅïf‰CZ–≠G’©]≥ﬁ%56¸ô1Ì6X2â…/H(?U2–ˇX®º¿(-O\`m1›b1∫‹{ PõEîñ¡ÏE8Td/·.™Ùù}vÙ˙EÔ¿eà¢G´˛+*†BÅzGê¶ÇòßΩ}∫wE&˙2åQÑå%Ÿ"·˘ı/Å…¿rµ£p¯úáeÁ0ˆÒ
-v∂Í{(–I°ﬁâX∑4èøA_i]ÌÑ„â&Ä™í)*¢åúN»Ÿ,SeGiK1á∞!VBΩ†<%î	c”Ük»Ï]1—HË™[:◊^Ø«^Ò3∞Rr}™	˚âﬂCÆÛ3Àh¶‰ﬁ‡FÊ"hQƒxÑ:X∞â>ûÎÄLr8]oˆÅbüìwÏ◊º9¶ÕE·æßMÔßıÔ4∫`\¢9<a„(Ú»+¬;t˝…Qt>J.^á¨òÍS	:áÒÿ~å∞ÃöA≠h∑°ÒvÃüË§á^Ω}s`†NÄ2Ç	U◊*D3ÜÈm>; √<,`Lè>™@˛∑˝∑z»“o
-˙	ÔV'¶ÃÄ⁄˘d%ÑõK≠"‹”9dÜJÊì™Íñó“@X!5)†˘Tå|ë°‹ãÙ#áwS™ZuX,∑i ,]&q ‰¨‹º ¡©˚§4Ω€Í£R‰‘ÚL•†˝w≈àœ"5hIé˚£,;î"4“≥¡Aù1JPç‡∑Lñ:Y!¡ëäk]ÔAgä˘âÃ…FøÏg,„'?°©©∫dı·'˙ıf˚+OÒ‹“QëAÎ∞grD∫Œ¶≤t+ïöŒ-ç·»Nwr3kÈïπÂË€9vM√†(ôû˛@m‡Ç"!·k]FÊÜ)¡1∏¨˙i"≈Ë_ût>1;? À"∏HèÖA8¨¢>¡—uAXEUBêÓˆ’uà òÓˆ·hd.:<ﬁ∞ïnàà o'3}û±ãà’‡£/¶`{û™ã~Ã!ıjÄmò&iß&Å°m;∑'áCIJÒê”ÉøàÑEçÅıiï	T%‚V°¿äJ·™€∫6Ÿ\èCQ'¢ú7Å⁄'r·!#é∏/®)&\”pw`„FóKV_5ƒ˚∆”\∏\êØ)®ï£Ì´¢Ü≥@ÖN’_§cW∆ åñ‘ka÷3SMâ◊=ä~”[÷gtb®à¥¬4ùÆ›fœÂ›îUÎªKåxÌ≤+˝ﬁ.UxuhÁtöÉ¡gK¶áPan;?¥≥∆∂…YÉï@W¸d'◊r≥òlﬂd‘©LTB…â7Â©G±◊’å∞H‚UI∞ §o!¢´œaÚ{A€I	W.™¿©∏ñç’ŸßÏ-8f:Ø‘ñhÏ¢Êl¬Ñ‹≥8gÀY«	1–´(Âo⁄2ßÅEÛ†SøDRÌèó‹‘B5sÛKX°U-≥¶îO⁄TM’FW[üZKm“«¬‚/KËT®µŒñË2'çw-•1/Íg°ÂS•P‘IëXØ@XH'∑Ω/6˛âm§¨˜»<–AœÑé|í(∞kq)ÂiTrÜâóâ·Îf£NvÛm˙¶ÍÈ⁄∑awëv'2ËUE¿;>â:Ìm≈Ô®&Œõ–ÈcxJäì;úég{= )†5b.…ÊªΩuPràË40[ùÊµÍÈ¸°S¥•ON0Ûsˆ){¥ÅˇnllC˚Øøﬂ?Ÿ;›9‹›#`€_∆úøò …®\L5‚ˆ˛ÎSJy0c¢Tö˙}ûÜ∫XÜ±&˝˘˝aˇàØ?‡_|ÛÕ„ØÇë‡˛#Òı◊œ¶BÒ'¶/ZÄ››?ﬁ9|≥{∫u¥ﬂùS‚˘…î∂Èœ˜√x"aÍìÍÿ(∆úgTDú˙Ù´ÑÏân¬ñ[Ï=ﬂz{pr˙jÔ’ˆﬁõclÒ·W:ˇ—.&JT∂2e—	ÜL{tåj5¯Q)ﬁqQ/ûMÕB}7Öv≥<«)Q%‘Ô”3€⁄á◊’ÔW4<J˘ö·Éãíq=æ$<E&¶9iÅ°Uó⁄>9Mï[\¨£bßt´πÛäº◊3“±Á‘å†Û—€›3e}èÀ–U^- ‰?É(f\’∂MQóUõ;Iœ©‘Aæ†a≥oÈ± f›ï–…ù]iÃÛ∂øfp€gíáBJ¶ƒÖ Ø#PÇYŸÚ*˛cYfÚ(:-C2≥ ùu™Ö9ZÊ&cÒ;¶¢s©–G—∫b/⁄îgt5ë—œlzG≥¯ÂEq;Õ4t/¿¸ Ö:µ;"Z6%˝íüì+µ¸˘‡}%¶.<E∆0Øñ“¢§;FzÿJS´Wìz±Ò‡±øn“–ªßµì›
-Q#PÃ®<sÂ-+Â–å"qÁ+sXfu√Ü´_àïjCg≥œ…ï’ài)Zn´8m6M®z ÈE~Ç4|èÆF∏NÓ‹Ù	¨,~°ΩY6ÛN„fu÷⁄ 4ãVrƒ≤¢«R∂ÎL}fL6Áñ/◊·øªı|tï°¥hÚ ƒ2ªH6F^Sù¨Rùı÷ÑT(0](€¥W:y≤ÖZ”◊“Åí_7ﬁ£ÄÂ¸˛úz íÓ«R£π∏˝i:ŸydÖ?¢»¿F •F∆>?E»√—›aŸ≠B§T1S◊JAΩkû"ÀΩßÙ{#l÷ZyQÆ@~À˝Ü-~∞x˝;ã◊≤ﬂº8c'j5Ó¥EˇyÌ⁄SùB⁄ı<äù%q¨Ox®A[?Ωí~1ÜPßa◊R∆FÂ°›âÂEÙ°¯C˘Ûú”Öí|hù)∑2Ω>ù ”ÁDM£ßkˇ  ˇˇ ÔŒ>&
+            if(!res.ok || !body.ok){ throw { code:res.status, message: body && body.error }; }
+            return body;
+          });
+        })
+        .then(function(){
+          lastSyncedSnapshot = JSON.stringify(data);
+          setGhStatus('Ver√∂ffentlicht ‚úì ‚Äì die Live-Seite aktualisiert sich nach dem n√§chsten Deploy/Refresh.', true);
+        })
+        .catch(function(err){
+          if(err && err.code === 401){
+            setGhStatus('Falscher Zugangscode (401).');
+          } else if(err && err.code === 409){
+            setGhStatus('Konflikt: Die Datei wurde gerade zeitgleich extern ge√§ndert. Bitte kurz erneut auf ‚ÄûAuf GitHub ver√∂ffentlichen‚Äú klicken.');
+          } else if(err && err.code === 0){
+            setGhStatus('Worker nicht erreichbar. Pr√ºfe Worker-URL, Deployment und CORS-Freigabe f√ºr ' + location.origin + '.');
+          } else {
+            setGhStatus('Ver√∂ffentlichen fehlgeschlagen' + (err && err.message ? (': ' + err.message) : '.'));
+          }
+        })
+        .finally(function(){ ghPublishBtn.disabled = false; });
+      });
+    });
+  });
+
+  /* ============================================================
+     8) Mobile Nav
+     ============================================================ */
+  var burgerBtn = document.getElementById('burgerBtn');
+  var navLinks = document.getElementById('navLinks');
+  var navBackdrop = document.createElement('div');
+  navBackdrop.className = 'nav-backdrop';
+  document.body.appendChild(navBackdrop);
+  function closeMobileNav(){
+    navLinks.classList.remove('open');
+    navBackdrop.classList.remove('visible');
+    burgerBtn.setAttribute('aria-expanded','false');
+  }
+  burgerBtn.addEventListener('click', function(){
+    var isOpen = navLinks.classList.toggle('open');
+    navBackdrop.classList.toggle('visible', isOpen);
+    burgerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+  navBackdrop.addEventListener('click', closeMobileNav);
+  navLinks.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', closeMobileNav);
+  });
+
+  /* ============================================================
+     8b) Scroll-to-top-Button (v. a. f√ºr lange Listen auf dem Handy)
+     ============================================================ */
+  var scrollTopBtn = document.getElementById('scrollTopBtn');
+  window.addEventListener('scroll', function(){
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 500);
+  }, { passive:true });
+  scrollTopBtn.addEventListener('click', function(){
+    window.scrollTo({ top:0, behavior:'smooth' });
+  });
+
+  /* ============================================================
+     9) INIT
+     ============================================================ */
+  // Sofort mit lokalem/Standard-Stand rendern, damit die Seite nie leer ist ‚Ä¶
+  renderPublic();
+  // routeFromHash() initial call runs in the first init block above; no need to repeat here.
+
+  // ‚Ä¶ und danach versuchen, die aktuelle data.json zu laden (z. B. von GitHub Pages).
+  // Das ist die Datei, die im Admin-Panel √ºber "Auf GitHub ver√∂ffentlichen" aktualisiert wird
+  // und die damit f√ºr ALLE Besucher der Seite gilt ‚Äì nicht nur f√ºr den eigenen Browser.
+  fetch('data.json?_=' + Date.now())
+    .then(function(res){ return res.ok ? res.json() : null; })
+    .then(function(parsed){
+      if(parsed && Array.isArray(parsed.members) && Array.isArray(parsed.news) && Array.isArray(parsed.templates)){
+        parsed.templates.forEach(normalizeTemplate);
+        normalizeRootData(parsed);
+        data = parsed;
+        lastSyncedSnapshot = JSON.stringify(data);
+        renderPublic();
+      }
+    })
+    .catch(function(){ /* z. B. lokal ohne Server ge√∂ffnet oder data.json existiert noch nicht -> Fallback bleibt aktiv */ });
+
+  // PNG-Override f√ºr Mitglieder-Plattform-Icons im Hintergrund aufw√§rmen
+  // (nach 'available' gecachte Bilder ersetzen das SVG im Member-Lightbox automatisch via upgradeOpenLightboxIcon)
+  if(typeof bootstrapPlatformAssets === 'function'){ bootstrapPlatformAssets(); }
+})();
+  // --- Make footer links with [data-nav] switch pages too (top nav already handles its own links) ---
+  // showPage/routeFromHash live in the main init block above ‚Äî they are NOT global.
+  // So we don't try to call them directly. Instead we let the browser change the URL
+  // hash, which fires the hashchange listener registered in init ‚Üí routeFromHash ‚Üí showPage.
+  (function(){
+    document.querySelectorAll('[data-nav]').forEach(function(a){
+      if(a.closest('#navLinks')) return; // top nav relies on built-in behavior
+      a.addEventListener('click', function(e){
+        var name = a.getAttribute('data-nav');
+        if(!name) return;
+        // Don't preventDefault: let the browser actually update the URL hash,
+        // which triggers our hashchange listener and routes to page-about correctly.
+        if(location.hash !== '#' + name){ location.hash = name; }
+      });
+    });
+  })();
+
+  // --- Smooth-scroll + scrollspy for the About page TOC ---
+  (function(){
+    var toc = document.querySelector('#page-about .about-toc');
+    if(!toc) return;
+    var links = toc.querySelectorAll('a[href^="#about-"]');
+    function scrollToSection(id){
+      var el = document.getElementById(id);
+      if(!el) return;
+      var headerOffset = 90;
+      var top = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+      var smooth = 'scrollBehavior' in document.documentElement.style;
+      if(smooth){ window.scrollTo({top: top, behavior: 'smooth'}); }
+      else { window.scrollTo(0, top); }
+      history.replaceState(null, '', '#' + id);
+    }
+    function setActive(activeLink){
+      links.forEach(function(l){
+        var isOn = l === activeLink;
+        l.classList.toggle('is-active', isOn);
+        if(isOn){ l.setAttribute('aria-current', 'location'); }
+        else { l.removeAttribute('aria-current'); }
+      });
+    }
+    links.forEach(function(a){
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        var id = a.getAttribute('href').slice(1);
+        scrollToSection(id);
+        setActive(a);
+      });
+    });
+    var sections = Array.prototype.map.call(links, function(a){ return document.getElementById(a.getAttribute('href').slice(1)); }).filter(Boolean);
+    if(sections.length && 'IntersectionObserver' in window){
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            var id = entry.target.id;
+            var match = null;
+            links.forEach(function(l){ if(l.getAttribute('href') === '#' + id){ match = l; } });
+            if(match) setActive(match);
+          }
+        });
+      }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+      sections.forEach(function(s){ io.observe(s); });
+    }
+  })();
+</script>
+<!-- Discord-Mitgliederzahl: live-Anzeige mit localStorage-Cache -->
+<script>
+(function(){
+  var KEY='strudel_discord_members_v1';
+  var TTL=5*60*1000;
+  var URL='https://api.jsonbin.io/v3/b/6a6de7dcda38895dfeac6e77?meta=false';
+  var slots=document.querySelectorAll('.dm-stat');
+  var nodes=document.querySelectorAll('.dm-stat-num');
+  if(!slots.length||!nodes.length)return;
+
+  // a11y: Screenreader sollen die aktualisierte Mitgliederzahl ank√ºndigen
+  slots.forEach(function(slot){
+    if(!slot.hasAttribute('aria-live')) slot.setAttribute('aria-live','polite');
+  });
+
+  function fmt(n){
+    try{ return new Intl.NumberFormat('de-DE').format(n); }
+    catch(e){ return String(n); }
+  }
+  var did=false;
+  function paint(n){
+    if(!isFinite(n)||n<=0)return false;
+    var t=fmt(n);
+    nodes.forEach(function(el){ el.textContent=t; });
+    return true;
+  }
+  function hideAll(){
+    // Wenn weder Cache noch Fetch liefern, blende den ganzen Stat aus
+    // (sonst st√ºnde da ‚Äû‚Äì Mitglieder sind bereits‚Ä¶‚Äú was komisch liest)
+    slots.forEach(function(s){ s.style.display='none'; });
+  }
+  function loadFresh(){
+    fetch(URL)
+      .then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+      .then(function(d){
+        var n=d && (typeof d.members==='number' ? d.members : parseInt(d.members,10));
+        if(!isFinite(n)||n<=0) throw new Error('bad payload');
+        try{ localStorage.setItem(KEY, JSON.stringify({n:n,t:Date.now()})); }catch(e){}
+        if(paint(n)) did=true;
+      })
+      .catch(function(err){
+        if(!did) hideAll();
+        console.warn('Discord-Mitgliederzahl konnte nicht geladen werden:', err);
+      });  }
+  try{
+    var raw=localStorage.getItem(KEY);
+    if(raw){
+      var p=JSON.parse(raw);
+      if(p && typeof p.n==='number' && (Date.now()-p.t)<TTL){
+        did=paint(p.n);
+      }
+    }
+  }catch(e){}
+
+  loadFresh();
+
+  // Auto-Refresh: alle TTL Minuten neu laden, damit offene Tabs wirklich live bleiben
+  setInterval(loadFresh, TTL);
+})();
+</script>
+</body>
+</html>
